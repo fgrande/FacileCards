@@ -26,6 +26,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     text: hasFixedName(widget.type) ? widget.type.name : '',
   );
   final _code = TextEditingController();
+  final _codeFocus = FocusNode();
   final _holder = TextEditingController();
   final _notes = TextEditingController();
 
@@ -58,6 +59,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   void dispose() {
     _name.dispose();
     _code.dispose();
+    _codeFocus.dispose();
     _holder.dispose();
     _notes.dispose();
     super.dispose();
@@ -67,20 +69,23 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
 
   Future<void> _scan() async {
-    final result = await Navigator.of(context).push<ScannedCode>(
-      MaterialPageRoute(builder: (_) => const ScanScreen()),
+    final outcome = await Navigator.of(context).push<ScanOutcome>(
+      MaterialPageRoute(
+        builder: (_) => ScanScreen(
+          typeName: hasFixedName(widget.type) ? widget.type.name : null,
+          expectedFormat: widget.type.codeFormat,
+        ),
+      ),
     );
-    if (result == null || !mounted) return;
-    final expected = widget.type.codeFormat;
-    final read = formatToText(result.format);
-    // Se la tipologia indica un formato, il codice deve essere letto in quel formato.
-    if (expected != null && expected != read) {
-      _message('Questo codice non è nel formato previsto per ${widget.type.name}.');
+    if (outcome == null || !mounted) return;
+    if (outcome.manual) {
+      _codeFocus.requestFocus();
       return;
     }
+    final code = outcome.code!;
     setState(() {
-      _code.text = result.value;
-      _scannedFormat = read;
+      _code.text = code.value;
+      _scannedFormat = formatToText(code.format);
     });
   }
 
@@ -166,6 +171,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
               Expanded(
                 child: TextField(
                   controller: _code,
+                  focusNode: _codeFocus,
                   decoration: const InputDecoration(
                     labelText: 'Codice',
                     border: OutlineInputBorder(),

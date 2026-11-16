@@ -8,6 +8,11 @@ class ScannedCode {
   final BarcodeFormat format;
 }
 
+/// Il codice letto è accettabile? Se la tipologia non indica un formato
+/// ([expected] vuoto) vale qualunque formato; altrimenti deve coincidere.
+bool formatAccepted(String? expected, BarcodeFormat read) =>
+    expected == null || expected == formatToText(read);
+
 /// Il formato si salva nel database come testo (il nome del formato).
 String formatToText(BarcodeFormat f) => f.name;
 

@@ -12,6 +12,7 @@ Questo repository è privato e contiene tutto il progetto.
 | `site/` | Il sito di presentazione e l'informativa sulla privacy, in italiano, inglese e francese: pagine HTML statiche, più `app-ads.txt` per AdMob | Niente da compilare: i file si pubblicano così come sono. Per ora il sito non è pubblicato |
 | `docs/` | La documentazione di progetto: perché (`00-perche.md`), analisi e decisioni (`01-analisi-iniziale.md`), indice delle videate (`02-videate.md`) | Niente. Contiene anche `videate/` (45 schermate disegnate in SVG, in `scuro/` quelle del tema scuro) e `logo/` |
 | `.github/workflows/` | La pipeline di GitHub | A ogni modifica di `app/` lancia l'analisi e le prove automatiche; non produce file |
+| `HISTORY.md` | La cronologia di cosa è stato deciso e fatto, e perché | Niente |
 | `CLAUDE.md` | Le istruzioni per chi lavora al progetto con Claude e l'elenco di ciò che resta da fare | Niente |
 
 ## Per lavorare sull'app

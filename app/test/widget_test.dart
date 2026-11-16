@@ -24,4 +24,10 @@ void main() {
     }
     expect(formatFromText('inesistente'), BarcodeFormat.unknown);
   });
+
+  test('il formato atteso: se la tipologia non ne indica uno vale qualunque', () {
+    expect(formatAccepted(null, BarcodeFormat.ean13), isTrue);
+    expect(formatAccepted('code128', BarcodeFormat.code128), isTrue);
+    expect(formatAccepted('code128', BarcodeFormat.ean13), isFalse);
+  });
 }

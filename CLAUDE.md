@@ -21,13 +21,15 @@ Questo file è il registro. A fine lavoro, ogni volta:
 2. aggiungere in "Da fare" ciò che è emerso;
 3. tenere "Prossimo passo" aggiornato (una cosa sola, la più utile ora).
 
+4. aggiungere in coda a `HISTORY.md` una breve voce su cosa è stato deciso o fatto e perché (è la memoria del progetto: leggerlo all'inizio di una sessione per sapere come si è arrivati qui).
+
 Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e cosa manca.
 
 ## Stato
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** schermata di scansione completa (videate 22–24: formato errato, fotocamera negata, immagine da galleria, inserimento a mano), poi la configurazione iniziale (videata 1).
+**Prossimo passo:** configurazione iniziale (videata 1: nome, lingua, sezione di partenza nella lingua scelta).
 
 ### Fatto
 
@@ -35,11 +37,12 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: progetto Flutter creato (`eu.facilecards.app`, minSdk 24); prototipo con lettura reale del codice e disegno del codice a barre.
 - 2026-11-16: database Drift (sezioni, tipologie, tessere, foto, impostazioni); catalogo iniziale delle tipologie (iniziali su colore), riallineato a ogni avvio.
 - 2026-11-16: nuova tessera (videate 7, 8), elenco tutte/per sezione con ricerca, preferite e ordinamento (2, 3), tessera (5), sezioni (12, 36–38), cestino con recupero (13) ed eliminazione (18), limite di 50.
-- 2026-11-16: pipeline GitHub per analisi e test.
+- 2026-11-16: pipeline GitHub per analisi e test; repository unico e privato (cronologia ripartita da zero), `README.md` e `CLAUDE.md` nella radice.
+- 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
 
 ### Da fare: app
 
-- Scansione: videate 22 (già in forma semplice), 23 formato errato, 24 fotocamera negata (permesso chiesto al primo tocco di "Scansiona"), immagine da galleria, inserimento a mano con scelta del formato.
+- Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - Configurazione iniziale (1): nome, lingua, sezione di partenza nella lingua scelta.
 - Scadenze (4): campanella e riepilogo; avviso solo dentro l'app.
 - Foto della tessera (25–28, 39): miniatura nella tessera, vista a tutto schermo con scorrimento, sostituzione ed eliminazione; file nello spazio privato dell'app.
