@@ -1,0 +1,4 @@
+.DS_Store
+.idea/
+*.swp
+.claude/settings.local.json

@@ -1,0 +1,4 @@
+# FacileCards - app-ads.txt
+# Sostituire questa riga di commento con la riga fornita da AdMob
+# (AdMob > App > Visualizza tutte le app > app-ads.txt), del tipo:
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

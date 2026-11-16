@@ -1,0 +1,284 @@
+import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
+import 'package:uuid/uuid.dart';
+
+import 'catalog.dart';
+
+part 'database.g.dart';
+
+const _uuid = Uuid();
+String newId() => _uuid.v4();
+
+/// Nome della sezione predefinita (la traduzione si farà nell'interfaccia).
+const defaultSectionName = 'Generale';
+
+/// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta
+/// registrata e nascosta (hidden), finché quelle tessere non vengono
+/// recuperate o cancellate.
+class Sections extends Table {
+  TextColumn get id => text().clientDefault(newId)();
+  TextColumn get name => text()(); // unico tra le sezioni visibili (controllo nel codice)
+  BoolColumn get isDefault => boolean().withDefault(const Constant(false))();
+  BoolColumn get hidden => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Catalogo delle tipologie (incluse la "Generica" e quelle ritirate).
+class CardTypes extends Table {
+  TextColumn get id => text()(); // identificativo stabile, es. "generic"
+  TextColumn get name => text()();
+  TextColumn get logo => text().nullable()();
+  IntColumn get color => integer().nullable()(); // ARGB
+  TextColumn get codeFormat => text().nullable()(); // facoltativo
+  TextColumn get category => text().withDefault(const Constant('altro'))();
+  TextColumn get country => text().nullable()();
+  BoolColumn get isGeneric => boolean().withDefault(const Constant(false))();
+  BoolColumn get retired => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get retiredOn => dateTime().nullable()();
+  TextColumn get replacedBy => text().nullable()();
+  BoolColumn get replacementNeedsNewCode =>
+      boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class Cards extends Table {
+  TextColumn get id => text().clientDefault(newId)();
+  TextColumn get typeId => text().references(CardTypes, #id)();
+  TextColumn get name => text()();
+  TextColumn get code => text()();
+  TextColumn get codeFormat => text()(); // salvato sempre sulla singola tessera
+  TextColumn get notes => text().nullable()();
+  TextColumn get holder => text().nullable()();
+  DateTimeColumn get expiresOn => dateTime().nullable()();
+  TextColumn get sectionId => text().references(Sections, #id)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get lastUsedAt => dateTime().nullable()();
+  BoolColumn get favorite => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().nullable()(); // cestino
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Fotografie della tessera: lato "front" o "back", file nello spazio privato.
+class CardImages extends Table {
+  TextColumn get cardId => text().references(Cards, #id)();
+  TextColumn get side => text()(); // 'front' | 'back'
+  TextColumn get fileName => text()();
+
+  @override
+  Set<Column> get primaryKey => {cardId, side};
+}
+
+/// Impostazioni semplici chiave/valore (lingua, tema, ordinamento, ...).
+class Settings extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+@DriftDatabase(tables: [Sections, CardTypes, Cards, CardImages, Settings])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(driftDatabase(name: 'facilecards'));
+
+  /// Per i test (database in memoria).
+  AppDatabase.forTesting(super.executor);
+
+  @override
+  int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+          await into(sections).insert(SectionsCompanion.insert(
+            name: defaultSectionName,
+            isDefault: const Value(true),
+          ));
+          await into(cardTypes).insert(CardTypesCompanion.insert(
+            id: 'generic',
+            name: 'Generica',
+            isGeneric: const Value(true),
+          ));
+        },
+        // Il catalogo delle tipologie si riallinea a ogni avvio (vedi catalog.dart).
+        beforeOpen: (details) async {
+          await batch((b) {
+            b.insertAllOnConflictUpdate(cardTypes, catalogTypes());
+          });
+          await purgeExpiredTrash(DateTime.now());
+        },
+        // Le migrazioni future vanno qui, un passo per versione
+        // (vedi analisi, punto B8: copia del database prima di migrare).
+        onUpgrade: (m, from, to) async {},
+      );
+
+  /// Limite della versione gratuita (la versione Pro non ha limite).
+  static const freeCardLimit = 50;
+
+  Future<int> activeCardCount() async =>
+      (await (select(cards)..where((c) => c.deletedAt.isNull())).get()).length;
+
+  Future<List<Section>> visibleSections() => (select(sections)
+        ..where((s) => s.hidden.equals(false))
+        ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+      .get();
+
+  /// Tipologie attive (non ritirate), in ordine alfabetico.
+  Future<List<CardType>> activeCardTypes() => (select(cardTypes)
+        ..where((t) => t.retired.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .get();
+
+  // ---- Sezioni -------------------------------------------------------
+
+  /// Numero di tessere (non nel cestino) per ogni sezione.
+  Future<Map<String, int>> sectionCounts() async {
+    final active =
+        await (select(cards)..where((c) => c.deletedAt.isNull())).get();
+    final counts = <String, int>{};
+    for (final c in active) {
+      counts[c.sectionId] = (counts[c.sectionId] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  Future<bool> sectionNameInUse(String name, {String? exceptId}) async {
+    final n = name.trim().toLowerCase();
+    final list = await visibleSections();
+    return list.any((s) => s.id != exceptId && s.name.toLowerCase() == n);
+  }
+
+  /// Crea una sezione. Restituisce false se il nome è vuoto o già usato.
+  Future<bool> createSection(String name) async {
+    final n = name.trim();
+    if (n.isEmpty || await sectionNameInUse(n)) return false;
+    await into(sections).insert(SectionsCompanion.insert(name: n));
+    return true;
+  }
+
+  Future<bool> renameSection(String id, String name) async {
+    final n = name.trim();
+    if (n.isEmpty || await sectionNameInUse(n, exceptId: id)) return false;
+    await (update(sections)..where((s) => s.id.equals(id)))
+        .write(SectionsCompanion(name: Value(n)));
+    return true;
+  }
+
+  /// Elimina una sezione (mai quella di partenza). Le tessere si spostano in
+  /// [moveTo] oppure, se è null, vanno nel cestino insieme alla sezione, che
+  /// resta nascosta finché quelle tessere non sono recuperate o cancellate.
+  Future<void> deleteSection(String id, {String? moveTo}) async {
+    final section =
+        await (select(sections)..where((s) => s.id.equals(id))).getSingle();
+    if (section.isDefault) {
+      throw StateError('La sezione di partenza non si elimina.');
+    }
+    await transaction(() async {
+      final active = update(cards)
+        ..where((c) => c.sectionId.equals(id) & c.deletedAt.isNull());
+      if (moveTo != null) {
+        await active.write(CardsCompanion(sectionId: Value(moveTo)));
+      } else {
+        await active.write(CardsCompanion(deletedAt: Value(DateTime.now())));
+      }
+      await _dropOrHideSection(id);
+    });
+  }
+
+  /// Una sezione senza più tessere (nemmeno nel cestino) sparisce; se ne ha
+  /// ancora nel cestino resta registrata ma nascosta.
+  Future<void> _dropOrHideSection(String id) async {
+    final left =
+        await (select(cards)..where((c) => c.sectionId.equals(id))).get();
+    if (left.isEmpty) {
+      await (delete(sections)..where((s) => s.id.equals(id))).go();
+    } else {
+      await (update(sections)..where((s) => s.id.equals(id)))
+          .write(const SectionsCompanion(hidden: Value(true)));
+    }
+  }
+
+  // ---- Cestino -------------------------------------------------------
+
+  static const trashDays = 30;
+
+  Stream<List<Card>> watchTrash() => (select(cards)
+        ..where((c) => c.deletedAt.isNotNull())
+        ..orderBy([(c) => OrderingTerm.desc(c.deletedAt)]))
+      .watch();
+
+  Future<int> trashCount() async =>
+      (await (select(cards)..where((c) => c.deletedAt.isNotNull())).get())
+          .length;
+
+  Future<void> moveCardToTrash(String id) =>
+      (update(cards)..where((c) => c.id.equals(id)))
+          .write(CardsCompanion(deletedAt: Value(DateTime.now())));
+
+  /// Recupera una tessera dal cestino nella sezione indicata (se era nascosta
+  /// la sezione torna visibile). Restituisce false se non c'è posto nel limite.
+  Future<bool> recoverCard(String cardId, String sectionId) async {
+    if (await activeCardCount() >= freeCardLimit) return false;
+    await transaction(() async {
+      await (update(sections)..where((s) => s.id.equals(sectionId)))
+          .write(const SectionsCompanion(hidden: Value(false)));
+      await (update(cards)..where((c) => c.id.equals(cardId))).write(
+        CardsCompanion(
+          sectionId: Value(sectionId),
+          deletedAt: const Value<DateTime?>(null),
+        ),
+      );
+    });
+    return true;
+  }
+
+  /// Elimina definitivamente una tessera (e i riferimenti alle sue foto).
+  Future<void> deleteCardForever(String id) async {
+    final card =
+        await (select(cards)..where((c) => c.id.equals(id))).getSingleOrNull();
+    if (card == null) return;
+    await transaction(() async {
+      await (delete(cardImages)..where((i) => i.cardId.equals(id))).go();
+      await (delete(cards)..where((c) => c.id.equals(id))).go();
+      final section = await (select(sections)
+            ..where((s) => s.id.equals(card.sectionId)))
+          .getSingleOrNull();
+      if (section != null && section.hidden) {
+        await _dropOrHideSection(section.id);
+      }
+    });
+  }
+
+  /// Cancella le tessere nel cestino da più di 30 giorni.
+  Future<void> purgeExpiredTrash(DateTime now) async {
+    final limit = now.subtract(const Duration(days: trashDays));
+    final old = await (select(cards)
+          ..where((c) => c.deletedAt.isSmallerThanValue(limit)))
+        .get();
+    for (final c in old) {
+      await deleteCardForever(c.id);
+    }
+  }
+
+  Future<Section> defaultSection() =>
+      (select(sections)..where((s) => s.isDefault.equals(true))).getSingle();
+
+  /// Tutte le tessere non nel cestino (l'ordinamento si fa nell'interfaccia).
+  Stream<List<Card>> watchActiveCards() =>
+      (select(cards)..where((c) => c.deletedAt.isNull())).watch();
+
+  /// Tessere non nel cestino di una sezione, in ordine alfabetico.
+  Stream<List<Card>> watchCards(String sectionId) {
+    return (select(cards)
+          ..where((c) => c.sectionId.equals(sectionId) & c.deletedAt.isNull())
+          ..orderBy([(c) => OrderingTerm.asc(c.name)]))
+        .watch();
+  }
+}
