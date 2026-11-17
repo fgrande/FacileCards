@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart' show Value;
+import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../barcode_support.dart';
 import '../data/catalog.dart';
@@ -89,6 +91,48 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     });
   }
 
+  /// Decisione 110: legge il codice da un'immagine della galleria, senza
+  /// aprire la fotocamera (e quindi senza il suo permesso).
+  Future<void> _fromGallery() async {
+    final scanner = MobileScannerController();
+    try {
+      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file == null || !mounted) return;
+      final capture = await scanner.analyzeImage(file.path);
+      if (!mounted) return;
+      final barcodes = (capture?.barcodes ?? const <Barcode>[])
+          .where((b) => (b.rawValue ?? '').isNotEmpty)
+          .toList();
+      if (barcodes.isEmpty) {
+        return _message('Nessun codice trovato: scegli una foto in cui il codice si veda bene.');
+      }
+      final expected = widget.type.codeFormat;
+      for (final b in barcodes) {
+        if (b.format != BarcodeFormat.unknown && formatAccepted(expected, b.format)) {
+          setState(() {
+            _code.text = b.rawValue!;
+            _scannedFormat = formatToText(b.format);
+          });
+          return;
+        }
+      }
+      final first = barcodes.first;
+      if (first.format == BarcodeFormat.unknown) {
+        return _message('Formato del codice non riconosciuto.');
+      }
+      final name = hasFixedName(widget.type) ? widget.type.name : 'questa tipologia';
+      _message(
+        'Questo codice non sembra di $name. '
+        'Letto: ${formatLabel(first.format)} · atteso: '
+        '${formatLabel(formatFromText(expected!))}',
+      );
+    } catch (_) {
+      if (mounted) _message('Non sono riuscito a leggere la foto: prova con un\'altra immagine.');
+    } finally {
+      scanner.dispose();
+    }
+  }
+
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final d = await showDatePicker(
@@ -165,25 +209,32 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             ),
           ),
           const SizedBox(height: 16),
+          TextField(
+            controller: _code,
+            focusNode: _codeFocus,
+            decoration: const InputDecoration(
+              labelText: 'Codice',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (_) => _scannedFormat = null,
+          ),
+          const SizedBox(height: 8),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: TextField(
-                  controller: _code,
-                  focusNode: _codeFocus,
-                  decoration: const InputDecoration(
-                    labelText: 'Codice',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) => _scannedFormat = null,
+                child: FilledButton.icon(
+                  onPressed: _scan,
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('Scansiona'),
                 ),
               ),
               const SizedBox(width: 12),
-              FilledButton.icon(
-                onPressed: _scan,
-                icon: const Icon(Icons.qr_code_scanner),
-                label: const Text('Scansiona'),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _fromGallery,
+                  icon: const Icon(Icons.photo_library_outlined),
+                  label: const Text('Galleria'),
+                ),
               ),
             ],
           ),

@@ -56,3 +56,15 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Da lanciare: `flutter pub add image_picker app_settings`, poi `flutter analyze` e `flutter test` (il lavoro sulla scansione non è stato ancora verificato).
 - Prossimo passo: **configurazione iniziale** (videata 1: nome, lingua, sezione di partenza nella lingua scelta).
 - Resta aperta la prova in cassa della fase 0: far leggere una tessera vera a uno scanner.
+
+## 17 novembre 2026
+
+- **Decisione 110**: la lettura da galleria esce dalla schermata di scansione e passa nella pagina dei dati della nuova tessera, con due pulsanti di pari peso, "Scansiona" e "Galleria". Motivo: la galleria è un'alternativa alla fotocamera, non un'azione dentro di essa; così non serve aprire la fotocamera né il suo permesso. L'inserimento a mano resta nella scansione come ripiego (scelta di Fabio).
+- Ridisegnate le videate 8, 22 e 24 (chiare e scure); aggiornate decisione 100 e indice delle videate. Cambiati `new_card_data_screen.dart` e `scan_screen.dart`. Il controllo del formato atteso vale anche per la galleria.
+- Sessione senza Flutter: il codice non è stato provato. Da fare a mano: `flutter pub get`, `flutter analyze`, `flutter test`, prova di "Galleria" sul telefono. Le panoramiche PNG non sono state rigenerate.
+
+## Dove eravamo rimasti (aggiornato il 17 novembre)
+
+- Prima: verificare le modifiche del 17 novembre (analyze, test, prova sul telefono) e la scansione del 16.
+- Poi: **configurazione iniziale** (videata 1).
+

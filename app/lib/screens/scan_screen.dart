@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -20,8 +19,8 @@ class ScanOutcome {
 }
 
 /// Videate 22, 23, 24: scansione con la fotocamera. Il primo codice
-/// riconosciuto vince; si può anche leggere da una foto della galleria o
-/// scrivere il codice a mano. Il permesso della fotocamera si chiede qui,
+/// riconosciuto vince; si può anche scrivere il codice a mano. La lettura da
+/// una foto della galleria sta nella pagina dei dati (decisione 110). Il permesso della fotocamera si chiede qui,
 /// al primo tocco di "Scansiona".
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key, this.typeName, this.expectedFormat});
@@ -96,25 +95,6 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
-  Future<void> _fromGallery() async {
-    try {
-      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (file == null || !mounted) return;
-      final capture = await _controller.analyzeImage(file.path);
-      final barcodes = capture?.barcodes ?? const <Barcode>[];
-      for (final b in barcodes) {
-        if (_accept(b)) return;
-      }
-      if (barcodes.isEmpty && mounted) {
-        _showBanner('Nessun codice trovato', 'Scegli una foto in cui il codice si veda bene.');
-      }
-    } catch (_) {
-      if (mounted) {
-        _showBanner('Non sono riuscito a leggere la foto', 'Prova con un\'altra immagine.');
-      }
-    }
-  }
-
   void _manual() => Navigator.of(context).pop(const ScanOutcome.manual());
 
   Future<void> _toggleTorch() async {
@@ -177,20 +157,10 @@ class _ScanScreenState extends State<ScanScreen> {
                   Text(label, style: const TextStyle(color: Colors.white70)),
                 ],
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton.icon(
-                      onPressed: _toggleTorch,
-                      icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
-                      label: const Text('Torcia'),
-                    ),
-                    TextButton.icon(
-                      onPressed: _fromGallery,
-                      icon: const Icon(Icons.photo_library_outlined),
-                      label: const Text('Da galleria'),
-                    ),
-                  ],
+                TextButton.icon(
+                  onPressed: _toggleTorch,
+                  icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
+                  label: const Text('Torcia'),
                 ),
                 TextButton(
                   onPressed: _manual,
@@ -225,7 +195,7 @@ class _ScanScreenState extends State<ScanScreen> {
             Text(
               denied
                   ? 'Per leggere il codice di una tessera FacileCards usa la fotocamera. Le immagini restano sul telefono.'
-                  : 'Puoi leggere il codice da una foto della galleria o scriverlo a mano.',
+                  : 'Puoi scrivere il codice a mano.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -237,10 +207,6 @@ class _ScanScreenState extends State<ScanScreen> {
             TextButton(
               onPressed: _manual,
               child: const Text('Inserisci il codice a mano'),
-            ),
-            TextButton(
-              onPressed: _fromGallery,
-              child: const Text('Leggi da una foto della galleria'),
             ),
           ],
         ),
