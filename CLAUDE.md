@@ -11,6 +11,7 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 - **Script `frun.sh`** (nella radice): analisi, prove e avvio dell'app in un colpo solo; si ferma al primo errore. Le opzioni passano a `flutter run`.
 - **Versione dell'app** (decisione 111): prima di ogni caricamento su uno store alzare `N` in `version: X.Y.Z+N` di `app/pubspec.yaml` (e `X.Y.Z` se cambia la versione), poi etichetta git `vX.Y.Z+N`.
 - **Cambi alle tabelle** (`lib/data/database.dart`): rilanciare `dart run build_runner build --delete-conflicting-outputs`. Dopo il primo rilascio ogni cambio di schema richiede una migrazione a passi, con prova su un database della versione precedente (decisione 88).
+- **Plugin:** prima di aggiungerne uno, controllare che la compilazione non dia l'avviso "Kotlin Gradle Plugin (KGP)" (le prossime versioni di Flutter rifiuteranno quei plugin); per funzioni piccole meglio un canale nativo nostro in `MainActivity.kt`.
 - **Import dei widget:** il progetto usa `package:material_ui/material_ui.dart`. La classe `Card` di Drift e quella dei widget si scontrano: importare `data/database.dart` con prefisso (`as db`).
 - **Prove automatiche** per la logica dei dati (limite, cestino, sezioni, importazioni, migrazioni); le schermate si provano a mano. La pipeline (`.github/workflows/ci.yml`) le lancia a ogni modifica di `app/`.
 - **Marchi:** il disclaimer ("FacileCards non è affiliata…") va ovunque si citino catene, in tutte le lingue (decisione 99).
@@ -31,7 +32,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** scadenze (videata 4): campanella e riepilogo, con i giorni di preavviso della configurazione.
+**Prossimo passo:** foto della tessera (videate 25–28, 39).
 
 ### Fatto
 
@@ -43,17 +44,18 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
 - 2026-11-17: "Da galleria" spostato nella videata 8 accanto a "Scansiona" (decisione 110), tolto dalla fotocamera (22), tenuto nella 24; controllo del codice letto in comune e con prove. Provato sul telefono, insieme alla scansione.
 - 2026-11-17: script `frun.sh`; numerazione delle versioni (decisione 111).
-- 2026-11-17: configurazione iniziale (videata 1): nome (proposto come intestatario delle nuove tessere), lingua (quella del telefono se offerta, se no inglese), avviso scadenze e giorni (1–90); sezione di partenza col nome nella lingua scelta. Da provare sul telefono.
+- 2026-11-17: configurazione iniziale (videata 1): nome (proposto come intestatario delle nuove tessere), lingua (quella del telefono se offerta, se no inglese), avviso scadenze e giorni (1–90); sezione di partenza col nome nella lingua scelta; nome facoltativo. Provata sul telefono.
+- 2026-11-17: scadenze (videata 4): campanella con il numero nella barra dell'elenco (solo se c'è qualcosa da segnalare), riquadro con scadute e in scadenza, tocco sulla tessera per aprirla; giorni di preavviso e avviso acceso/spento dalla configurazione. Provato sul telefono.
+- 2026-11-17: tolto il plugin `app_settings` (avviso Kotlin Gradle Plugin di Flutter): "Apri impostazioni" ora è codice nostro in `MainActivity.kt` (canale `facilecards/system`). Provato sul telefono.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
-- Scadenze (4): campanella e riepilogo; avviso solo dentro l'app.
 - Foto della tessera (25–28, 39): miniatura nella tessera, vista a tutto schermo con scorrimento, sostituzione ed eliminazione; file nello spazio privato dell'app.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
-- Impostazioni (14, 21) e tema scuro; scelta ordinamento e vista ricordata.
+- Impostazioni (14, 21) e tema scuro; scelta ordinamento e vista ricordata. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
 - Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
 - Esporta tutto / importa tutto (29–35).
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.

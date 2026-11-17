@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../barcode_support.dart';
 import '../gallery_scan.dart';
+import '../system_settings.dart';
 
 /// Esito della schermata di scansione: un codice letto, oppure la scelta
 /// di scrivere il codice a mano.
@@ -208,7 +208,7 @@ class _ScanScreenState extends State<ScanScreen> {
             const SizedBox(height: 24),
             if (denied)
               FilledButton(
-                onPressed: AppSettings.openAppSettings,
+                onPressed: openAppSettings,
                 child: const Text('Apri impostazioni'),
               ),
             TextButton(

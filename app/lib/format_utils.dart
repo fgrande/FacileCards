@@ -24,16 +24,33 @@ String deletedLabel(DateTime deletedAt, DateTime now) {
   return 'Eliminata $days giorni fa';
 }
 
-/// Avviso di scadenza, solo se la tessera scade entro 30 giorni (o è scaduta).
-String? expiryLabel(DateTime? expiresOn, DateTime now) {
+/// Avviso di scadenza nella riga dell'elenco, solo se la tessera scade entro
+/// [days] giorni (o è scaduta).
+String? expiryLabel(DateTime? expiresOn, DateTime now, {required int days}) {
   if (expiresOn == null) return null;
-  final days = _day(expiresOn).difference(_day(now)).inDays;
-  if (days < 0) return 'Scaduta';
-  if (days == 0) return 'Scade oggi';
-  if (days == 1) return 'Scade domani';
-  if (days <= 30) return 'Scade tra $days giorni';
+  final left = _day(expiresOn).difference(_day(now)).inDays;
+  if (left < 0) return 'Scaduta';
+  if (left == 0) return 'Scade oggi';
+  if (left == 1) return 'Scade domani';
+  if (left <= days) return 'Scade tra $left giorni';
   return null;
 }
+
+/// Etichetta breve nel riquadro delle scadenze: "Scaduta", "Oggi",
+/// "Domani", "Tra 12 giorni".
+String expiryBadge(DateTime expiresOn, DateTime now) {
+  final left = _day(expiresOn).difference(_day(now)).inDays;
+  if (left < 0) return 'Scaduta';
+  if (left == 0) return 'Oggi';
+  if (left == 1) return 'Domani';
+  return 'Tra $left giorni';
+}
+
+/// "Scaduta il 31 ottobre 2026" / "Scade il 28 novembre 2026"
+String expiryDetail(DateTime expiresOn, DateTime now) =>
+    _day(expiresOn).isBefore(_day(now))
+        ? 'Scaduta il ${longDate(expiresOn)}'
+        : 'Scade il ${longDate(expiresOn)}';
 
 const _months = [
   'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio',

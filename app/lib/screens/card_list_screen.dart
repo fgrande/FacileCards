@@ -1,8 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../expiry.dart';
 import '../format_utils.dart';
 import 'card_screen.dart';
+import 'expiry_panel.dart';
 import 'new_card_type_screen.dart';
 import 'sections_screen.dart';
 
@@ -26,6 +28,10 @@ class _CardListScreenState extends State<CardListScreen> {
   _ViewMode _view = _ViewMode.all;
   _SortMode _sort = _SortMode.lastUsed;
   String _query = '';
+  ExpirySettings _expiry = ExpirySettings.defaults;
+  // Un solo ascolto per tutta la vita della schermata: ricrearlo a ogni
+  // ricostruzione (per esempio a ogni lettera della ricerca) è inutile.
+  late final _cards = widget.database.watchActiveCards();
 
   @override
   void initState() {
@@ -37,8 +43,10 @@ class _CardListScreenState extends State<CardListScreen> {
     final d = widget.database;
     final types = await d.select(d.cardTypes).get();
     final sections = await d.select(d.sections).get();
+    final expiry = await d.expirySettings();
     if (!mounted) return;
     setState(() {
+      _expiry = expiry;
       _types = {for (final t in types) t.id: t};
       _sections = {for (final s in sections) s.id: s};
     });
@@ -79,44 +87,78 @@ class _CardListScreenState extends State<CardListScreen> {
   }
 
   Widget _header(String text, {String? trailing}) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(text, style: Theme.of(context).textTheme.labelMedium),
-            ),
-            if (trailing != null)
-              Text(trailing, style: Theme.of(context).textTheme.labelMedium),
-          ],
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(text, style: Theme.of(context).textTheme.labelMedium),
         ),
-      );
+        if (trailing != null)
+          Text(trailing, style: Theme.of(context).textTheme.labelMedium),
+      ],
+    ),
+  );
 
   Widget _row(db.Card c, DateTime now) {
     final type = _types[c.typeId];
     final section = _sections[c.sectionId]?.name ?? '';
-    final warn = expiryLabel(c.expiresOn, now);
+    final warn = _expiry.enabled
+        ? expiryLabel(c.expiresOn, now, days: _expiry.days)
+        : null;
     final subtitle = warn != null
         ? Text(warn, style: TextStyle(color: Colors.amber.shade800))
-        : Text(_view == _ViewMode.all
-            ? '$section · ${usedLabel(c.lastUsedAt, now)}'
-            : (type?.name ?? ''));
+        : Text(
+            _view == _ViewMode.all
+                ? '$section · ${usedLabel(c.lastUsedAt, now)}'
+                : (type?.name ?? ''),
+          );
     return ListTile(
-      leading: type == null ? const Icon(Icons.credit_card) : TypeLogo(type: type),
+      leading: type == null
+          ? const Icon(Icons.credit_card)
+          : TypeLogo(type: type),
       title: Text(c.name),
       subtitle: subtitle,
       trailing: warn != null
           ? Icon(Icons.notifications_active, color: Colors.amber.shade800)
           : null,
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CardScreen(
-            database: widget.database,
-            card: c,
-            type: type,
-            sectionName: section,
-          ),
+      onTap: () => _open(c),
+    );
+  }
+
+  void _open(db.Card c) {
+    final type = _types[c.typeId];
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CardScreen(
+          database: widget.database,
+          card: c,
+          type: type,
+          sectionName: _sections[c.sectionId]?.name ?? '',
         ),
       ),
+    );
+  }
+
+  /// Campanella con il numero di tessere scadute o in scadenza (decisione 70);
+  /// non compare se non c'è niente da segnalare.
+  Widget _bell(List<db.Card> all) {
+    final flagged = cardsToFlag(all, DateTime.now(), _expiry);
+    if (flagged.isEmpty) return const SizedBox.shrink();
+    return IconButton(
+      tooltip: 'Scadenze',
+      icon: Badge(
+        label: Text('${flagged.length}'),
+        child: const Icon(Icons.notifications_outlined),
+      ),
+      onPressed: () async {
+        final chosen = await showExpiryPanel(
+          context,
+          cards: flagged,
+          types: _types,
+          settings: _expiry,
+        );
+        if (chosen != null && mounted) _open(chosen);
+      },
     );
   }
 
@@ -152,8 +194,12 @@ class _CardListScreenState extends State<CardListScreen> {
     if (_view == _ViewMode.all) {
       final rest = cards.where((c) => !c.favorite).toList();
       if (rest.isNotEmpty) {
-        widgets.add(_header('TUTTE LE TESSERE',
-            trailing: '${all.length} di ${db.AppDatabase.freeCardLimit}'));
+        widgets.add(
+          _header(
+            'TUTTE LE TESSERE',
+            trailing: '${all.length} di ${db.AppDatabase.freeCardLimit}',
+          ),
+        );
         widgets.addAll(rest.map((c) => _row(c, now)));
       }
     } else {
@@ -163,13 +209,19 @@ class _CardListScreenState extends State<CardListScreen> {
           final sa = _sections[a], sb = _sections[b];
           if (sa?.isDefault == true) return -1;
           if (sb?.isDefault == true) return 1;
-          return (sa?.name ?? '').toLowerCase().compareTo((sb?.name ?? '').toLowerCase());
+          return (sa?.name ?? '').toLowerCase().compareTo(
+            (sb?.name ?? '').toLowerCase(),
+          );
         });
       for (final id in ids) {
         final inSection = cards.where((c) => c.sectionId == id).toList();
         final n = inSection.length;
-        widgets.add(_header((_sections[id]?.name ?? '').toUpperCase(),
-            trailing: n == 1 ? '1 tessera' : '$n tessere'));
+        widgets.add(
+          _header(
+            (_sections[id]?.name ?? '').toUpperCase(),
+            trailing: n == 1 ? '1 tessera' : '$n tessere',
+          ),
+        );
         widgets.addAll(inSection.map((c) => _row(c, now)));
       }
     }
@@ -178,29 +230,30 @@ class _CardListScreenState extends State<CardListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FacileCards'),
-        actions: [
-          IconButton(
-            tooltip: 'Sezioni',
-            icon: const Icon(Icons.folder_outlined),
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => SectionsScreen(database: widget.database),
-                ),
-              );
-              _loadRefs();
-            },
+    return StreamBuilder<List<db.Card>>(
+      stream: _cards,
+      builder: (context, snap) {
+        final all = snap.data ?? const <db.Card>[];
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('FacileCards'),
+            actions: [
+              _bell(all),
+              IconButton(
+                tooltip: 'Sezioni',
+                icon: const Icon(Icons.folder_outlined),
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SectionsScreen(database: widget.database),
+                    ),
+                  );
+                  _loadRefs();
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: StreamBuilder<List<db.Card>>(
-        stream: widget.database.watchActiveCards(),
-        builder: (context, snap) {
-          final all = snap.data ?? const <db.Card>[];
-          return ListView(
+          body: ListView(
             padding: const EdgeInsets.only(bottom: 88),
             children: [
               Padding(
@@ -262,14 +315,14 @@ class _CardListScreenState extends State<CardListScreen> {
               ),
               ..._content(all),
             ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _add,
-        icon: const Icon(Icons.add),
-        label: const Text('Aggiungi'),
-      ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _add,
+            icon: const Icon(Icons.add),
+            label: const Text('Aggiungi'),
+          ),
+        );
+      },
     );
   }
 }

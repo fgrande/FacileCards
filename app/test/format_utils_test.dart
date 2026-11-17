@@ -15,13 +15,24 @@ void main() {
     expect(usedLabel(DateTime(2026, 6, 1), now), '5 mesi fa');
   });
 
-  test('avviso di scadenza solo entro 30 giorni', () {
-    expect(expiryLabel(null, now), isNull);
-    expect(expiryLabel(DateTime(2027, 12, 31), now), isNull);
-    expect(expiryLabel(DateTime(2026, 11, 15), now), 'Scaduta');
-    expect(expiryLabel(DateTime(2026, 11, 16), now), 'Scade oggi');
-    expect(expiryLabel(DateTime(2026, 11, 17), now), 'Scade domani');
-    expect(expiryLabel(DateTime(2026, 11, 28), now), 'Scade tra 12 giorni');
+  test('avviso di scadenza solo entro i giorni di preavviso', () {
+    expect(expiryLabel(null, now, days: 30), isNull);
+    expect(expiryLabel(DateTime(2027, 12, 31), now, days: 30), isNull);
+    expect(expiryLabel(DateTime(2026, 11, 15), now, days: 30), 'Scaduta');
+    expect(expiryLabel(DateTime(2026, 11, 16), now, days: 30), 'Scade oggi');
+    expect(expiryLabel(DateTime(2026, 11, 17), now, days: 30), 'Scade domani');
+    expect(expiryLabel(DateTime(2026, 11, 28), now, days: 30), 'Scade tra 12 giorni');
+    expect(expiryLabel(DateTime(2026, 11, 28), now, days: 10), isNull);
+  });
+
+  test('etichette del riquadro delle scadenze', () {
+    expect(expiryBadge(DateTime(2026, 10, 31), now), 'Scaduta');
+    expect(expiryBadge(DateTime(2026, 11, 16), now), 'Oggi');
+    expect(expiryBadge(DateTime(2026, 11, 17), now), 'Domani');
+    expect(expiryBadge(DateTime(2026, 11, 28), now), 'Tra 12 giorni');
+    expect(expiryDetail(DateTime(2026, 10, 31), now), 'Scaduta il 31 ottobre 2026');
+    expect(expiryDetail(DateTime(2026, 11, 16), now), 'Scade il 16 novembre 2026');
+    expect(expiryDetail(DateTime(2026, 11, 28), now), 'Scade il 28 novembre 2026');
   });
 
   test('data estesa', () {
