@@ -39,7 +39,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: nuova tessera (videate 7, 8), elenco tutte/per sezione con ricerca, preferite e ordinamento (2, 3), tessera (5), sezioni (12, 36–38), cestino con recupero (13) ed eliminazione (18), limite di 50.
 - 2026-11-16: pipeline GitHub per analisi e test; repository unico e privato (cronologia ripartita da zero), `README.md` e `CLAUDE.md` nella radice.
 - 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
-- 2026-11-17: lettura da galleria portata nella pagina dei dati, accanto a "Scansiona" (decisione 110); tolta dalla scansione e dalla schermata del permesso negato; videate 8, 22, 24 ridisegnate (chiare e scure). **Codice non provato: Flutter non era disponibile** — lanciare `flutter pub get`, `flutter analyze`, `flutter test` e provare a mano "Galleria".
+- 2026-11-17: lettura da galleria portata nella pagina dei dati, accanto a "Scansiona" (decisione 110); tolta dalla scansione e dalla schermata del permesso negato; videate 8, 22, 24 ridisegnate (chiare e scure) e panoramiche rigenerate. **Codice non provato: Flutter non era disponibile** — lanciare `flutter pub get`, `flutter analyze`, `flutter test` e provare a mano "Galleria".
 
 ### Da fare: app
 
@@ -59,8 +59,6 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Traduzioni inglese e francese (spagnolo e tedesco predisposti); icona e schermata di avvio dell'app.
 - Migrazioni del database e prove su database di esempio per ogni versione rilasciata (punto B8).
 - Sistemare l'avviso `itf` deprecato in `lib/barcode_support.dart` (usare `itf14`).
-
-- Rigenerare le panoramiche `docs/videate/00-panoramica.png` e `scuro/00-panoramica.png` (mostrano ancora le videate 8, 22, 24 vecchie).
 
 ### Da fare: verifiche e pubblicazione
 
