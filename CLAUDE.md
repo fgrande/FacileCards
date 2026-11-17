@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** impostazioni (videate 14, 21), con la voce nel menu ⋮ dell'elenco.
+**Prossimo passo:** modifica della tessera (matita nella videata 5), con la stessa pagina della nuova tessera.
 
 ### Fatto
 
@@ -50,14 +50,16 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-17: tolto il plugin `app_settings` (avviso Kotlin Gradle Plugin di Flutter): "Apri impostazioni" ora è codice nostro in `MainActivity.kt` (canale `facilecards/system`). Provato sul telefono.
 - 2026-11-17: foto della tessera (videate 8, 25–28, 39): fronte e retro nella nuova tessera (fronte obbligatorio per la generica), miniatura o "Aggiungi foto" nella scheda, visualizzatore con scorrimento, zoom, Sostituisci ed Elimina foto; foto ridotte a 1600 px e 500 KB, file in `photos/` nello spazio privato, quelli orfani cancellati dopo l'avvio. Anche "Sposta" nella scheda (videata 5). Provato sul telefono.
 - 2026-11-17: tema grafico come nei disegni, chiaro e scuro (segue il telefono): tavolozza, campi, pulsanti a pillola, righe su fondo bianco; rifatte elenco (2, 3), scheda (5), nuova tessera (7, 8, con "Salva" fisso in basso), scadenze (4), configurazione (1), sezioni (12), cestino (13, recupero in un foglio dal basso), visualizzatore foto. Colori del catalogo allineati ai disegni. Provato sul telefono.
+- 2026-11-17: impostazioni (14) e informazioni (21): nome, lingua, tema (come il telefono / chiaro / scuro, cambia subito), avviso scadenze e giorni; riquadro della versione gratuita; informativa, sito e versione dell'app aperti con codice nativo nostro (`openUrl`, `appVersion` in `MainActivity.kt`). Vista e ordinamento dell'elenco ricordati. Provato sul telefono.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
+- Modifica della tessera (matita nella videata 5).
 - Eliminazione trascinando la riga (17).
-- Modifica della tessera (matita nella videata 5) e condivisione dalla scheda: non ancora fatte.
+- Condivisione dalla scheda della tessera: non ancora fatta.
 - Sezioni (12): condivisione della sezione, "Esporta tutto", "Importa tutto" e il riquadro "Ultima copia" arrivano con l'esportazione.
 - Impostazioni (14, 21): scelta del tema (chiaro, scuro, come il telefono), ordinamento e vista ricordati. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
 - Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
@@ -66,7 +68,10 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.
 - Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto.
 - Backup automatico di Android (database e foto; acquisto escluso).
-- Traduzioni inglese e francese (spagnolo e tedesco predisposti); icona e schermata di avvio dell'app.
+- Traduzioni inglese e francese (spagnolo e tedesco predisposti).
+- Icona dell'app dal logo in `docs/logo/` (anche icona adattiva), con strumenti usati solo per generare le immagini (niente plugin nell'app).
+- Schermata di avvio (idea di Fabio, 17 nov): un'immagine da generare con tante tessere sparse e mischiate, leggermente sfocate, come viste dall'alto su un ripiano (il ripiano non si vede); versione chiara e scura. Da verificare: da Android 12 il sistema mostra solo un'icona centrata, quindi l'immagine a tutto schermo va valutata (anche rispetto alla regola dei 2 secondi).
+- Avvio più rapido: riallineare il catalogo solo quando cambia (non a ogni avvio) e svuotare il cestino dopo la prima schermata; misurare l'avvio a freddo in versione definitiva (`--release`) prima e dopo. Nota: la lentezza vista sul telefono è soprattutto della versione di prova (debug).
 - Migrazioni del database e prove su database di esempio per ogni versione rilasciata (punto B8).
 - Sistemare l'avviso `itf` deprecato in `lib/barcode_support.dart` (usare `itf14`).
 

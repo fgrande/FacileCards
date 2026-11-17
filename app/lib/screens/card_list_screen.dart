@@ -9,6 +9,7 @@ import 'expiry_panel.dart';
 import 'new_card_type_screen.dart';
 import 'search_field.dart';
 import 'sections_screen.dart';
+import 'settings_screen.dart';
 import '../theme.dart';
 import '../ui.dart';
 
@@ -48,9 +49,18 @@ class _CardListScreenState extends State<CardListScreen> {
     final types = await d.select(d.cardTypes).get();
     final sections = await d.select(d.sections).get();
     final expiry = await d.expirySettings();
+    final view = await d.setting(db.SettingKeys.listView);
+    final sort = await d.setting(db.SettingKeys.listSort);
     if (!mounted) return;
     setState(() {
       _expiry = expiry;
+      // Vista e ordinamento come li si era lasciati.
+      if (view != null) {
+        _view = view == 'bySection' ? _ViewMode.bySection : _ViewMode.all;
+      }
+      if (sort != null) {
+        _sort = sort == 'name' ? _SortMode.name : _SortMode.lastUsed;
+      }
       _types = {for (final t in types) t.id: t};
       _sections = {for (final s in sections) s.id: s};
     });
@@ -99,8 +109,10 @@ class _CardListScreenState extends State<CardListScreen> {
         : null;
     final expired = warn == 'Scaduta';
     final subtitle = warn != null
-        ? Text(warn,
-            style: TextStyle(color: expired ? colors.danger : colors.warn))
+        ? Text(
+            warn,
+            style: TextStyle(color: expired ? colors.danger : colors.warn),
+          )
         : Text(
             _view == _ViewMode.all
                 ? '$section · ${usedLabel(c.lastUsedAt, now)}'
@@ -188,7 +200,11 @@ class _CardListScreenState extends State<CardListScreen> {
     if (favorites.isNotEmpty) {
       widgets.add(const GroupHeader('Preferite'));
       widgets.add(
-        TileGroup(children: [for (final c in favorites) _row(c, now, inFavorites: true)]),
+        TileGroup(
+          children: [
+            for (final c in favorites) _row(c, now, inFavorites: true),
+          ],
+        ),
       );
     }
     if (_view == _ViewMode.all) {
@@ -239,10 +255,39 @@ class _CardListScreenState extends State<CardListScreen> {
     _loadRefs();
   }
 
-  void _setView(_ViewMode v) => setState(() {
-    _view = v;
-    _sort = v == _ViewMode.all ? _SortMode.lastUsed : _SortMode.name;
-  });
+  void _setView(_ViewMode v) {
+    setState(() {
+      _view = v;
+      _sort = v == _ViewMode.all ? _SortMode.lastUsed : _SortMode.name;
+    });
+    _rememberList();
+  }
+
+  void _setSort(_SortMode m) {
+    setState(() => _sort = m);
+    _rememberList();
+  }
+
+  Future<void> _rememberList() async {
+    final d = widget.database;
+    await d.setSetting(
+      db.SettingKeys.listView,
+      _view == _ViewMode.bySection ? 'bySection' : 'all',
+    );
+    await d.setSetting(
+      db.SettingKeys.listSort,
+      _sort == _SortMode.name ? 'name' : 'lastUsed',
+    );
+  }
+
+  Future<void> _openSettings() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SettingsScreen(database: widget.database),
+      ),
+    );
+    _loadRefs(); // l'avviso scadenze può essere cambiato
+  }
 
   /// Selettore a pillola "Tutte / Per sezione".
   Widget _viewSwitch(AppColors c) {
@@ -289,7 +334,7 @@ class _CardListScreenState extends State<CardListScreen> {
 
   /// Menu a pillola per l'ordinamento.
   Widget _sortButton(AppColors c) => PopupMenuButton<_SortMode>(
-    onSelected: (m) => setState(() => _sort = m),
+    onSelected: _setSort,
     itemBuilder: (_) => const [
       PopupMenuItem(value: _SortMode.lastUsed, child: Text('Ultimo utilizzo')),
       PopupMenuItem(value: _SortMode.name, child: Text('Nome A–Z')),
@@ -337,14 +382,16 @@ class _CardListScreenState extends State<CardListScreen> {
               _bell(all),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert),
-                onSelected: (v) {
-                  if (v == 'sections') _openSections();
+                onSelected: (v) => switch (v) {
+                  'sections' => _openSections(),
+                  _ => _openSettings(),
                 },
                 itemBuilder: (_) => const [
                   PopupMenuItem(
                     value: 'sections',
                     child: Text('Sezioni e cestino'),
                   ),
+                  PopupMenuItem(value: 'settings', child: Text('Impostazioni')),
                 ],
               ),
             ],

@@ -33,6 +33,9 @@ abstract final class SettingKeys {
   static const language = 'language';
   static const expiryAlerts = 'expiryAlerts';
   static const expiryDays = 'expiryDays';
+  static const theme = 'theme'; // 'system' | 'light' | 'dark'
+  static const listView = 'listView'; // 'all' | 'bySection'
+  static const listSort = 'listSort'; // 'lastUsed' | 'name'
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta

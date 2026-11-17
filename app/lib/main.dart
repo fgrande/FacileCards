@@ -9,9 +9,12 @@ import 'theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final database = AppDatabase();
-  // Una sola lettura prima della prima schermata: se la configurazione è
-  // fatta si va dritti all'elenco (regola dei 2 secondi).
+  // Due letture prima della prima schermata (configurazione fatta, tema):
+  // poi si va dritti all'elenco (regola dei 2 secondi).
   final setupDone = await database.isSetupDone();
+  appThemeMode.value = themeModeFromText(
+    await database.setting(SettingKeys.theme),
+  );
   runApp(FacileCardsApp(database: database, setupDone: setupDone));
   // Dopo la prima schermata, senza fretta: via i file delle foto che il
   // database non conosce più (tessere cancellate, cestino svuotato).
@@ -40,17 +43,20 @@ class _FacileCardsAppState extends State<FacileCardsApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FacileCards',
-      themeMode: ThemeMode.system,
-      theme: buildTheme(Brightness.light),
-      darkTheme: buildTheme(Brightness.dark),
-      home: _setupDone
-          ? CardListScreen(database: widget.database)
-          : SetupScreen(
-              database: widget.database,
-              onDone: () => setState(() => _setupDone = true),
-            ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: appThemeMode,
+      builder: (context, mode, _) => MaterialApp(
+        title: 'FacileCards',
+        themeMode: mode,
+        theme: buildTheme(Brightness.light),
+        darkTheme: buildTheme(Brightness.dark),
+        home: _setupDone
+            ? CardListScreen(database: widget.database)
+            : SetupScreen(
+                database: widget.database,
+                onDone: () => setState(() => _setupDone = true),
+              ),
+      ),
     );
   }
 }

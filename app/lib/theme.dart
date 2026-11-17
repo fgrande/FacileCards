@@ -211,3 +211,26 @@ ThemeData buildTheme(Brightness brightness) {
     ),
   );
 }
+
+/// Tema scelto nelle impostazioni (videata 14). L'app lo ascolta e cambia
+/// subito; si salva come testo nella tabella delle impostazioni.
+final appThemeMode = ValueNotifier<ThemeMode>(ThemeMode.system);
+
+ThemeMode themeModeFromText(String? text) => switch (text) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
+
+String themeModeToText(ThemeMode mode) => switch (mode) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      ThemeMode.system => 'system',
+    };
+
+/// Nome del tema come si mostra all'utente.
+String themeModeLabel(ThemeMode mode) => switch (mode) {
+      ThemeMode.light => 'Chiaro',
+      ThemeMode.dark => 'Scuro',
+      ThemeMode.system => 'Come il telefono',
+    };

@@ -10,7 +10,7 @@ String proposedLanguage(String phoneLanguage) =>
     db.supportedLanguages.contains(phoneLanguage) ? phoneLanguage : 'en';
 
 /// Nome di ogni lingua scritto nella lingua stessa.
-const _languageNames = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'};
+const languageNames = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'};
 
 /// Videata 1: configurazione iniziale, solo al primo avvio (decisione 65).
 class SetupScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _SetupScreenState extends State<SetupScreen> {
           for (final l in db.supportedLanguages)
             SimpleDialogOption(
               onPressed: () => Navigator.of(context).pop(l),
-              child: Text(_languageNames[l]!),
+              child: Text(languageNames[l]!),
             ),
         ],
       ),
@@ -115,7 +115,7 @@ class _SetupScreenState extends State<SetupScreen> {
                             : null,
                         suffixIcon: const Icon(Icons.expand_more),
                       ),
-                      child: Text(_languageNames[_language]!),
+                      child: Text(languageNames[_language]!),
                     ),
                   ),
                   const SizedBox(height: 16),
