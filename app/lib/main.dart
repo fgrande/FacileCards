@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import 'data/database.dart';
+import 'photos.dart';
 import 'screens/card_list_screen.dart';
 import 'screens/setup_screen.dart';
 
@@ -11,6 +12,12 @@ Future<void> main() async {
   // fatta si va dritti all'elenco (regola dei 2 secondi).
   final setupDone = await database.isSetupDone();
   runApp(FacileCardsApp(database: database, setupDone: setupDone));
+  // Dopo la prima schermata, senza fretta: via i file delle foto che il
+  // database non conosce più (tessere cancellate, cestino svuotato).
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final store = await PhotoStore.instance;
+    await store.removeOrphans(database);
+  });
 }
 
 class FacileCardsApp extends StatefulWidget {

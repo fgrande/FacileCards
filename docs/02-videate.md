@@ -32,7 +32,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 5 | [Tessera](videate/05-tessera.svg) | Miniatura della foto del fronte (toccandola si apre il visualizzatore, videate 25–27); codice a barre grande, numero in chiaro, intestatario, scadenza, note; nella barra: preferita, modifica, condividi, cestino; annuncio al piede, staccato dal codice | 13, 62, 75 |
 | 6 | [Tessera con formato non più valido](videate/06-tessera-tipologia-ritirata.svg) | Segnale di avviso sull'icona della tessera; toccandolo si apre il riquadro con la spiegazione e la proposta della nuova tipologia. Lo stesso segnale compare nell'elenco (videata 2, PAM) | 39, 45, 73 |
 | 7 | [Nuova tessera: tipologia](videate/07-nuova-tessera-tipologia.svg) | Ricerca nel catalogo; negozi; tipologie di categoria e Tessera Generica | 40, 72 |
-| 8 | [Nuova tessera: dati](videate/08-nuova-tessera-dati.svg) | Nome, codice con "Scansiona" e "Da galleria", sezione, scadenza, intestatario, note, foto, preferita, contatore | 5, 37, 62, 71, 110 |
+| 8 | [Nuova tessera: dati](videate/08-nuova-tessera-dati.svg) | Nome, codice con "Scansiona" e "Da galleria", sezione, scadenza, intestatario, note, foto, preferita | 5, 37, 62, 71, 110 |
 | 9 | [Condividi: avviso](videate/09-condividi-avviso.svg) | Primo passaggio della doppia conferma: cosa comporta la condivisione | 68 |
 | 10 | [Condividi: conferma](videate/10-condividi-conferma.svg) | Secondo passaggio: casella "Ho capito", messaggio che accompagna il file, password facoltativa | 64, 68, 103 |
 | 11 | [Importa sezione](videate/11-importa-sezione.svg) | Anteprima del file, tre destinazioni, esito sul limite di 50 | 16, 17, 18 |

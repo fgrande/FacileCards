@@ -325,6 +325,46 @@ class AppDatabase extends _$AppDatabase {
         await setSetting(SettingKeys.setupDone, 'true');
       });
 
+  // ---- Foto della tessera ----------------------------------------------
+
+  /// Foto della tessera per lato ('front', 'back') → nome del file.
+  Future<Map<String, String>> cardPhotos(String cardId) async {
+    final rows = await (select(cardImages)
+          ..where((i) => i.cardId.equals(cardId)))
+        .get();
+    return {for (final r in rows) r.side: r.fileName};
+  }
+
+  Stream<Map<String, String>> watchCardPhotos(String cardId) =>
+      (select(cardImages)..where((i) => i.cardId.equals(cardId)))
+          .watch()
+          .map((rows) => {for (final r in rows) r.side: r.fileName});
+
+  /// Imposta la foto di un lato. Restituisce il nome del file sostituito
+  /// (da cancellare), se c'era.
+  Future<String?> setCardPhoto(String cardId, String side, String fileName) =>
+      transaction(() async {
+        final old = (await cardPhotos(cardId))[side];
+        await into(cardImages).insertOnConflictUpdate(CardImagesCompanion.insert(
+            cardId: cardId, side: side, fileName: fileName));
+        return old;
+      });
+
+  /// Toglie la foto di un lato. Restituisce il nome del file da cancellare.
+  Future<String?> removeCardPhoto(String cardId, String side) =>
+      transaction(() async {
+        final old = (await cardPhotos(cardId))[side];
+        await (delete(cardImages)
+              ..where((i) => i.cardId.equals(cardId) & i.side.equals(side)))
+            .go();
+        return old;
+      });
+
+  /// Sposta la tessera in un'altra sezione (videata 5, "Sposta").
+  Future<void> moveCard(String cardId, String sectionId) =>
+      (update(cards)..where((c) => c.id.equals(cardId)))
+          .write(CardsCompanion(sectionId: Value(sectionId)));
+
   Future<Section> defaultSection() =>
       (select(sections)..where((s) => s.isDefault.equals(true))).getSingle();
 

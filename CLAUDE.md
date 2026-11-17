@@ -32,7 +32,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** foto della tessera (videate 25–28, 39).
+**Prossimo passo:** impostazioni (videate 14, 21) e tema scuro.
 
 ### Fatto
 
@@ -41,20 +41,21 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: database Drift (sezioni, tipologie, tessere, foto, impostazioni); catalogo iniziale delle tipologie (iniziali su colore), riallineato a ogni avvio.
 - 2026-11-16: nuova tessera (videate 7, 8), elenco tutte/per sezione con ricerca, preferite e ordinamento (2, 3), tessera (5), sezioni (12, 36–38), cestino con recupero (13) ed eliminazione (18), limite di 50.
 - 2026-11-16: pipeline GitHub per analisi e test; repository unico e privato (cronologia ripartita da zero), `README.md` e `CLAUDE.md` nella radice.
-- 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
+- 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Provate sul telefono anche galleria e "Apri impostazioni" (17 nov).
 - 2026-11-17: "Da galleria" spostato nella videata 8 accanto a "Scansiona" (decisione 110), tolto dalla fotocamera (22), tenuto nella 24; controllo del codice letto in comune e con prove. Provato sul telefono, insieme alla scansione.
 - 2026-11-17: script `frun.sh`; numerazione delle versioni (decisione 111).
 - 2026-11-17: configurazione iniziale (videata 1): nome (proposto come intestatario delle nuove tessere), lingua (quella del telefono se offerta, se no inglese), avviso scadenze e giorni (1–90); sezione di partenza col nome nella lingua scelta; nome facoltativo. Provata sul telefono.
 - 2026-11-17: scadenze (videata 4): campanella con il numero nella barra dell'elenco (solo se c'è qualcosa da segnalare), riquadro con scadute e in scadenza, tocco sulla tessera per aprirla; giorni di preavviso e avviso acceso/spento dalla configurazione. Provato sul telefono.
 - 2026-11-17: tolto il plugin `app_settings` (avviso Kotlin Gradle Plugin di Flutter): "Apri impostazioni" ora è codice nostro in `MainActivity.kt` (canale `facilecards/system`). Provato sul telefono.
+- 2026-11-17: foto della tessera (videate 8, 25–28, 39): fronte e retro nella nuova tessera (fronte obbligatorio per la generica), miniatura o "Aggiungi foto" nella scheda, visualizzatore con scorrimento, zoom, Sostituisci ed Elimina foto; foto ridotte a 1600 px e 500 KB, file in `photos/` nello spazio privato, quelli orfani cancellati dopo l'avvio. Anche "Sposta" nella scheda (videata 5). Provato sul telefono.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
-- Foto della tessera (25–28, 39): miniatura nella tessera, vista a tutto schermo con scorrimento, sostituzione ed eliminazione; file nello spazio privato dell'app.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
+- Modifica della tessera (matita nella videata 5) e condivisione dalla scheda: non ancora fatte.
 - Impostazioni (14, 21) e tema scuro; scelta ordinamento e vista ricordata. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
 - Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
 - Esporta tutto / importa tutto (29–35).
