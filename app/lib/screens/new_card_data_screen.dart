@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../barcode_support.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
+import '../gallery_scan.dart';
 import 'scan_screen.dart';
 
 /// Videata 8: dati della nuova tessera.
@@ -35,7 +36,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   int _count = 0;
   DateTime? _expiresOn;
   bool _favorite = false;
-  String? _scannedFormat; // formato letto dalla fotocamera, se c'è
+  String? _scannedFormat; // formato letto (fotocamera o galleria), se c'è
 
   @override
   void initState() {
@@ -83,6 +84,22 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
       return;
     }
     final code = outcome.code!;
+    setState(() {
+      _code.text = code.value;
+      _scannedFormat = formatToText(code.format);
+    });
+  }
+
+  /// Decisione 110: la galleria si sceglie qui, accanto a "Scansiona",
+  /// senza aprire la fotocamera né chiederne il permesso.
+  Future<void> _fromGallery() async {
+    final check = await readCodeFromGallery(
+      expectedFormat: widget.type.codeFormat,
+      typeName: hasFixedName(widget.type) ? widget.type.name : null,
+    );
+    if (check == null || !mounted) return;
+    if (!check.isAccepted) return _message('${check.title}\n${check.detail}');
+    final code = check.code!;
     setState(() {
       _code.text = code.value;
       _scannedFormat = formatToText(code.format);
@@ -165,25 +182,32 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             ),
           ),
           const SizedBox(height: 16),
+          TextField(
+            controller: _code,
+            focusNode: _codeFocus,
+            decoration: const InputDecoration(
+              labelText: 'Codice',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (_) => _scannedFormat = null,
+          ),
+          const SizedBox(height: 12),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: TextField(
-                  controller: _code,
-                  focusNode: _codeFocus,
-                  decoration: const InputDecoration(
-                    labelText: 'Codice',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) => _scannedFormat = null,
+                child: FilledButton.icon(
+                  onPressed: _scan,
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('Scansiona'),
                 ),
               ),
               const SizedBox(width: 12),
-              FilledButton.icon(
-                onPressed: _scan,
-                icon: const Icon(Icons.qr_code_scanner),
-                label: const Text('Scansiona'),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _fromGallery,
+                  icon: const Icon(Icons.photo_library_outlined),
+                  label: const Text('Da galleria'),
+                ),
               ),
             ],
           ),

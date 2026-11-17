@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../barcode_support.dart';
+import '../gallery_scan.dart';
 
 /// Esito della schermata di scansione: un codice letto, oppure la scelta
 /// di scrivere il codice a mano.
@@ -20,9 +20,9 @@ class ScanOutcome {
 }
 
 /// Videate 22, 23, 24: scansione con la fotocamera. Il primo codice
-/// riconosciuto vince; si può anche leggere da una foto della galleria o
-/// scrivere il codice a mano. Il permesso della fotocamera si chiede qui,
-/// al primo tocco di "Scansiona".
+/// riconosciuto vince; si può scrivere il codice a mano. La lettura da
+/// galleria sta nella videata 8 e, se la fotocamera manca, nella 24.
+/// Il permesso della fotocamera si chiede qui, al primo tocco di "Scansiona".
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key, this.typeName, this.expectedFormat});
 
@@ -68,24 +68,15 @@ class _ScanScreenState extends State<ScanScreen> {
   /// Controlla il codice letto; se va bene chiude la schermata.
   /// Restituisce false se l'ha rifiutato.
   bool _accept(Barcode b) {
-    final value = b.rawValue;
-    if (value == null || value.isEmpty) return false;
-    if (b.format == BarcodeFormat.unknown) {
-      _showBanner('Formato non riconosciuto', 'Prova a inquadrare di nuovo il codice.');
-      return false;
-    }
-    if (!formatAccepted(widget.expectedFormat, b.format)) {
-      final name = widget.typeName ?? 'questa tipologia';
-      _showBanner(
-        'Questo codice non sembra di $name',
-        'Controlla la tipologia o usa Tessera Generica.\n'
-        'Letto: ${formatLabel(b.format)} · atteso: '
-        '${formatLabel(formatFromText(widget.expectedFormat!))}',
-      );
+    final check = checkScanned(b.rawValue, b.format,
+        expectedFormat: widget.expectedFormat, typeName: widget.typeName);
+    if (check == null) return false;
+    if (!check.isAccepted) {
+      _showBanner(check.title!, check.detail!);
       return false;
     }
     _done = true;
-    Navigator.of(context).pop(ScanOutcome.code(ScannedCode(value, b.format)));
+    Navigator.of(context).pop(ScanOutcome.code(check.code!));
     return true;
   }
 
@@ -96,22 +87,18 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
+  /// Solo dalla videata 24: con la fotocamera attiva la galleria si sceglie
+  /// già nella videata 8 (decisione 110).
   Future<void> _fromGallery() async {
-    try {
-      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (file == null || !mounted) return;
-      final capture = await _controller.analyzeImage(file.path);
-      final barcodes = capture?.barcodes ?? const <Barcode>[];
-      for (final b in barcodes) {
-        if (_accept(b)) return;
-      }
-      if (barcodes.isEmpty && mounted) {
-        _showBanner('Nessun codice trovato', 'Scegli una foto in cui il codice si veda bene.');
-      }
-    } catch (_) {
-      if (mounted) {
-        _showBanner('Non sono riuscito a leggere la foto', 'Prova con un\'altra immagine.');
-      }
+    final check = await readCodeFromGallery(
+        expectedFormat: widget.expectedFormat, typeName: widget.typeName);
+    if (check == null || !mounted) return;
+    if (check.isAccepted) {
+      _done = true;
+      Navigator.of(context).pop(ScanOutcome.code(check.code!));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${check.title}\n${check.detail}')));
     }
   }
 
@@ -177,20 +164,10 @@ class _ScanScreenState extends State<ScanScreen> {
                   Text(label, style: const TextStyle(color: Colors.white70)),
                 ],
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton.icon(
-                      onPressed: _toggleTorch,
-                      icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
-                      label: const Text('Torcia'),
-                    ),
-                    TextButton.icon(
-                      onPressed: _fromGallery,
-                      icon: const Icon(Icons.photo_library_outlined),
-                      label: const Text('Da galleria'),
-                    ),
-                  ],
+                TextButton.icon(
+                  onPressed: _toggleTorch,
+                  icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
+                  label: const Text('Torcia'),
                 ),
                 TextButton(
                   onPressed: _manual,

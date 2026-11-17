@@ -13,6 +13,47 @@ class ScannedCode {
 bool formatAccepted(String? expected, BarcodeFormat read) =>
     expected == null || expected == formatToText(read);
 
+/// Esito del controllo di un codice letto: accettato, oppure rifiutato con
+/// un messaggio da mostrare (titolo e dettaglio).
+class ScanCheck {
+  const ScanCheck.accepted(ScannedCode this.code)
+      : title = null,
+        detail = null;
+  const ScanCheck.rejected(String this.title, String this.detail) : code = null;
+
+  final ScannedCode? code;
+  final String? title;
+  final String? detail;
+
+  bool get isAccepted => code != null;
+}
+
+/// Controlla un codice letto (dalla fotocamera o da un'immagine) rispetto al
+/// formato atteso dalla tipologia (decisione 82). Restituisce null se non c'è
+/// nessun valore da considerare.
+ScanCheck? checkScanned(
+  String? value,
+  BarcodeFormat format, {
+  String? expectedFormat,
+  String? typeName,
+}) {
+  if (value == null || value.isEmpty) return null;
+  if (format == BarcodeFormat.unknown) {
+    return const ScanCheck.rejected(
+        'Formato non riconosciuto', 'Prova a inquadrare di nuovo il codice.');
+  }
+  if (!formatAccepted(expectedFormat, format)) {
+    final name = typeName ?? 'questa tipologia';
+    return ScanCheck.rejected(
+      'Questo codice non sembra di $name',
+      'Controlla la tipologia o usa Tessera Generica.\n'
+          'Letto: ${formatLabel(format)} · atteso: '
+          '${formatLabel(formatFromText(expectedFormat!))}',
+    );
+  }
+  return ScanCheck.accepted(ScannedCode(value, format));
+}
+
 /// Il formato si salva nel database come testo (il nome del formato).
 String formatToText(BarcodeFormat f) => f.name;
 

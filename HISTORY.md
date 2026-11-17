@@ -56,3 +56,11 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Da lanciare: `flutter pub add image_picker app_settings`, poi `flutter analyze` e `flutter test` (il lavoro sulla scansione non è stato ancora verificato).
 - Prossimo passo: **configurazione iniziale** (videata 1: nome, lingua, sezione di partenza nella lingua scelta).
 - Resta aperta la prova in cassa della fase 0: far leggere una tessera vera a uno scanner.
+
+## 17 novembre 2026: galleria accanto a "Scansiona"
+
+- Su proposta di Fabio, la lettura da galleria esce dalla schermata della fotocamera e va nella videata 8, accanto a "Scansiona" (decisione 110, che modifica la 100). Motivo: molte tessere arrivano già come immagine (screenshot, e-mail, PDF) e così non serve aprire la fotocamera né concederne il permesso. L'inserimento a mano resta nella fotocamera, come ripiego; la videata 24 (permesso negato) tiene anche la galleria.
+- Il controllo del codice letto (formato sconosciuto, formato diverso da quello della tipologia) è ora una funzione comune (`checkScanned` in `barcode_support.dart`) con le sue prove; la lettura da galleria sta in `lib/gallery_scan.dart`. Aggiornati i disegni 8 e 22, chiari e scuri.
+- Fabio ha provato sul telefono scansione e galleria: funzionano.
+- Aggiunto `frun.sh` (analisi, prove, avvio; si ferma al primo errore).
+- Decisa la numerazione delle versioni (decisione 111): `X.Y.Z+N` nel pubspec, un solo contatore di build per Google Play e App Store, che cresce a ogni caricamento e non si riusa.

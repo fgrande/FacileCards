@@ -5,9 +5,11 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 ## Regole di lavoro
 
 - **Lingua.** Documenti, commenti e testi dell'interfaccia in italiano. Nell'app l'interfaccia sarà in italiano, inglese e francese (spagnolo e tedesco predisposti): per ora i testi sono scritti in italiano direttamente nel codice, la traduzione si fa dopo.
-- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 109). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
+- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 111). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
 - **Velocità prima di tutto.** La tessera deve essere sullo schermo entro 2 secondi da un avvio a freddo, anche senza rete. Niente schermate o controlli di rete prima di mostrare la tessera.
 - **Dopo ogni modifica al codice** lanciare, da `app/`: `flutter analyze` e `flutter test`, e correggere finché passano. Se Flutter non è disponibile (per esempio in una sessione su un server), dirlo chiaramente: il codice non è stato provato.
+- **Script `frun.sh`** (nella radice): analisi, prove e avvio dell'app in un colpo solo; si ferma al primo errore. Le opzioni passano a `flutter run`.
+- **Versione dell'app** (decisione 111): prima di ogni caricamento su uno store alzare `N` in `version: X.Y.Z+N` di `app/pubspec.yaml` (e `X.Y.Z` se cambia la versione), poi etichetta git `vX.Y.Z+N`.
 - **Cambi alle tabelle** (`lib/data/database.dart`): rilanciare `dart run build_runner build --delete-conflicting-outputs`. Dopo il primo rilascio ogni cambio di schema richiede una migrazione a passi, con prova su un database della versione precedente (decisione 88).
 - **Import dei widget:** il progetto usa `package:material_ui/material_ui.dart`. La classe `Card` di Drift e quella dei widget si scontrano: importare `data/database.dart` con prefisso (`as db`).
 - **Prove automatiche** per la logica dei dati (limite, cestino, sezioni, importazioni, migrazioni); le schermate si provano a mano. La pipeline (`.github/workflows/ci.yml`) le lancia a ogni modifica di `app/`.
@@ -39,6 +41,8 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: nuova tessera (videate 7, 8), elenco tutte/per sezione con ricerca, preferite e ordinamento (2, 3), tessera (5), sezioni (12, 36–38), cestino con recupero (13) ed eliminazione (18), limite di 50.
 - 2026-11-16: pipeline GitHub per analisi e test; repository unico e privato (cronologia ripartita da zero), `README.md` e `CLAUDE.md` nella radice.
 - 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
+- 2026-11-17: "Da galleria" spostato nella videata 8 accanto a "Scansiona" (decisione 110), tolto dalla fotocamera (22), tenuto nella 24; controllo del codice letto in comune e con prove. Provato sul telefono, insieme alla scansione.
+- 2026-11-17: script `frun.sh`; numerazione delle versioni (decisione 111).
 
 ### Da fare: app
 
