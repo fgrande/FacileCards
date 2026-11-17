@@ -1,12 +1,16 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
 import 'card_screen.dart';
 import 'expiry_panel.dart';
 import 'new_card_type_screen.dart';
+import 'search_field.dart';
 import 'sections_screen.dart';
+import '../theme.dart';
+import '../ui.dart';
 
 enum _ViewMode { all, bySection }
 
@@ -86,41 +90,35 @@ class _CardListScreenState extends State<CardListScreen> {
     return fields.any((f) => f.toLowerCase().contains(q));
   }
 
-  Widget _header(String text, {String? trailing}) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-    child: Row(
-      children: [
-        Expanded(
-          child: Text(text, style: Theme.of(context).textTheme.labelMedium),
-        ),
-        if (trailing != null)
-          Text(trailing, style: Theme.of(context).textTheme.labelMedium),
-      ],
-    ),
-  );
-
-  Widget _row(db.Card c, DateTime now) {
+  Widget _row(db.Card c, DateTime now, {bool inFavorites = false}) {
+    final colors = AppColors.of(context);
     final type = _types[c.typeId];
     final section = _sections[c.sectionId]?.name ?? '';
     final warn = _expiry.enabled
         ? expiryLabel(c.expiresOn, now, days: _expiry.days)
         : null;
+    final expired = warn == 'Scaduta';
     final subtitle = warn != null
-        ? Text(warn, style: TextStyle(color: Colors.amber.shade800))
+        ? Text(warn,
+            style: TextStyle(color: expired ? colors.danger : colors.warn))
         : Text(
             _view == _ViewMode.all
                 ? '$section · ${usedLabel(c.lastUsedAt, now)}'
-                : (type?.name ?? ''),
+                // Per sezione: le preferite dicono dove stanno, le altre che
+                // tessera sono (la sezione è già nell'intestazione).
+                : (inFavorites ? section : categoryLabel(type)),
           );
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      minVerticalPadding: 6,
       leading: type == null
           ? const Icon(Icons.credit_card)
-          : TypeLogo(type: type),
+          : TypeLogo(type: type, name: c.name, warning: type.retired),
       title: Text(c.name),
       subtitle: subtitle,
-      trailing: warn != null
-          ? Icon(Icons.notifications_active, color: Colors.amber.shade800)
-          : null,
+      trailing: c.favorite
+          ? Icon(Icons.star_rounded, color: colors.star, size: 28)
+          : const Chevron(),
       onTap: () => _open(c),
     );
   }
@@ -188,19 +186,21 @@ class _CardListScreenState extends State<CardListScreen> {
     final favorites = cards.where((c) => c.favorite).toList();
     final widgets = <Widget>[];
     if (favorites.isNotEmpty) {
-      widgets.add(_header('PREFERITE'));
-      widgets.addAll(favorites.map((c) => _row(c, now)));
+      widgets.add(const GroupHeader('Preferite'));
+      widgets.add(
+        TileGroup(children: [for (final c in favorites) _row(c, now, inFavorites: true)]),
+      );
     }
     if (_view == _ViewMode.all) {
       final rest = cards.where((c) => !c.favorite).toList();
       if (rest.isNotEmpty) {
         widgets.add(
-          _header(
-            'TUTTE LE TESSERE',
+          GroupHeader(
+            'Tutte le tessere',
             trailing: '${all.length} di ${db.AppDatabase.freeCardLimit}',
           ),
         );
-        widgets.addAll(rest.map((c) => _row(c, now)));
+        widgets.add(TileGroup(children: [for (final c in rest) _row(c, now)]));
       }
     } else {
       // Sezione di partenza per prima, le altre in ordine alfabetico (decisione 85).
@@ -217,109 +217,169 @@ class _CardListScreenState extends State<CardListScreen> {
         final inSection = cards.where((c) => c.sectionId == id).toList();
         final n = inSection.length;
         widgets.add(
-          _header(
-            (_sections[id]?.name ?? '').toUpperCase(),
+          GroupHeader(
+            _sections[id]?.name ?? '',
             trailing: n == 1 ? '1 tessera' : '$n tessere',
           ),
         );
-        widgets.addAll(inSection.map((c) => _row(c, now)));
+        widgets.add(
+          TileGroup(children: [for (final c in inSection) _row(c, now)]),
+        );
       }
     }
     return widgets;
   }
 
+  Future<void> _openSections() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SectionsScreen(database: widget.database),
+      ),
+    );
+    _loadRefs();
+  }
+
+  void _setView(_ViewMode v) => setState(() {
+    _view = v;
+    _sort = v == _ViewMode.all ? _SortMode.lastUsed : _SortMode.name;
+  });
+
+  /// Selettore a pillola "Tutte / Per sezione".
+  Widget _viewSwitch(AppColors c) {
+    Widget option(String label, _ViewMode mode) {
+      final selected = _view == mode;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => _setView(mode),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            margin: const EdgeInsets.all(2),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: selected ? c.surface : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: selected ? c.primary : c.muted,
+                fontSize: 14.5,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      height: 36,
+      decoration: BoxDecoration(
+        color: c.segment,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          option('Tutte', _ViewMode.all),
+          option('Per sezione', _ViewMode.bySection),
+        ],
+      ),
+    );
+  }
+
+  /// Menu a pillola per l'ordinamento.
+  Widget _sortButton(AppColors c) => PopupMenuButton<_SortMode>(
+    onSelected: (m) => setState(() => _sort = m),
+    itemBuilder: (_) => const [
+      PopupMenuItem(value: _SortMode.lastUsed, child: Text('Ultimo utilizzo')),
+      PopupMenuItem(value: _SortMode.name, child: Text('Nome A–Z')),
+    ],
+    child: Container(
+      height: 36,
+      padding: const EdgeInsets.only(left: 14, right: 8),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: c.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _sort == _SortMode.lastUsed ? 'Ultimo utilizzo' : 'Nome A–Z',
+            style: TextStyle(color: c.text, fontSize: 14),
+          ),
+          const SizedBox(width: 4),
+          Icon(Icons.expand_more, color: c.muted, size: 22),
+        ],
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return StreamBuilder<List<db.Card>>(
       stream: _cards,
       builder: (context, snap) {
         final all = snap.data ?? const <db.Card>[];
         return Scaffold(
           appBar: AppBar(
-            title: const Text('FacileCards'),
+            titleSpacing: 16,
+            title: const Row(
+              children: [
+                AppMark(height: 30),
+                SizedBox(width: 10),
+                Text('FacileCards'),
+              ],
+            ),
             actions: [
               _bell(all),
-              IconButton(
-                tooltip: 'Sezioni',
-                icon: const Icon(Icons.folder_outlined),
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => SectionsScreen(database: widget.database),
-                    ),
-                  );
-                  _loadRefs();
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (v) {
+                  if (v == 'sections') _openSections();
                 },
+                itemBuilder: (_) => const [
+                  PopupMenuItem(
+                    value: 'sections',
+                    child: Text('Sezioni e cestino'),
+                  ),
+                ],
               ),
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.only(bottom: 88),
+            padding: const EdgeInsets.only(bottom: 96),
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Cerca tessere',
-                    border: OutlineInputBorder(),
-                  ),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                child: SearchField(
+                  hint: 'Cerca tessere',
                   onChanged: (v) => setState(() => _query = v),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 0),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
                 child: Row(
                   children: [
-                    ChoiceChip(
-                      label: const Text('Tutte'),
-                      selected: _view == _ViewMode.all,
-                      onSelected: (_) => setState(() {
-                        _view = _ViewMode.all;
-                        _sort = _SortMode.lastUsed;
-                      }),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Per sezione'),
-                      selected: _view == _ViewMode.bySection,
-                      onSelected: (_) => setState(() {
-                        _view = _ViewMode.bySection;
-                        _sort = _SortMode.name;
-                      }),
-                    ),
-                    const Spacer(),
-                    PopupMenuButton<_SortMode>(
-                      onSelected: (m) => setState(() => _sort = m),
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(
-                          value: _SortMode.lastUsed,
-                          child: Text('Ultimo utilizzo'),
-                        ),
-                        PopupMenuItem(
-                          value: _SortMode.name,
-                          child: Text('Nome A–Z'),
-                        ),
-                      ],
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          _sort == _SortMode.lastUsed
-                              ? 'Ultimo utilizzo'
-                              : 'Nome A–Z',
-                        ),
-                      ),
-                    ),
+                    Expanded(child: _viewSwitch(c)),
+                    const SizedBox(width: 10),
+                    _sortButton(c),
                   ],
                 ),
               ),
               ..._content(all),
             ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: _add,
-            icon: const Icon(Icons.add),
-            label: const Text('Aggiungi'),
+          floatingActionButton: SizedBox(
+            width: 60,
+            height: 60,
+            child: FloatingActionButton(
+              tooltip: 'Aggiungi una tessera',
+              onPressed: _add,
+              child: const Icon(Icons.add, size: 34),
+            ),
           ),
         );
       },

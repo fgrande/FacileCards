@@ -12,6 +12,7 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 - **Versione dell'app** (decisione 111): prima di ogni caricamento su uno store alzare `N` in `version: X.Y.Z+N` di `app/pubspec.yaml` (e `X.Y.Z` se cambia la versione), poi etichetta git `vX.Y.Z+N`.
 - **Cambi alle tabelle** (`lib/data/database.dart`): rilanciare `dart run build_runner build --delete-conflicting-outputs`. Dopo il primo rilascio ogni cambio di schema richiede una migrazione a passi, con prova su un database della versione precedente (decisione 88).
 - **Plugin:** prima di aggiungerne uno, controllare che la compilazione non dia l'avviso "Kotlin Gradle Plugin (KGP)" (le prossime versioni di Flutter rifiuteranno quei plugin); per funzioni piccole meglio un canale nativo nostro in `MainActivity.kt`.
+- **Aspetto:** colori e stili stanno in `lib/theme.dart` (tavolozza chiara e scura di `docs/02-videate.md`, letta con `AppColors.of(context)`); i pezzi comuni (logo della tipologia, intestazioni dei gruppi, righe su fondo bianco, riquadri) in `lib/ui.dart`. Niente colori scritti nelle schermate, salvo quelli fissi per regola (riquadro del codice bianco, colori delle tipologie).
 - **Import dei widget:** il progetto usa `package:material_ui/material_ui.dart`. La classe `Card` di Drift e quella dei widget si scontrano: importare `data/database.dart` con prefisso (`as db`).
 - **Prove automatiche** per la logica dei dati (limite, cestino, sezioni, importazioni, migrazioni); le schermate si provano a mano. La pipeline (`.github/workflows/ci.yml`) le lancia a ogni modifica di `app/`.
 - **Marchi:** il disclaimer ("FacileCards non è affiliata…") va ovunque si citino catene, in tutte le lingue (decisione 99).
@@ -32,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** impostazioni (videate 14, 21) e tema scuro.
+**Prossimo passo:** impostazioni (videate 14, 21), con la voce nel menu ⋮ dell'elenco.
 
 ### Fatto
 
@@ -48,6 +49,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-17: scadenze (videata 4): campanella con il numero nella barra dell'elenco (solo se c'è qualcosa da segnalare), riquadro con scadute e in scadenza, tocco sulla tessera per aprirla; giorni di preavviso e avviso acceso/spento dalla configurazione. Provato sul telefono.
 - 2026-11-17: tolto il plugin `app_settings` (avviso Kotlin Gradle Plugin di Flutter): "Apri impostazioni" ora è codice nostro in `MainActivity.kt` (canale `facilecards/system`). Provato sul telefono.
 - 2026-11-17: foto della tessera (videate 8, 25–28, 39): fronte e retro nella nuova tessera (fronte obbligatorio per la generica), miniatura o "Aggiungi foto" nella scheda, visualizzatore con scorrimento, zoom, Sostituisci ed Elimina foto; foto ridotte a 1600 px e 500 KB, file in `photos/` nello spazio privato, quelli orfani cancellati dopo l'avvio. Anche "Sposta" nella scheda (videata 5). Provato sul telefono.
+- 2026-11-17: tema grafico come nei disegni, chiaro e scuro (segue il telefono): tavolozza, campi, pulsanti a pillola, righe su fondo bianco; rifatte elenco (2, 3), scheda (5), nuova tessera (7, 8, con "Salva" fisso in basso), scadenze (4), configurazione (1), sezioni (12), cestino (13, recupero in un foglio dal basso), visualizzatore foto. Colori del catalogo allineati ai disegni. Provato sul telefono.
 
 ### Da fare: app
 
@@ -56,7 +58,8 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
 - Modifica della tessera (matita nella videata 5) e condivisione dalla scheda: non ancora fatte.
-- Impostazioni (14, 21) e tema scuro; scelta ordinamento e vista ricordata. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
+- Sezioni (12): condivisione della sezione, "Esporta tutto", "Importa tutto" e il riquadro "Ultima copia" arrivano con l'esportazione.
+- Impostazioni (14, 21): scelta del tema (chiaro, scuro, come il telefono), ordinamento e vista ricordati. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
 - Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
 - Esporta tutto / importa tutto (29–35).
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.

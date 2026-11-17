@@ -7,7 +7,10 @@ import '../barcode_support.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../gallery_scan.dart';
+import '../format_utils.dart';
 import '../photos.dart';
+import '../theme.dart';
+import '../ui.dart';
 import 'photo_picker.dart';
 import 'scan_screen.dart';
 
@@ -182,6 +185,79 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     );
   }
 
+  /// Riquadro in alto con la tipologia scelta (videata 8).
+  Widget _typeBox(AppColors c) {
+    final format = widget.type.codeFormat;
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: c.infoBg,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          TypeLogo(type: widget.type, size: 44),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.type.name,
+                    style: TextStyle(
+                        color: c.infoText,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600)),
+                Text(
+                  format == null
+                      ? 'Qualunque formato di codice'
+                      : 'Formato del codice: ${formatLabel(formatFromText(format))}',
+                  style: TextStyle(
+                      color: c.infoText.withValues(alpha: 0.8), fontSize: 12.5),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Campo che si tocca per scegliere (sezione, scadenza).
+  Widget _pickerBox({
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+    bool muted = false,
+    VoidCallback? onClear,
+  }) {
+    final c = AppColors.of(context);
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: onClear != null
+              ? IconButton(
+                  tooltip: 'Togli',
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: onClear,
+                )
+              : const Icon(Icons.expand_more),
+        ),
+        child: Text(
+          value,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+              color: muted ? c.muted : c.text,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final d = await showDatePicker(
@@ -268,26 +344,37 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   @override
   Widget build(BuildContext context) {
     final date = _expiresOn;
+    final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(widget.type.name)),
+      appBar: AppBar(title: const Text('Nuova tessera')),
+      // "Salva" fisso in basso: resta visibile anche sui telefoni piccoli.
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: FilledButton(
+            onPressed: _saving ? null : _save,
+            child: Text(_saving ? 'Salvataggio…' : 'Salva'),
+          ),
+        ),
+      ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
         children: [
+          _typeBox(c),
+          const SizedBox(height: 12),
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.sentences,
             decoration: const InputDecoration(
               labelText: 'Nome',
-              border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           TextField(
             controller: _code,
             focusNode: _codeFocus,
             decoration: const InputDecoration(
               labelText: 'Codice',
-              border: OutlineInputBorder(),
             ),
             onChanged: (_) => _scannedFormat = null,
           ),
@@ -311,28 +398,38 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          ListTile(
-            title: const Text('Sezione'),
-            trailing: Text(_section?.name ?? ''),
-            onTap: _pickSection,
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _pickerBox(
+                  label: 'Sezione',
+                  value: _section?.name ?? '',
+                  onTap: _pickSection,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _pickerBox(
+                  label: 'Scadenza',
+                  value: date == null ? 'Nessuna' : longDate(date),
+                  muted: date == null,
+                  onTap: _pickDate,
+                  onClear: date == null
+                      ? null
+                      : () => setState(() => _expiresOn = null),
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            title: const Text('Scadenza'),
-            trailing: Text(date == null
-                ? 'Nessuna'
-                : '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}'),
-            onTap: _pickDate,
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           TextField(
             controller: _holder,
             decoration: const InputDecoration(
               labelText: 'Intestatario',
-              border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           TextField(
             controller: _notes,
             // Una riga sola; si allarga fino a tre mentre si scrive.
@@ -341,17 +438,17 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             decoration: const InputDecoration(
               labelText: 'Note',
               hintText: 'Facoltative',
-              border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             _frontRequired
                 ? 'FOTO (IL FRONTE È OBBLIGATORIO)'
                 : 'FOTO (FACOLTATIVE)',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextStyle(
+                color: c.muted, fontSize: 12.5, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Row(
             children: [
               _photoSlot(PhotoSide.front),
@@ -360,16 +457,23 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Aggiungi alle preferite'),
-            value: _favorite,
-            onChanged: (v) => setState(() => _favorite = v),
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _saving ? null : _save,
-            child: Text(_saving ? 'Salvataggio…' : 'Salva'),
+          InkWell(
+            onTap: () => setState(() => _favorite = !_favorite),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: Row(
+                children: [
+                  Icon(
+                    _favorite ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: _favorite ? c.star : c.muted,
+                    size: 26,
+                  ),
+                  const SizedBox(width: 10),
+                  Text('Aggiungi alle preferite',
+                      style: TextStyle(color: c.text, fontSize: 15)),
+                ],
+              ),
+            ),
           ),
         ],
       ),

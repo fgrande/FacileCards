@@ -4,6 +4,7 @@ import 'data/database.dart';
 import 'photos.dart';
 import 'screens/card_list_screen.dart';
 import 'screens/setup_screen.dart';
+import 'theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,15 +43,8 @@ class _FacileCardsAppState extends State<FacileCardsApp> {
     return MaterialApp(
       title: 'FacileCards',
       themeMode: ThemeMode.system,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F6FEB)),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1F6FEB),
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
       home: _setupDone
           ? CardListScreen(database: widget.database)
           : SetupScreen(

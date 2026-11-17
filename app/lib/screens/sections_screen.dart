@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../ui.dart';
 import 'trash_screen.dart';
 
 /// Videate 12, 36, 37, 38: le sezioni e l'accesso al cestino.
@@ -105,54 +106,72 @@ class _SectionsScreenState extends State<SectionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String count(int n) => n == 1 ? '1 tessera' : '$n tessere';
     return Scaffold(
-      appBar: AppBar(title: const Text('Sezioni')),
-      body: ListView(
-        children: [
-          for (final s in _sections)
-            ListTile(
-              leading: const Icon(Icons.folder_outlined),
-              title: Text(s.name),
-              subtitle: Text(s.isDefault
-                  ? '${_counts[s.id] ?? 0} tessere · non eliminabile'
-                  : ((_counts[s.id] ?? 0) == 0
-                      ? 'Vuota'
-                      : '${_counts[s.id]} tessere')),
-              trailing: PopupMenuButton<String>(
-                onSelected: (v) => v == 'rename' ? _rename(s) : _delete(s),
-                itemBuilder: (_) => [
-                  const PopupMenuItem(value: 'rename', child: Text('Rinomina')),
-                  if (!s.isDefault)
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text('Elimina sezione'),
-                    ),
-                ],
-              ),
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-            child: Text('ARCHIVIO', style: Theme.of(context).textTheme.labelMedium),
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete_outline),
-            title: const Text('Cestino'),
-            subtitle: Text('$_trash tessere · eliminate dopo ${db.AppDatabase.trashDays} giorni'),
-            onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => TrashScreen(database: widget.database),
-                ),
-              );
-              _load();
-            },
+      appBar: AppBar(
+        title: const Text('Sezioni'),
+        actions: [
+          IconButton(
+            tooltip: 'Nuova sezione',
+            icon: const Icon(Icons.add, size: 30),
+            onPressed: _create,
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _create,
-        icon: const Icon(Icons.create_new_folder_outlined),
-        label: const Text('Nuova sezione'),
+      body: ListView(
+        padding: const EdgeInsets.only(top: 4, bottom: 24),
+        children: [
+          TileGroup(
+            indent: 74,
+            children: [
+              for (final s in _sections)
+                ListTile(
+                  contentPadding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
+                  leading: const IconTile(Icons.folder_outlined, accent: true),
+                  title: Text(s.name),
+                  subtitle: Text(s.isDefault
+                      ? '${count(_counts[s.id] ?? 0)} · non eliminabile'
+                      : ((_counts[s.id] ?? 0) == 0
+                          ? 'Vuota'
+                          : count(_counts[s.id]!))),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (v) => v == 'rename' ? _rename(s) : _delete(s),
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(
+                          value: 'rename', child: Text('Rinomina')),
+                      if (!s.isDefault)
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Elimina sezione'),
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const GroupHeader('Archivio'),
+          TileGroup(
+            indent: 74,
+            children: [
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                leading: const IconTile(Icons.delete_outline),
+                title: const Text('Cestino'),
+                subtitle: Text(
+                    '${count(_trash)} · eliminate dopo ${db.AppDatabase.trashDays} giorni'),
+                trailing: const Chevron(),
+                onTap: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => TrashScreen(database: widget.database),
+                    ),
+                  );
+                  _load();
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

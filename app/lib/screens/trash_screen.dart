@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../format_utils.dart';
+import '../theme.dart';
+import '../ui.dart';
 
 /// Videata 13: il cestino. Le tessere restano 30 giorni e si possono
 /// recuperare in una sezione a scelta.
@@ -50,9 +52,11 @@ class _TrashScreenState extends State<TrashScreen> {
     preselected ??= visible.first.id;
     if (!mounted) return;
 
-    final chosen = await showDialog<String>(
+    final chosen = await showModalBottomSheet<String>(
       context: context,
-      builder: (_) => _RecoverDialog(
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _RecoverSheet(
         cardName: card.name,
         options: options,
         selected: preselected!,
@@ -87,45 +91,71 @@ class _TrashScreenState extends State<TrashScreen> {
     if (ok == true) await widget.database.deleteCardForever(card.id);
   }
 
+  late final _types = widget.database.select(widget.database.cardTypes).get();
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final c = AppColors.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Cestino')),
       body: StreamBuilder<List<db.Card>>(
         stream: widget.database.watchTrash(),
         builder: (context, snap) {
           final cards = snap.data ?? const <db.Card>[];
-          return FutureBuilder<List<db.Section>>(
-            future: widget.database.select(widget.database.sections).get(),
-            builder: (context, secSnap) {
+          return FutureBuilder(
+            future: Future.wait([
+              widget.database.select(widget.database.sections).get(),
+              _types,
+            ]),
+            builder: (context, refs) {
               final names = {
-                for (final s in secSnap.data ?? const <db.Section>[]) s.id: s.name,
+                for (final s in (refs.data?[0] as List<db.Section>? ?? const []))
+                  s.id: s.name,
+              };
+              final types = {
+                for (final t in (refs.data?[1] as List<db.CardType>? ?? const []))
+                  t.id: t,
               };
               return ListView(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('Le tessere eliminate restano qui 30 giorni.'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                    child: Text(
+                        'Le tessere eliminate restano qui ${db.AppDatabase.trashDays} giorni. '
+                        'Tocca una tessera per recuperarla.',
+                        style: TextStyle(color: c.muted, fontSize: 13.5)),
                   ),
                   if (cards.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('Il cestino è vuoto.'),
-                    ),
-                  for (final c in cards)
-                    ListTile(
-                      leading: const Icon(Icons.credit_card),
-                      title: Text(c.name),
-                      subtitle: Text(
-                        '${deletedLabel(c.deletedAt ?? now, now)} · era in ${names[c.sectionId] ?? ''}',
-                      ),
-                      onTap: () => _recover(c),
-                      trailing: IconButton(
-                        tooltip: 'Elimina per sempre',
-                        icon: const Icon(Icons.delete_forever_outlined),
-                        onPressed: () => _deleteForever(c),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Text('Il cestino è vuoto.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: c.muted)),
+                    )
+                  else
+                    TileGroup(
+                      children: [
+                        for (final card in cards)
+                          ListTile(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(16, 4, 4, 4),
+                            leading: types[card.typeId] == null
+                                ? const IconTile(Icons.credit_card)
+                                : TypeLogo(
+                                    type: types[card.typeId]!, name: card.name),
+                            title: Text(card.name),
+                            subtitle: Text(
+                              '${deletedLabel(card.deletedAt ?? now, now)} · era in ${names[card.sectionId] ?? ''}',
+                            ),
+                            onTap: () => _recover(card),
+                            trailing: IconButton(
+                              tooltip: 'Elimina per sempre',
+                              icon: const Icon(Icons.delete_forever_outlined),
+                              onPressed: () => _deleteForever(card),
+                            ),
+                          ),
+                      ],
                     ),
                 ],
               );
@@ -145,8 +175,9 @@ class _Option {
   final bool recreated;
 }
 
-class _RecoverDialog extends StatefulWidget {
-  const _RecoverDialog({
+/// Videata 13: in quale sezione recuperare la tessera.
+class _RecoverSheet extends StatefulWidget {
+  const _RecoverSheet({
     required this.cardName,
     required this.options,
     required this.selected,
@@ -159,50 +190,114 @@ class _RecoverDialog extends StatefulWidget {
   final int activeTotal;
 
   @override
-  State<_RecoverDialog> createState() => _RecoverDialogState();
+  State<_RecoverSheet> createState() => _RecoverSheetState();
 }
 
-class _RecoverDialogState extends State<_RecoverDialog> {
+class _RecoverSheetState extends State<_RecoverSheet> {
   late String _selected = widget.selected;
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Recupera «${widget.cardName}» in…'),
-      content: SingleChildScrollView(
+    final c = AppColors.of(context);
+    final after = widget.activeTotal + 1;
+    final fits = after <= db.AppDatabase.freeCardLimit;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            for (final o in widget.options)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(_selected == o.section.id
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off),
-                title: Text(o.section.name),
-                subtitle: Text(o.recreated
-                    ? 'Sezione eliminata: verrà ricreata'
-                    : (o.count == 1 ? '1 tessera' : '${o.count} tessere')),
-                onTap: () => setState(() => _selected = o.section.id),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+              child: Text('Recupera «${widget.cardName}» in…',
+                  style: TextStyle(
+                      color: c.text, fontSize: 20, fontWeight: FontWeight.w500)),
+            ),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final o in widget.options)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _option(c, o),
+                    ),
+                ],
               ),
-            const SizedBox(height: 8),
-            Text(
-              'Dopo il recupero: ${widget.activeTotal + 1} di ${db.AppDatabase.freeCardLimit} tessere',
-              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: fits ? c.successBg : c.warnBg,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(fits ? Icons.check : Icons.warning_amber_rounded,
+                      color: fits ? c.success : c.warn, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      fits
+                          ? 'Dopo il recupero: $after di ${db.AppDatabase.freeCardLimit} tessere'
+                          : 'Hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere',
+                      style: TextStyle(
+                          color: fits ? c.success : c.warn, fontSize: 13.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(_selected),
+              child: const Text('Recupera'),
             ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+    );
+  }
+
+  Widget _option(AppColors c, _Option o) {
+    final selected = _selected == o.section.id;
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => setState(() => _selected = o.section.id),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+              color: selected ? c.primary : c.border, width: selected ? 1.6 : 1),
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(_selected),
-          child: const Text('Recupera'),
+        child: Row(
+          children: [
+            Icon(
+              selected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: selected ? c.primary : c.muted,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(o.section.name,
+                      style: TextStyle(color: c.text, fontSize: 16)),
+                  Text(
+                    o.recreated
+                        ? 'Sezione eliminata: verrà ricreata'
+                        : (o.count == 1 ? '1 tessera' : '${o.count} tessere'),
+                    style: TextStyle(color: c.muted, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

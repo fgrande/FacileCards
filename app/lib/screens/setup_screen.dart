@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../theme.dart';
+import '../ui.dart';
 
 /// Lingua proposta: quella del telefono se è tra quelle offerte, altrimenti
 /// l'inglese.
@@ -72,6 +74,7 @@ class _SetupScreenState extends State<SetupScreen> {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     return Scaffold(
+      backgroundColor: AppColors.of(context).surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -80,7 +83,7 @@ class _SetupScreenState extends State<SetupScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   const SizedBox(height: 24),
-                  Icon(Icons.wallet, size: 64, color: theme.colorScheme.primary),
+                  const Center(child: AppMark(height: 96)),
                   const SizedBox(height: 16),
                   Text('Benvenuto in FacileCards',
                       textAlign: TextAlign.center,
@@ -98,7 +101,6 @@ class _SetupScreenState extends State<SetupScreen> {
                       labelText: 'Il tuo nome (facoltativo)',
                       helperText:
                           'Lo proponiamo come intestatario delle nuove tessere.',
-                      border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -111,15 +113,13 @@ class _SetupScreenState extends State<SetupScreen> {
                         helperText: _language == _phoneLanguage
                             ? 'È quella del telefono. Puoi cambiarla.'
                             : null,
-                        border: const OutlineInputBorder(),
                         suffixIcon: const Icon(Icons.expand_more),
                       ),
                       child: Text(_languageNames[_language]!),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Card.outlined(
-                    margin: EdgeInsets.zero,
+                  Panel(
                     child: Column(
                       children: [
                         SwitchListTile(

@@ -1,12 +1,15 @@
 import 'package:barcode_widget/barcode_widget.dart' as bw;
 import 'package:drift/drift.dart' show Value;
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:material_ui/material_ui.dart';
 
 import '../barcode_support.dart';
+import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../format_utils.dart';
 import '../photos.dart';
-import 'new_card_type_screen.dart' show TypeLogo;
+import '../theme.dart';
+import '../ui.dart';
 import 'photo_picker.dart';
 import 'photo_viewer_screen.dart';
 
@@ -38,8 +41,9 @@ class _CardScreenState extends State<CardScreen> {
 
   Future<void> _update(db.CardsCompanion values) {
     final d = widget.database;
-    return (d.update(d.cards)..where((c) => c.id.equals(widget.card.id)))
-        .write(values);
+    return (d.update(
+      d.cards,
+    )..where((c) => c.id.equals(widget.card.id))).write(values);
   }
 
   @override
@@ -56,15 +60,17 @@ class _CardScreenState extends State<CardScreen> {
   Future<void> _openPhotos(String side) async {
     final store = _store;
     if (store == null) return;
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => PhotoViewerScreen(
-        database: widget.database,
-        store: store,
-        card: widget.card,
-        frontRequired: _frontRequired,
-        initialSide: side,
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PhotoViewerScreen(
+          database: widget.database,
+          store: store,
+          card: widget.card,
+          frontRequired: _frontRequired,
+          initialSide: side,
+        ),
       ),
-    ));
+    );
   }
 
   /// Videata 28: senza foto del fronte si aggiunge quella, poi si passa al
@@ -76,12 +82,16 @@ class _CardScreenState extends State<CardScreen> {
     if (bytes == null || !mounted) return;
     final name = await store.write(widget.card.id, PhotoSide.front, bytes);
     if (name == null) return;
-    final old =
-        await widget.database.setCardPhoto(widget.card.id, PhotoSide.front, name);
+    final old = await widget.database.setCardPhoto(
+      widget.card.id,
+      PhotoSide.front,
+      name,
+    );
     if (old != null) await store.delete(old);
     if (mounted) {
       await _openPhotos(
-          photos.containsKey(PhotoSide.back) ? PhotoSide.front : PhotoSide.back);
+        photos.containsKey(PhotoSide.back) ? PhotoSide.front : PhotoSide.back,
+      );
     }
   }
 
@@ -97,10 +107,12 @@ class _CardScreenState extends State<CardScreen> {
           for (final s in sections)
             SimpleDialogOption(
               onPressed: () => Navigator.of(context).pop(s),
-              child: Text(s.name,
-                  style: TextStyle(
-                      fontWeight:
-                          s.name == _sectionName ? FontWeight.w700 : null)),
+              child: Text(
+                s.name,
+                style: TextStyle(
+                  fontWeight: s.name == _sectionName ? FontWeight.w700 : null,
+                ),
+              ),
             ),
         ],
       ),
@@ -113,58 +125,63 @@ class _CardScreenState extends State<CardScreen> {
   /// Miniatura della foto del fronte con il numero di foto, oppure
   /// il pulsante "Aggiungi foto" (videate 5 e 28).
   Widget _photoTile() => StreamBuilder<Map<String, String>>(
-        stream: _photos,
-        builder: (context, snap) {
-          final photos = snap.data ?? const <String, String>{};
-          final front = photos[PhotoSide.front];
-          final store = _store;
-          final scheme = Theme.of(context).colorScheme;
-          if (front == null || store == null) {
-            return OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(64)),
-              onPressed: store == null ? null : () => _addPhoto(photos),
-              icon: const Icon(Icons.photo_camera_outlined),
-              label: const Text('Aggiungi foto'),
-            );
-          }
-          return InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () => _openPhotos(PhotoSide.front),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                height: 64,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.file(store.file(front), fit: BoxFit.cover),
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: scheme.inverseSurface.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          photos.length == 1 ? '1 foto' : '${photos.length} foto',
-                          style: TextStyle(
-                              color: scheme.onInverseSurface,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
-                        ),
+    stream: _photos,
+    builder: (context, snap) {
+      final photos = snap.data ?? const <String, String>{};
+      final front = photos[PhotoSide.front];
+      final store = _store;
+      final scheme = Theme.of(context).colorScheme;
+      if (front == null || store == null) {
+        return OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(64),
+            side: BorderSide(color: AppColors.of(context).primary),
+          ),
+          onPressed: store == null ? null : () => _addPhoto(photos),
+          icon: const Icon(Icons.photo_camera_outlined),
+          label: const Text('Aggiungi foto'),
+        );
+      }
+      return InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => _openPhotos(PhotoSide.front),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            height: 64,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.file(store.file(front), fit: BoxFit.cover),
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: scheme.inverseSurface.withValues(alpha: 0.85),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      photos.length == 1 ? '1 foto' : '${photos.length} foto',
+                      style: TextStyle(
+                        color: scheme.onInverseSurface,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       );
+    },
+  );
 
   Future<void> _toggleFavorite() async {
     setState(() => _favorite = !_favorite);
@@ -204,22 +221,35 @@ class _CardScreenState extends State<CardScreen> {
     if (mounted) Navigator.of(context).pop();
   }
 
-  Widget _info(String label, String value) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 110,
-              child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+  /// Riga dei dettagli: etichetta a sinistra, valore a destra.
+  Widget _info(String label, String value) {
+    final c = AppColors.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(color: c.muted, fontSize: 14)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: c.text,
+                fontSize: 14.5,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            Expanded(child: Text(value)),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     final c = widget.card;
     final format = formatFromText(c.codeFormat);
     final barcode = drawableBarcode(format);
@@ -227,21 +257,33 @@ class _CardScreenState extends State<CardScreen> {
     final notes = c.notes;
     final expires = c.expiresOn;
     final type = widget.type;
+    // L'intestazione ha il colore della tipologia, uguale nei due temi.
+    final headerColor = Color(type?.color ?? TypeLogo.fallbackColor);
+    final details = [
+      if (holder != null) _info('Intestatario', holder),
+      if (expires != null) _info('Scadenza', longDate(expires)),
+      if (notes != null) _info('Note', notes),
+    ];
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Row(
-          children: [
-            if (type != null) ...[
-              SizedBox(width: 36, height: 36, child: TypeLogo(type: type)),
-              const SizedBox(width: 12),
-            ],
-            Expanded(child: Text(c.name, overflow: TextOverflow.ellipsis)),
-          ],
+        backgroundColor: headerColor,
+        foregroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: Text(c.name, overflow: TextOverflow.ellipsis),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
         ),
         actions: [
           IconButton(
             tooltip: 'Preferita',
-            icon: Icon(_favorite ? Icons.star : Icons.star_border),
+            icon: Icon(
+              _favorite ? Icons.star_rounded : Icons.star_outline_rounded,
+              color: _favorite ? const Color(0xFFFFD166) : Colors.white,
+              size: 28,
+            ),
             onPressed: _toggleFavorite,
           ),
           IconButton(
@@ -251,50 +293,155 @@ class _CardScreenState extends State<CardScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Stack(
         children: [
+          // Fascia colorata dietro la parte alta del codice.
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(16),
-            child: barcode == null
-                ? Text('Formato non disegnabile: ${c.codeFormat}')
-                : bw.BarcodeWidget(
-                    barcode: barcode,
-                    data: c.code,
-                    width: double.infinity,
-                    height: isSquareFormat(format) ? 260 : 140,
-                    drawText: true,
-                    errorBuilder: (context, error) =>
-                        Text('Codice non valido: $error'),
-                  ),
+            height: 300 + MediaQuery.paddingOf(context).top - 56,
+            color: headerColor,
           ),
-          const SizedBox(height: 8),
-          Center(child: Text(formatLabel(format))),
-          const SizedBox(height: 16),
-          if (holder != null) _info('Intestatario', holder),
-          _info('Sezione', _sectionName),
-          if (expires != null) _info('Scadenza', longDate(expires)),
-          if (notes != null) _info('Note', notes),
-          const SizedBox(height: 12),
-          Row(
+          ListView(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              MediaQuery.paddingOf(context).top + kToolbarHeight,
+              16,
+              24,
+            ),
             children: [
-              Expanded(child: _photoTile()),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(64)),
-                  onPressed: _move,
-                  child: const Text('Sposta'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        initialsOf(
+                          type != null && hasFixedName(type)
+                              ? type.name
+                              : c.name,
+                        ),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            c.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 21,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            [?holder, _sectionName].join(' · '),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.88),
+                              fontSize: 13.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              // Il riquadro del codice resta bianco anche nel tema scuro:
+              // gli scanner leggono male i codici su fondo scuro.
+              Container(
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: const Color(0xFFD5DBE8)),
+                ),
+                child: Column(
+                  children: [
+                    if (barcode == null)
+                      Text(
+                        'Formato non disegnabile: ${c.codeFormat}',
+                        style: const TextStyle(color: Colors.black),
+                      )
+                    else
+                      bw.BarcodeWidget(
+                        barcode: barcode,
+                        data: c.code,
+                        width: double.infinity,
+                        height: isSquareFormat(format) ? 240 : 180,
+                        drawText: true,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        errorBuilder: (context, error) => Text(
+                          'Codice non valido: $error',
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                    Text(
+                      formatLabel(format),
+                      style: const TextStyle(
+                        color: Color(0xFF5F6B80),
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (details.isNotEmpty) ...[
+                Panel(
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < details.length; i++) ...[
+                        if (i > 0)
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                        details[i],
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              Row(
+                children: [
+                  Expanded(child: _photoTile()),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(64),
+                      ),
+                      onPressed: _move,
+                      child: const Text('Sposta'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Inserita il ${longDate(c.createdAt)}',
+                style: TextStyle(color: colors.muted, fontSize: 13),
+              ),
             ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Inserita il ${longDate(c.createdAt)}',
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),

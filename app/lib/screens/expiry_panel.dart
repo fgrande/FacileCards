@@ -3,7 +3,8 @@ import 'package:material_ui/material_ui.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
-import 'new_card_type_screen.dart' show TypeLogo;
+import '../theme.dart';
+import '../ui.dart';
 
 /// Videata 4: riquadro delle scadenze che scende dall'alto toccando la
 /// campanella. Restituisce la tessera toccata, oppure null se si chiude.
@@ -97,7 +98,7 @@ class _ExpiryPanel extends StatelessWidget {
                         horizontal: 16, vertical: 4),
                     leading: type == null
                         ? const Icon(Icons.credit_card)
-                        : TypeLogo(type: type),
+                        : TypeLogo(type: type, name: c.name, size: 44),
                     title: Text(c.name),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,14 +144,8 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final (bg, fg) = expired
-        ? (dark
-            ? (const Color(0xFF3D1A1D), const Color(0xFFFF8A8A))
-            : (const Color(0xFFFDE7E9), const Color(0xFFC62828)))
-        : (dark
-            ? (const Color(0xFF3A2C0C), const Color(0xFFF0B24A))
-            : (const Color(0xFFFFF3D6), const Color(0xFFB26A00)));
+    final c = AppColors.of(context);
+    final (bg, fg) = expired ? (c.dangerBg, c.danger) : (c.warnBg, c.warn);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(

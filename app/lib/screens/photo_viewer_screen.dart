@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../photos.dart';
+import '../theme.dart';
 import 'photo_picker.dart';
 
 const _sides = [PhotoSide.front, PhotoSide.back];
@@ -181,13 +182,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1F6FEB),
-          brightness: Brightness.dark,
-        ),
-      ),
+      data: buildTheme(Brightness.dark),
       child: StreamBuilder<Map<String, String>>(
         stream: _photos,
         builder: (context, snap) {

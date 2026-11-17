@@ -12,15 +12,15 @@ import 'database.dart';
 /// category: 'fedelta' = negozio con nome fisso; le altre ('biblioteca',
 /// 'palestra', 'altro') lasciano scegliere il nome all'utente.
 List<CardTypesCompanion> catalogTypes() => [
-      _t('acqua-e-sapone', 'Acqua & Sapone', 0xFF1E88E5),
-      _t('basko', 'Basko', 0xFFE53935),
-      _t('calliope', 'Calliope', 0xFF8E24AA),
-      _t('carrefour', 'Carrefour', 0xFF1565C0),
-      _t('decathlon', 'Decathlon', 0xFF0082C3),
-      _t('kiabi', 'Kiabi', 0xFF43A047),
-      _t('biblioteca', 'Biblioteca', 0xFF6D4C41, category: 'biblioteca'),
-      _t('palestra', 'Palestra', 0xFFEF6C00, category: 'palestra'),
-      _t('generic', 'Tessera generica', 0xFF546E7A,
+      _t('acqua-e-sapone', 'Acqua & Sapone', 0xFF00897B),
+      _t('basko', 'Basko', 0xFFC62828),
+      _t('calliope', 'Calliope', 0xFFF4511E),
+      _t('carrefour', 'Carrefour', 0xFF1D4E9E),
+      _t('decathlon', 'Decathlon', 0xFF0B74C4),
+      _t('kiabi', 'Kiabi', 0xFF6A3FB5),
+      _t('biblioteca', 'Biblioteca', 0xFF546E7A, category: 'biblioteca'),
+      _t('palestra', 'Palestra', 0xFF00838F, category: 'palestra'),
+      _t('generic', 'Tessera generica', 0xFF78909C,
           category: 'altro', generic: true),
     ];
 
@@ -41,3 +41,11 @@ CardTypesCompanion _t(
 
 /// Le tipologie a nome fisso (negozi) precompilano il nome della tessera.
 bool hasFixedName(CardType t) => t.category == 'fedelta';
+
+/// Che tessera è, come si mostra nell'elenco per sezione (videata 3).
+String categoryLabel(CardType? t) => switch (t?.category) {
+      'fedelta' => 'Tessera fedeltà',
+      'biblioteca' => 'Biblioteca',
+      'palestra' => 'Palestra',
+      _ => 'Tessera',
+    };
