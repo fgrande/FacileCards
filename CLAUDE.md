@@ -31,7 +31,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** configurazione iniziale (videata 1: nome, lingua, sezione di partenza nella lingua scelta).
+**Prossimo passo:** scadenze (videata 4): campanella e riepilogo, con i giorni di preavviso della configurazione.
 
 ### Fatto
 
@@ -43,11 +43,12 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-16: scansione completa (videate 22–24): controllo del formato atteso con avviso, torcia, lettura da galleria, inserimento a mano, schermata per permesso negato. Da provare sul telefono: lettura da galleria e "Apri impostazioni".
 - 2026-11-17: "Da galleria" spostato nella videata 8 accanto a "Scansiona" (decisione 110), tolto dalla fotocamera (22), tenuto nella 24; controllo del codice letto in comune e con prove. Provato sul telefono, insieme alla scansione.
 - 2026-11-17: script `frun.sh`; numerazione delle versioni (decisione 111).
+- 2026-11-17: configurazione iniziale (videata 1): nome (proposto come intestatario delle nuove tessere), lingua (quella del telefono se offerta, se no inglese), avviso scadenze e giorni (1–90); sezione di partenza col nome nella lingua scelta. Da provare sul telefono.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
-- Configurazione iniziale (1): nome, lingua, sezione di partenza nella lingua scelta.
+- La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Scadenze (4): campanella e riepilogo; avviso solo dentro l'app.
 - Foto della tessera (25–28, 39): miniatura nella tessera, vista a tutto schermo con scorrimento, sostituzione ed eliminazione; file nello spazio privato dell'app.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.

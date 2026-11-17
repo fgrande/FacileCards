@@ -25,7 +25,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 
 | # | Videata | Cosa mostra | Decisioni |
 |---|---|---|---|
-| 1 | [Configurazione iniziale](videate/01-configurazione-iniziale.svg) | Le tre domande del primo avvio: nome, lingua, avviso scadenze con giorni | 65 |
+| 1 | [Configurazione iniziale](videate/01-configurazione-iniziale.svg) | Le tre domande del primo avvio: nome (facoltativo), lingua, avviso scadenze con giorni | 65 |
 | 2 | [Elenco, tutte le tessere](videate/02-elenco-tutte.svg) | Ricerca su tutti i campi, selettore Tutte / Per sezione, ordinamento, preferite in cima, campanella delle scadenze, contatore, annuncio al piede | 10, 53, 58, 70 |
 | 3 | [Elenco per sezione](videate/03-elenco-per-sezione.svg) | Preferite in cima (e ripetute nella loro sezione), poi una intestazione per sezione: Generale per prima, le altre in ordine alfabetico | 10, 58, 85, 86 |
 | 4 | [Scadenze](videate/04-scadenze.svg) | Campanella espansa: tessere scadute e in scadenza | 63, 70 |

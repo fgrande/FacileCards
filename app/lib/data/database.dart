@@ -12,6 +12,29 @@ String newId() => _uuid.v4();
 /// Nome della sezione predefinita (la traduzione si farà nell'interfaccia).
 const defaultSectionName = 'Generale';
 
+/// Lingue proposte nella configurazione iniziale (spagnolo e tedesco sono
+/// predisposti ma non ancora offerti).
+const supportedLanguages = ['it', 'en', 'fr'];
+
+/// Nome della sezione di partenza nella lingua scelta (decisione 84; i nomi
+/// non italiani sono da confermare).
+const defaultSectionNames = {
+  'it': 'Generale',
+  'en': 'General',
+  'fr': 'Général',
+  'es': 'General',
+  'de': 'Allgemein',
+};
+
+/// Chiavi della tabella delle impostazioni.
+abstract final class SettingKeys {
+  static const setupDone = 'setupDone';
+  static const holderName = 'holderName';
+  static const language = 'language';
+  static const expiryAlerts = 'expiryAlerts';
+  static const expiryDays = 'expiryDays';
+}
+
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta
 /// registrata e nascosta (hidden), finché quelle tessere non vengono
 /// recuperate o cancellate.
@@ -266,6 +289,41 @@ class AppDatabase extends _$AppDatabase {
       await deleteCardForever(c.id);
     }
   }
+
+  // ---- Impostazioni e configurazione iniziale --------------------------
+
+  static const defaultExpiryDays = 30;
+
+  Future<String?> setting(String key) async =>
+      (await (select(settings)..where((s) => s.key.equals(key)))
+              .getSingleOrNull())
+          ?.value;
+
+  Future<void> setSetting(String key, String value) => into(settings)
+      .insertOnConflictUpdate(SettingsCompanion.insert(key: key, value: value));
+
+  /// La configurazione iniziale (videata 1) è già stata fatta?
+  Future<bool> isSetupDone() async =>
+      await setting(SettingKeys.setupDone) == 'true';
+
+  /// Salva le risposte della configurazione iniziale e dà alla sezione di
+  /// partenza il nome nella lingua scelta (decisione 84).
+  Future<void> completeSetup({
+    required String holderName,
+    required String language,
+    required bool expiryAlerts,
+    required int expiryDays,
+  }) =>
+      transaction(() async {
+        await setSetting(SettingKeys.holderName, holderName.trim());
+        await setSetting(SettingKeys.language, language);
+        await setSetting(SettingKeys.expiryAlerts, expiryAlerts.toString());
+        await setSetting(SettingKeys.expiryDays, expiryDays.toString());
+        final name = defaultSectionNames[language] ?? defaultSectionName;
+        await (update(sections)..where((s) => s.isDefault.equals(true)))
+            .write(SectionsCompanion(name: Value(name)));
+        await setSetting(SettingKeys.setupDone, 'true');
+      });
 
   Future<Section> defaultSection() =>
       (select(sections)..where((s) => s.isDefault.equals(true))).getSingle();

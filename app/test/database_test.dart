@@ -133,4 +133,31 @@ void main() {
     expect(list.map((c) => c.name), ['Biblioteca']);
     expect(list.single.id, isNotEmpty);
   });
+
+  test('configurazione iniziale: all\'inizio non è fatta', () async {
+    expect(await db.isSetupDone(), isFalse);
+  });
+
+  test('configurazione iniziale: salva le risposte e la ricorda', () async {
+    await db.completeSetup(
+        holderName: '  Fabio Grande ',
+        language: 'it',
+        expiryAlerts: false,
+        expiryDays: 15);
+    expect(await db.isSetupDone(), isTrue);
+    expect(await db.setting(SettingKeys.holderName), 'Fabio Grande');
+    expect(await db.setting(SettingKeys.language), 'it');
+    expect(await db.setting(SettingKeys.expiryAlerts), 'false');
+    expect(await db.setting(SettingKeys.expiryDays), '15');
+    expect((await db.defaultSection()).name, 'Generale');
+  });
+
+  test('la sezione di partenza prende il nome nella lingua scelta', () async {
+    await db.completeSetup(
+        holderName: '', language: 'fr', expiryAlerts: true, expiryDays: 30);
+    final s = await db.defaultSection();
+    expect(s.name, 'Général');
+    expect(s.isDefault, isTrue);
+    expect((await db.visibleSections()).length, 1);
+  });
 }

@@ -84,7 +84,7 @@ Il requisito guida è la **velocità**: dall'apertura dell'app alla tessera a sc
 | 62 | **Altri dati per tessera**: note, intestatario (proposto in automatico, modificabile), scadenza facoltativa |
 | 63 | **Tessere scadute o in scadenza** evidenziate in un'area dedicata dell'interfaccia |
 | 64 | **Messaggio di condivisione**: accompagna il file con il nome dell'app e il link allo store |
-| 65 | **Configurazione iniziale con tre domande**: nominativo dell'intestatario; lingua (predefinita quella del telefono); avviso scadenze attivo o no e numero di giorni di preavviso (predefinito: attivo, 30 giorni) |
+| 65 | **Configurazione iniziale con tre domande**: nominativo dell'intestatario, facoltativo (chiarito il 17 nov 2026), si propone come intestatario delle nuove tessere; lingua (predefinita quella del telefono); avviso scadenze attivo o no e numero di giorni di preavviso (predefinito: attivo, 30 giorni) |
 | 66 | **Avviso scadenze regolato dalla configurazione**: se attivo, una tessera è "in scadenza" a partire dal numero di giorni impostato |
 | 67 | **Nel file condiviso viaggia tutto**: note, intestatario e scadenza compresi. Le tessere si condividono tra familiari, non con sconosciuti |
 | 68 | **Esportazione con doppia conferma**: prima di condividere, l'app spiega che le tessere stanno per essere consegnate ad altre persone e chiede di confermare due volte, perché l'utente capisca ciò che sta facendo |

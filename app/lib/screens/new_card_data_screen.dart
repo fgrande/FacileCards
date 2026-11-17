@@ -47,7 +47,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   Future<void> _load() async {
     final sections = await widget.database.visibleSections();
     final count = await widget.database.activeCardCount();
+    // Intestatario proposto: il nome dato nella configurazione iniziale.
+    final holder = await widget.database.setting(db.SettingKeys.holderName);
     if (!mounted) return;
+    if (_holder.text.isEmpty && holder != null) _holder.text = holder;
     setState(() {
       _sections = sections;
       _section = sections.firstWhere((s) => s.isDefault,

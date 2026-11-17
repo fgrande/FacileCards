@@ -2,15 +2,33 @@ import 'package:material_ui/material_ui.dart';
 
 import 'data/database.dart';
 import 'screens/card_list_screen.dart';
+import 'screens/setup_screen.dart';
 
-void main() {
-  runApp(FacileCardsApp(database: AppDatabase()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = AppDatabase();
+  // Una sola lettura prima della prima schermata: se la configurazione è
+  // fatta si va dritti all'elenco (regola dei 2 secondi).
+  final setupDone = await database.isSetupDone();
+  runApp(FacileCardsApp(database: database, setupDone: setupDone));
 }
 
-class FacileCardsApp extends StatelessWidget {
-  const FacileCardsApp({super.key, required this.database});
+class FacileCardsApp extends StatefulWidget {
+  const FacileCardsApp({
+    super.key,
+    required this.database,
+    required this.setupDone,
+  });
 
   final AppDatabase database;
+  final bool setupDone;
+
+  @override
+  State<FacileCardsApp> createState() => _FacileCardsAppState();
+}
+
+class _FacileCardsAppState extends State<FacileCardsApp> {
+  late bool _setupDone = widget.setupDone;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +44,12 @@ class FacileCardsApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: CardListScreen(database: database),
+      home: _setupDone
+          ? CardListScreen(database: widget.database)
+          : SetupScreen(
+              database: widget.database,
+              onDone: () => setState(() => _setupDone = true),
+            ),
     );
   }
 }
