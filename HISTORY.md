@@ -128,3 +128,11 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - L'interruttore spento era quasi invisibile su fondo bianco: ora ha un grigio ben leggibile in tutta l'app.
 - Con questo "Esporta tutto" e "Importa tutto" sono completi. Prossimo passo proposto: condivisione di una sezione e di una tessera, con lo stesso file.
 - Fabio ha provato la password sul telefono: funziona.
+
+## 18 novembre 2026: condivisione, tappa 1 (invio)
+
+- Piano in tre tappe approvato da Fabio: 1) invio; 2) ricezione da dentro l'app, con la voce "Importa tutto" trasformata in **"Importa da file"** (riconosce da sola copia completa, sezione o tessera: scelta di Fabio) e la migrazione del database per gli identificativi d'origine (decisione 79); 3) "Apri con FacileCards" da altre app.
+- **Invio**: "Condividi" nel menu della sezione (videata 36; solo se la sezione ha tessere) e icona di condivisione nella barra della scheda (videata 5, ora come nel disegno: stella, matita, condivisione, cestino). Stesso flusso di "Esporta tutto" generalizzato (`ExportTarget`): passo 1 con i quattro avvisi della videata 9 (usare, vedere, inoltrare, non ritirare), passo 2 come la videata 10 con "Ho capito", anteprima del messaggio e del file, password facoltativa e il solo pulsante "Condividi". Messaggio: "Ti invio le tessere della sezione «…». Per aprirle serve FacileCards:" con il link a Google Play (`storeUrl` in `lib/links.dart`, funziona dalla pubblicazione). Nome del file: quello della sezione o della tessera, ripulito dai caratteri vietati. Sopra i 20 MB un avviso (decisione 92).
+- Nel file condiviso viaggiano codici, intestatario, note, scadenza e foto (decisione 67), ma non preferita, date di inserimento e di uso, né il nome del proprietario: sono personali. Prove su cosa contiene il file di una sezione e di una tessera.
+- Messe in coda due richieste di Fabio, d'accordo anche Claude: icona di condivisione Android a tre pallini al posto di quella stile iPhone; menu ⋮ con due voci separate, "Sezioni" e "Dati" (copie, importazione, cestino), al posto di "Sezioni e cestino".
+- Fabio ha provato l'invio di sezione e tessera sul telefono: funziona.

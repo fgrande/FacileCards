@@ -202,4 +202,88 @@ void main() {
       expect(sizeLabel(300 * 1024), 'circa 300 KB');
     });
   });
+
+  group('Condividi sezione e tessera', () {
+    late AppDatabase db;
+    late Directory dir;
+    late PhotoStore store;
+    late String family;
+
+    setUp(() async {
+      db = AppDatabase.forTesting(NativeDatabase.memory());
+      dir = await Directory.systemTemp.createTemp('facilecards_share');
+      store = PhotoStore(dir);
+      await db.completeSetup(
+          holderName: 'Fabio Grande',
+          language: 'it',
+          expiryAlerts: true,
+          expiryDays: 30);
+      await db.createSection('Famiglia');
+      family = (await db.visibleSections())
+          .firstWhere((s) => s.name == 'Famiglia')
+          .id;
+    });
+    tearDown(() async {
+      await db.close();
+      await dir.delete(recursive: true);
+    });
+
+    Future<String> add(String name, String sectionId,
+        {bool trashed = false}) async {
+      final id = newId();
+      await db.into(db.cards).insert(CardsCompanion.insert(
+          id: Value(id),
+          typeId: 'generic',
+          name: name,
+          code: name,
+          codeFormat: 'code128',
+          sectionId: sectionId,
+          favorite: const Value(true),
+          lastUsedAt: Value(DateTime(2026, 11, 1)),
+          deletedAt: Value(trashed ? DateTime.now() : null)));
+      return id;
+    }
+
+    test('una sezione: solo le sue tessere, senza dati personali', () async {
+      await add('Biblioteca', family);
+      await add('Kiabi', family);
+      await add('Nel cestino', family, trashed: true);
+      await add('Altrove', (await db.defaultSection()).id);
+      final bytes = await buildExportFile(
+          db, store, ExportTarget.section(family));
+      final read = decodeArchive(bytes);
+      expect(read.header.kind, ArchiveKind.section);
+      final content = decodeContent(read.content);
+      expect(content.owner, isNull);
+      expect(content.sections.single.name, 'Famiglia');
+      expect(content.sections.single.isDefault, isFalse);
+      expect(content.cards.map((c) => c.name).toSet(), {'Biblioteca', 'Kiabi'});
+      for (final c in content.cards) {
+        expect(c.favorite, isFalse);
+        expect(c.lastUsedAt, isNull);
+        expect(c.createdAt, isNull);
+        expect(c.holder, isNull); // non indicato nella prova
+      }
+    });
+
+    test('una tessera: solo quella, con la sua sezione', () async {
+      final id = await add('Biblioteca', family);
+      await add('Kiabi', family);
+      final summary =
+          await exportSummary(db, store, ExportTarget.card(id));
+      expect(summary.cards, 1);
+      final read = decodeArchive(
+          await buildExportFile(db, store, ExportTarget.card(id)));
+      expect(read.header.kind, ArchiveKind.card);
+      final content = decodeContent(read.content);
+      expect(content.cards.single.name, 'Biblioteca');
+      expect(content.sections.single.id, family);
+    });
+
+    test('nome del file condiviso', () {
+      expect(sharedFileName('Famiglia'), 'Famiglia.facilecards');
+      expect(sharedFileName('Casa/Ufficio: 2?'), 'Casa-Ufficio- 2-.facilecards');
+      expect(sharedFileName('  '), 'FacileCards.facilecards');
+    });
+  });
 }

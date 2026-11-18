@@ -10,6 +10,8 @@ import '../format_utils.dart';
 import '../photos.dart';
 import '../theme.dart';
 import '../ui.dart';
+import '../transfer/export.dart' show ExportTarget;
+import 'export_screen.dart';
 import 'new_card_data_screen.dart';
 import 'photo_picker.dart';
 import 'photo_viewer_screen.dart';
@@ -332,6 +334,17 @@ class _CardScreenState extends State<CardScreen> {
               icon: const Icon(Icons.edit_outlined),
               onPressed: _edit,
             ),
+          IconButton(
+            tooltip: 'Condividi',
+            icon: const Icon(Icons.ios_share),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => ExportScreen(
+                database: widget.database,
+                target: ExportTarget.card(_card.id),
+                name: _card.name,
+              ),
+            )),
+          ),
           IconButton(
             tooltip: 'Elimina',
             icon: const Icon(Icons.delete_outline),

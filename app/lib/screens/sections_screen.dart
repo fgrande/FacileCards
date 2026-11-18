@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../data/database.dart' as db;
 import '../theme.dart';
 import '../ui.dart';
+import '../transfer/export.dart' show ExportTarget;
 import 'export_screen.dart';
 import 'import_screen.dart';
 import 'trash_screen.dart';
@@ -65,6 +66,17 @@ class _SectionsScreenState extends State<SectionsScreen> {
     }
     _load();
   }
+
+  /// Videate 9 e 10: condivisione della sezione.
+  Future<void> _share(db.Section s) => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ExportScreen(
+            database: widget.database,
+            target: ExportTarget.section(s.id),
+            name: s.name,
+          ),
+        ),
+      );
 
   Future<void> _rename(db.Section s) async {
     final name = await showDialog<String>(
@@ -149,8 +161,17 @@ class _SectionsScreenState extends State<SectionsScreen> {
                               : count(_counts[s.id]!)),
                   ),
                   trailing: PopupMenuButton<String>(
-                    onSelected: (v) => v == 'rename' ? _rename(s) : _delete(s),
+                    onSelected: (v) => switch (v) {
+                      'share' => _share(s),
+                      'rename' => _rename(s),
+                      _ => _delete(s),
+                    },
                     itemBuilder: (_) => [
+                      if ((_counts[s.id] ?? 0) > 0)
+                        const PopupMenuItem(
+                          value: 'share',
+                          child: Text('Condividi'),
+                        ),
                       const PopupMenuItem(
                         value: 'rename',
                         child: Text('Rinomina'),

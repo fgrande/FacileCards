@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** condivisione di una sezione e di una singola tessera (videate 9–11, decisioni 16, 18, 68, 79, 80, 107), con lo stesso file `.facilecards` e l'apertura da altre app ("Apri con FacileCards").
+**Prossimo passo:** condivisione, tappa 2: ricezione da dentro l'app con "Importa da file" (al posto di "Importa tutto"), migrazione del database alla versione 2 (identificativi d'origine), importazione di sezione (videata 11) e di tessera singola (decisione 107). Poi tappa 3: "Apri con FacileCards" da WhatsApp, Gmail, Drive.
 
 ### Fatto
 
@@ -56,6 +56,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-18: file `.facilecards` (formato versione 1: intestazione in chiaro + contenuto zip con dati e foto; controlli sui file ricevuti) ed "Esporta tutto" senza password (videate 32, 33 senza la parte password): da Sezioni → Archivio, due passi con "Ho capito", "Salva sul telefono" con il selettore di Android che riparte dall'ultima cartella (decisione 112) e "Condividi…" (codice nativo nostro, FileProvider); promemoria "Ultima copia" nelle Sezioni. Provato sul telefono.
 - 2026-11-18: "Importa tutto" (videate 29–31): da Sezioni → Archivio, selettore di Android (parte dalla cartella dell'ultimo backup), lettura e controlli in un isolate, riepilogo dell'archivio, "Unisci" (solo le tessere che mancano, riconosciute dall'identificativo; quelle nel cestino tornano in uso) o "Sostituisci tutto" (seconda conferma con i numeri veri del cestino), limite sul risultato con invito a Pro; sezioni ritrovate per identificativo o nome, altrimenti create; tipologia sconosciuta → generica. Provato sul telefono.
 - 2026-11-18: password facoltativa sui file (decisione 103, videate 33–35): in "Esporta tutto" interruttore, password ripetuta (almeno 8 caratteri) e avvertenza; contenuto cifrato con AES-256-GCM, chiave da PBKDF2-HMAC-SHA256 (200.000 ripetizioni, valore nell'intestazione); all'importazione richiesta della password, errata ritentabile senza limiti. Interruttore spento più visibile in tutta l'app. Provato sul telefono.
+- 2026-11-18: condivisione, tappa 1 (invio): "Condividi" nel menu della sezione (36) e nella scheda della tessera (5); due passi come nelle videate 9 e 10, con anteprima del messaggio (link a Google Play) e del file, password facoltativa, avviso sopra i 20 MB; nel file niente dati personali (preferita, date d'uso, proprietario). Provato sul telefono.
 
 ### Da fare: app
 
@@ -63,9 +64,9 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
-- Condivisione dalla scheda della tessera: non ancora fatta.
-- Sezioni (12): condivisione della sezione, "Esporta tutto", "Importa tutto" e il riquadro "Ultima copia" arrivano con l'esportazione.
-- Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
+- Ricezione di sezione e tessera (11, 107) e apertura da altre app.
+- Icona di condivisione: usare quella di Android a tre pallini collegati (`Icons.share`) al posto del quadrato con la freccia, che è lo stile di iPhone (richiesta di Fabio, 18 nov).
+- Menu ⋮ dell'elenco: dividere "Sezioni e cestino" in due voci, "Sezioni" (gestione delle sezioni) e "Dati" (Esporta tutto, Importa da file, Cestino, promemoria "Ultima copia") (richiesta di Fabio, 18 nov). Cambia la videata 12: da registrare come decisione e aggiornare i disegni.
 - File di una sola sezione o tessera: oggi "Importa tutto" li rifiuta con un messaggio; si apriranno con la condivisione (9–11, 107).
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.

@@ -7,16 +7,28 @@ import '../data/database.dart' as db;
 import '../photos.dart';
 import '../system_settings.dart';
 import '../theme.dart';
+import '../links.dart';
+import '../transfer/archive_format.dart';
 import '../transfer/crypto.dart';
 import '../transfer/export.dart';
+import '../ui.dart';
 
-/// Videate 32 e 33: "Esporta tutto" in due passi (doppia conferma,
-/// decisioni 68 e 69). Restituisce true se la copia è stata salvata o
-/// condivisa.
+/// "Esporta tutto" (videate 32, 33) e condivisione di una sezione o di una
+/// tessera (videate 9, 10), in due passi (doppia conferma, decisioni 68 e
+/// 69). Restituisce true se la copia è stata salvata o condivisa.
 class ExportScreen extends StatefulWidget {
-  const ExportScreen({super.key, required this.database});
+  const ExportScreen({
+    super.key,
+    required this.database,
+    this.target = const ExportTarget.all(),
+    this.name = '',
+  });
 
   final db.AppDatabase database;
+  final ExportTarget target;
+
+  /// Nome della sezione o della tessera condivisa.
+  final String name;
 
   @override
   State<ExportScreen> createState() => _ExportScreenState();
@@ -34,6 +46,27 @@ class _ExportScreenState extends State<ExportScreen> {
   PhotoStore? _store;
 
   db.AppDatabase get _db => widget.database;
+
+  bool get _backup => widget.target.kind == ArchiveKind.all;
+  bool get _single => widget.target.kind == ArchiveKind.card;
+
+  String get _title => switch (widget.target.kind) {
+    ArchiveKind.all => 'Esporta tutto',
+    ArchiveKind.section => 'Condividi sezione',
+    ArchiveKind.card => 'Condividi tessera',
+  };
+
+  String _cards(int n) => n == 1 ? '1 tessera' : '$n tessere';
+
+  /// Messaggio che accompagna il file condiviso (decisione 64).
+  String get _shareMessage => _single
+      ? 'Ti invio la tessera «${widget.name}».\n'
+            'Per aprirla serve FacileCards:\n$storeUrl'
+      : 'Ti invio le tessere della sezione «${widget.name}».\n'
+            'Per aprirle serve FacileCards:\n$storeUrl';
+
+  String get _fileName =>
+      _backup ? backupFileName(DateTime.now()) : sharedFileName(widget.name);
 
   @override
   void dispose() {
@@ -56,7 +89,7 @@ class _ExportScreenState extends State<ExportScreen> {
 
   Future<void> _load() async {
     final store = await PhotoStore.instance;
-    final summary = await exportSummary(_db, store);
+    final summary = await exportSummary(_db, store, widget.target);
     if (mounted) {
       setState(() {
         _store = store;
@@ -79,9 +112,10 @@ class _ExportScreenState extends State<ExportScreen> {
     final dir = Directory('${(await getTemporaryDirectory()).path}/export');
     if (await dir.exists()) await dir.delete(recursive: true);
     await dir.create(recursive: true);
-    final bytes = await buildBackupFile(
+    final bytes = await buildExportFile(
       _db,
       _store!,
+      widget.target,
       password: _protect ? _password.text : null,
     );
     return writeTempFile(dir, name, bytes);
@@ -116,13 +150,17 @@ class _ExportScreenState extends State<ExportScreen> {
   Future<void> _share() async {
     setState(() => _busy = true);
     try {
-      final path = await _prepareFile(backupFileName(DateTime.now()));
+      final path = await _prepareFile(_fileName);
+      if (!_backup) {
+        await shareFile(path: path, title: _title, text: _shareMessage);
+        return;
+      }
       await shareFile(
         path: path,
         title: 'Salva la copia delle tessere',
         text:
             'Copia di tutte le mie tessere di FacileCards. '
-            'Si apre con l\'app FacileCards, da "Importa tutto".',
+            'Si apre con l\'app FacileCards, da "Importa da file".',
       );
       // Non si sa se l'altra app salverà davvero: la si conta come copia fatta.
       await _db.setSetting(
@@ -207,14 +245,17 @@ class _ExportScreenState extends State<ExportScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.folder_outlined, color: c.infoText),
+              Icon(
+                _single ? Icons.credit_card : Icons.folder_outlined,
+                color: c.infoText,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tutte le tue tessere',
+                      _backup ? 'Tutte le tue tessere' : widget.name,
                       style: TextStyle(
                         color: c.infoText,
                         fontSize: 17,
@@ -224,9 +265,13 @@ class _ExportScreenState extends State<ExportScreen> {
                     Text(
                       s == null
                           ? '…'
-                          : '${s.cards == 1 ? '1 tessera' : '${s.cards} tessere'} · '
+                          : _backup
+                          ? '${_cards(s.cards)} · '
                                 '${s.sections == 1 ? '1 sezione' : '${s.sections} sezioni'} · '
-                                '${sizeLabel(s.bytes)}',
+                                '${sizeLabel(s.bytes)}'
+                          : _single
+                          ? 'Tessera · ${sizeLabel(s.bytes)}'
+                          : '${_cards(s.cards)} · ${sizeLabel(s.bytes)}',
                       style: TextStyle(color: c.infoText, fontSize: 13.5),
                     ),
                   ],
@@ -237,33 +282,79 @@ class _ExportScreenState extends State<ExportScreen> {
         ),
         const SizedBox(height: 22),
         Text(
-          'Stai per creare una copia di tutte le tue tessere',
+          _backup
+              ? 'Stai per creare una copia di tutte le tue tessere'
+              : _single
+              ? 'Stai per consegnare questa tessera ad altre persone'
+              : 'Stai per consegnare queste tessere ad altre persone',
           style: TextStyle(color: c.text, fontSize: 20),
         ),
         const SizedBox(height: 22),
-        _point(
-          c,
-          'Il file contiene tutto',
-          'Codici, intestatari, note e foto.',
-        ),
-        _point(
-          c,
-          'Chi lo apre può usare le tessere',
-          'Alla cassa valgono come le tue.',
-        ),
-        _point(
-          c,
-          'Conservalo in un posto sicuro',
-          'Un archivio personale, non una chat.',
-        ),
-        _point(
-          c,
-          'Puoi proteggerlo con una password',
-          'Al prossimo passaggio, se vuoi.',
-        ),
+        if (!_backup)
+          ..._sharePoints(c)
+        else ...[
+          _point(
+            c,
+            'Il file contiene tutto',
+            'Codici, intestatari, note e foto.',
+          ),
+          _point(
+            c,
+            'Chi lo apre può usare le tessere',
+            'Alla cassa valgono come le tue.',
+          ),
+          _point(
+            c,
+            'Conservalo in un posto sicuro',
+            'Un archivio personale, non una chat.',
+          ),
+          _point(
+            c,
+            'Puoi proteggerlo con una password',
+            'Al prossimo passaggio, se vuoi.',
+          ),
+        ],
+        if (!_backup && (s?.bytes ?? 0) > largeShareBytes) _largeWarning(c, s!),
       ],
     );
   }
+
+  /// Videata 9: cosa comporta consegnare le tessere ad altri (decisione 68).
+  List<Widget> _sharePoints(AppColors c) => [
+    _point(
+      c,
+      _single
+          ? 'Chi riceve il file può usare la tessera'
+          : 'Chi riceve il file può usare le tessere',
+      'Alla cassa valgono come le tue.',
+    ),
+    _point(
+      c,
+      _single ? 'Vede tutto ciò che contiene' : 'Vede tutto ciò che contengono',
+      'Codici, intestatario, note e foto.',
+    ),
+    _point(c, 'Può inoltrarlo a chiunque', 'FacileCards non può impedirlo.'),
+    _point(
+      c,
+      'Non puoi ritirarlo',
+      'Una volta inviato, il file non è più tuo.',
+    ),
+  ];
+
+  /// File grande: si avvisa prima di condividere (decisione 92).
+  Widget _largeWarning(AppColors c, ExportSummary s) => Container(
+    margin: const EdgeInsets.only(top: 4),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: c.warnBg,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      'Il file è grande (${sizeLabel(s.bytes)}), soprattutto per le foto: '
+      'alcune app potrebbero non riuscire a inviarlo.',
+      style: TextStyle(color: c.warn, fontSize: 13.5, height: 1.4),
+    ),
+  );
 
   /// Passo 2 (videata 33): "Ho capito", poi salva o condividi.
   Widget _stepTwo(AppColors c) {
@@ -292,8 +383,13 @@ class _ExportScreenState extends State<ExportScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    'Ho capito: sto esportando '
-                    '${n == 1 ? '1 tessera' : '$n tessere'} in un unico file.',
+                    _backup
+                        ? 'Ho capito: sto esportando ${_cards(n)} in un unico file.'
+                        : _single
+                        ? 'Ho capito: sto condividendo la tessera «${widget.name}» '
+                              'con le persone a cui invierò il file.'
+                        : 'Ho capito: sto condividendo ${_cards(n)} della sezione '
+                              '«${widget.name}» con le persone a cui invierò il file.',
                     style: TextStyle(color: c.text, fontSize: 15.5),
                   ),
                 ),
@@ -301,6 +397,10 @@ class _ExportScreenState extends State<ExportScreen> {
             ),
           ),
         ),
+        if (!_backup) ...[
+          const GroupHeader('Messaggio che accompagna il file'),
+          _messagePreview(c),
+        ],
         const SizedBox(height: 14),
         _passwordPanel(c),
         if (_protect) ...[
@@ -318,7 +418,62 @@ class _ExportScreenState extends State<ExportScreen> {
             ),
           ),
         ],
+        if (!_backup) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Si aprirà il pannello di condivisione del telefono: '
+            'scegli tu l\'app e il destinatario.',
+            style: TextStyle(color: c.muted, fontSize: 13.5),
+          ),
+        ],
       ],
+    );
+  }
+
+  /// Anteprima del messaggio e del file (videata 10).
+  Widget _messagePreview(AppColors c) {
+    final s = _summary;
+    return Panel(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _shareMessage,
+            style: TextStyle(color: c.text, fontSize: 14.5, height: 1.45),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: c.segment,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.insert_drive_file_outlined,
+                  color: c.muted,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _fileName,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: c.text, fontSize: 14),
+                  ),
+                ),
+                if (s != null)
+                  Text(
+                    sizeLabel(s.bytes).replaceFirst('circa ', ''),
+                    style: TextStyle(color: c.muted, fontSize: 13),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -363,7 +518,11 @@ class _ExportScreenState extends State<ExportScreen> {
               'Proteggi con password',
               style: TextStyle(color: c.text, fontSize: 16.5),
             ),
-            subtitle: const Text('Facoltativa.'),
+            subtitle: Text(
+              _backup
+                  ? 'Facoltativa.'
+                  : 'Facoltativa: chi apre il file dovrà inserirla.',
+            ),
             value: _protect,
             onChanged: _busy ? null : (v) => setState(() => _protect = v),
           ),
@@ -423,7 +582,7 @@ class _ExportScreenState extends State<ExportScreen> {
         if (!didPop && _step == 2 && !_busy) _backToStepOne();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Esporta tutto')),
+        appBar: AppBar(title: Text(_title)),
         body: Column(
           children: [
             _progress(c),
@@ -440,7 +599,8 @@ class _ExportScreenState extends State<ExportScreen> {
               children: _step == 1
                   ? [
                       FilledButton(
-                        onPressed: ready
+                        // Una sezione vuota non si condivide.
+                        onPressed: ready && _summary!.cards > 0
                             ? () => setState(() => _step = 2)
                             : null,
                         child: const Text('Continua'),
@@ -452,15 +612,21 @@ class _ExportScreenState extends State<ExportScreen> {
                       ),
                     ]
                   : [
-                      FilledButton(
-                        onPressed: ready && _canExport ? _save : null,
-                        child: const Text('Salva sul telefono'),
-                      ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                        onPressed: ready && _canExport ? _share : null,
-                        child: const Text('Condividi…'),
-                      ),
+                      if (_backup) ...[
+                        FilledButton(
+                          onPressed: ready && _canExport ? _save : null,
+                          child: const Text('Salva sul telefono'),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton(
+                          onPressed: ready && _canExport ? _share : null,
+                          child: const Text('Condividi…'),
+                        ),
+                      ] else
+                        FilledButton(
+                          onPressed: ready && _canExport ? _share : null,
+                          child: const Text('Condividi'),
+                        ),
                       const SizedBox(height: 4),
                       TextButton(
                         onPressed: _busy ? null : _backToStepOne,
