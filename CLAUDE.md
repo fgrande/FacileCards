@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** modifica della tessera (matita nella videata 5), con la stessa pagina della nuova tessera.
+**Prossimo passo:** icona dell'app e avvio più rapido (con misura in `--release`); poi la schermata di avvio.
 
 ### Fatto
 
@@ -51,17 +51,16 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-17: foto della tessera (videate 8, 25–28, 39): fronte e retro nella nuova tessera (fronte obbligatorio per la generica), miniatura o "Aggiungi foto" nella scheda, visualizzatore con scorrimento, zoom, Sostituisci ed Elimina foto; foto ridotte a 1600 px e 500 KB, file in `photos/` nello spazio privato, quelli orfani cancellati dopo l'avvio. Anche "Sposta" nella scheda (videata 5). Provato sul telefono.
 - 2026-11-17: tema grafico come nei disegni, chiaro e scuro (segue il telefono): tavolozza, campi, pulsanti a pillola, righe su fondo bianco; rifatte elenco (2, 3), scheda (5), nuova tessera (7, 8, con "Salva" fisso in basso), scadenze (4), configurazione (1), sezioni (12), cestino (13, recupero in un foglio dal basso), visualizzatore foto. Colori del catalogo allineati ai disegni. Provato sul telefono.
 - 2026-11-17: impostazioni (14) e informazioni (21): nome, lingua, tema (come il telefono / chiaro / scuro, cambia subito), avviso scadenze e giorni; riquadro della versione gratuita; informativa, sito e versione dell'app aperti con codice nativo nostro (`openUrl`, `appVersion` in `MainActivity.kt`). Vista e ordinamento dell'elenco ricordati. Provato sul telefono.
+- 2026-11-18: modifica della tessera: matita nella scheda (5), stessa pagina della nuova tessera già compilata (titolo "Modifica tessera"), tipologia fissa; foto sostituite o tolte applicate solo con "Salva"; la scheda si aggiorna subito. Scadenza nel modulo in formato corto (31/12/2027). Provato sul telefono.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
-- Modifica della tessera (matita nella videata 5).
 - Eliminazione trascinando la riga (17).
 - Condivisione dalla scheda della tessera: non ancora fatta.
 - Sezioni (12): condivisione della sezione, "Esporta tutto", "Importa tutto" e il riquadro "Ultima copia" arrivano con l'esportazione.
-- Impostazioni (14, 21): scelta del tema (chiaro, scuro, come il telefono), ordinamento e vista ricordati. Cambiando l'avviso scadenze, l'elenco deve rileggerlo (oggi lo legge all'apertura e al ritorno da Sezioni).
 - Condivisione di sezione e di singola tessera (9–11, 107): file `.facilecards` con versione, foto incluse, password facoltativa (decisione 103).
 - Esporta tutto / importa tutto (29–35).
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.

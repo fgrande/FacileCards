@@ -87,3 +87,12 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - L'elenco ricorda vista ("Tutte" / "Per sezione") e ordinamento tra un avvio e l'altro.
 - Fabio ha chiesto perché l'app ci metta un paio di secondi ad aprirsi: è soprattutto la versione di prova (debug); la definitiva si misura con `--release`. Annotate per dopo, in `CLAUDE.md`: alleggerire l'avvio (catalogo riallineato solo quando cambia, cestino svuotato dopo la prima schermata), icona dell'app dal nostro logo e una schermata di avvio con tante tessere sparse e leggermente sfocate, come su un ripiano (idea di Fabio). Le impostazioni sono da provare sul telefono prima del commit.
 - Fabio ha provato le impostazioni sul telefono: funzionano.
+
+## 18 novembre 2026: modifica della tessera
+
+- Matita nella barra della scheda (videata 5): apre la stessa pagina della nuova tessera, già compilata, con il titolo "Modifica tessera". La tipologia non si cambia (porterebbe con sé formato e foto obbligatorie diverse: se è sbagliata si fa una tessera nuova). Il formato del codice resta quello salvato finché il codice non si riscrive a mano o si rilegge.
+- Le foto cambiate nel modulo (sostituite o tolte) si applicano solo con "Salva", in una transazione insieme ai dati (`updateCard` nel database, con prove); i file vecchi si cancellano dopo. Con "indietro" non cambia niente. Il fronte della tessera generica resta obbligatorio anche modificando.
+- La scheda tiene allineata la propria copia della tessera anche dopo stella e "Sposta", altrimenti una modifica successiva li avrebbe annullati.
+- Nel modulo la scadenza si mostra in formato corto (31/12/2027): quella estesa veniva tagliata.
+- Rimossa da `CLAUDE.md` una voce del "Da fare" sulle impostazioni rimasta per errore.
+- Fabio ha provato la modifica della tessera sul telefono: funziona.

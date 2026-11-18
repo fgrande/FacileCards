@@ -10,6 +10,7 @@ import '../format_utils.dart';
 import '../photos.dart';
 import '../theme.dart';
 import '../ui.dart';
+import 'new_card_data_screen.dart';
 import 'photo_picker.dart';
 import 'photo_viewer_screen.dart';
 
@@ -34,16 +35,18 @@ class CardScreen extends StatefulWidget {
 }
 
 class _CardScreenState extends State<CardScreen> {
-  late bool _favorite = widget.card.favorite;
+  // Si aggiorna dopo una modifica (matita).
+  late db.Card _card = widget.card;
+  late bool _favorite = _card.favorite;
   late String _sectionName = widget.sectionName;
-  late final _photos = widget.database.watchCardPhotos(widget.card.id);
+  late final _photos = widget.database.watchCardPhotos(_card.id);
   PhotoStore? _store;
 
   Future<void> _update(db.CardsCompanion values) {
     final d = widget.database;
     return (d.update(
       d.cards,
-    )..where((c) => c.id.equals(widget.card.id))).write(values);
+    )..where((c) => c.id.equals(_card.id))).write(values);
   }
 
   @override
@@ -65,7 +68,7 @@ class _CardScreenState extends State<CardScreen> {
         builder: (_) => PhotoViewerScreen(
           database: widget.database,
           store: store,
-          card: widget.card,
+          card: _card,
           frontRequired: _frontRequired,
           initialSide: side,
         ),
@@ -80,10 +83,10 @@ class _CardScreenState extends State<CardScreen> {
     if (store == null) return;
     final bytes = await pickCardPhoto(context, title: 'Foto del fronte');
     if (bytes == null || !mounted) return;
-    final name = await store.write(widget.card.id, PhotoSide.front, bytes);
+    final name = await store.write(_card.id, PhotoSide.front, bytes);
     if (name == null) return;
     final old = await widget.database.setCardPhoto(
-      widget.card.id,
+      _card.id,
       PhotoSide.front,
       name,
     );
@@ -93,6 +96,35 @@ class _CardScreenState extends State<CardScreen> {
         photos.containsKey(PhotoSide.back) ? PhotoSide.front : PhotoSide.back,
       );
     }
+  }
+
+  /// Matita: la pagina della nuova tessera, già compilata. Al ritorno la
+  /// scheda rilegge la tessera.
+  Future<void> _edit() async {
+    final type = widget.type;
+    if (type == null) return;
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => NewCardDataScreen(
+          database: widget.database,
+          type: type,
+          card: _card,
+        ),
+      ),
+    );
+    if (saved != true) return;
+    final d = widget.database;
+    final card = await d.cardById(_card.id);
+    if (card == null || !mounted) return;
+    final section = await (d.select(
+      d.sections,
+    )..where((s) => s.id.equals(card.sectionId))).getSingleOrNull();
+    if (!mounted) return;
+    setState(() {
+      _card = card;
+      _favorite = card.favorite;
+      _sectionName = section?.name ?? _sectionName;
+    });
   }
 
   /// "Sposta": cambia la sezione della tessera.
@@ -118,8 +150,13 @@ class _CardScreenState extends State<CardScreen> {
       ),
     );
     if (chosen == null || chosen.name == _sectionName) return;
-    await widget.database.moveCard(widget.card.id, chosen.id);
-    if (mounted) setState(() => _sectionName = chosen.name);
+    await widget.database.moveCard(_card.id, chosen.id);
+    if (mounted) {
+      setState(() {
+        _sectionName = chosen.name;
+        _card = _card.copyWith(sectionId: chosen.id);
+      });
+    }
   }
 
   /// Miniatura della foto del fronte con il numero di foto, oppure
@@ -184,7 +221,10 @@ class _CardScreenState extends State<CardScreen> {
   );
 
   Future<void> _toggleFavorite() async {
-    setState(() => _favorite = !_favorite);
+    setState(() {
+      _favorite = !_favorite;
+      _card = _card.copyWith(favorite: _favorite);
+    });
     await _update(db.CardsCompanion(favorite: Value(_favorite)));
   }
 
@@ -193,7 +233,7 @@ class _CardScreenState extends State<CardScreen> {
     final choice = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Eliminare «${widget.card.name}»?'),
+        title: Text('Eliminare «${_card.name}»?'),
         content: const Text('Nel cestino resta recuperabile per 30 giorni.'),
         actions: [
           TextButton(
@@ -214,9 +254,9 @@ class _CardScreenState extends State<CardScreen> {
     if (choice == null) return;
     final d = widget.database;
     if (choice == 'trash') {
-      await d.moveCardToTrash(widget.card.id);
+      await d.moveCardToTrash(_card.id);
     } else {
-      await d.deleteCardForever(widget.card.id);
+      await d.deleteCardForever(_card.id);
     }
     if (mounted) Navigator.of(context).pop();
   }
@@ -250,7 +290,7 @@ class _CardScreenState extends State<CardScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final c = widget.card;
+    final c = _card;
     final format = formatFromText(c.codeFormat);
     final barcode = drawableBarcode(format);
     final holder = c.holder;
@@ -286,6 +326,12 @@ class _CardScreenState extends State<CardScreen> {
             ),
             onPressed: _toggleFavorite,
           ),
+          if (widget.type != null)
+            IconButton(
+              tooltip: 'Modifica',
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: _edit,
+            ),
           IconButton(
             tooltip: 'Elimina',
             icon: const Icon(Icons.delete_outline),

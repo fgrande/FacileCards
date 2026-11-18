@@ -59,3 +59,7 @@ const _months = [
 
 /// "31 dicembre 2027"
 String longDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+
+/// "31/12/2027", per i campi stretti (scadenza nella nuova tessera).
+String shortDate(DateTime d) =>
+    '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';

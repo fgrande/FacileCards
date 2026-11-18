@@ -37,6 +37,7 @@ void main() {
 
   test('data estesa', () {
     expect(longDate(DateTime(2027, 12, 31)), '31 dicembre 2027');
+    expect(shortDate(DateTime(2027, 3, 5)), '05/03/2027');
   });
 
   test('quando è stata eliminata', () {

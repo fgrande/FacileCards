@@ -363,6 +363,33 @@ class AppDatabase extends _$AppDatabase {
         return old;
       });
 
+  /// Modifica una tessera (matita nella videata 5): scrive i campi in
+  /// [values] e applica le foto cambiate nel modulo, tutto in una transazione.
+  /// [newPhotos]: lato → nome del file già scritto; [removedPhotos]: lati da
+  /// togliere. Restituisce i nomi dei file non più usati, da cancellare.
+  Future<List<String>> updateCard(
+    String cardId,
+    CardsCompanion values, {
+    Map<String, String> newPhotos = const {},
+    Set<String> removedPhotos = const {},
+  }) =>
+      transaction(() async {
+        await (update(cards)..where((c) => c.id.equals(cardId))).write(values);
+        final obsolete = <String>[];
+        for (final side in removedPhotos) {
+          final old = await removeCardPhoto(cardId, side);
+          if (old != null) obsolete.add(old);
+        }
+        for (final e in newPhotos.entries) {
+          final old = await setCardPhoto(cardId, e.key, e.value);
+          if (old != null) obsolete.add(old);
+        }
+        return obsolete;
+      });
+
+  Future<Card?> cardById(String id) =>
+      (select(cards)..where((c) => c.id.equals(id))).getSingleOrNull();
+
   /// Sposta la tessera in un'altra sezione (videata 5, "Sposta").
   Future<void> moveCard(String cardId, String sectionId) =>
       (update(cards)..where((c) => c.id.equals(cardId)))

@@ -14,16 +14,19 @@ import '../ui.dart';
 import 'photo_picker.dart';
 import 'scan_screen.dart';
 
-/// Videata 8: dati della nuova tessera.
+/// Videata 8: dati della nuova tessera. Con [card] la stessa pagina modifica
+/// una tessera esistente (matita nella videata 5); la tipologia non cambia.
 class NewCardDataScreen extends StatefulWidget {
   const NewCardDataScreen({
     super.key,
     required this.database,
     required this.type,
+    this.card,
   });
 
   final db.AppDatabase database;
   final db.CardType type;
+  final db.Card? card;
 
   @override
   State<NewCardDataScreen> createState() => _NewCardDataScreenState();
@@ -31,22 +34,37 @@ class NewCardDataScreen extends StatefulWidget {
 
 class _NewCardDataScreenState extends State<NewCardDataScreen> {
   late final _name = TextEditingController(
-    text: hasFixedName(widget.type) ? widget.type.name : '',
+    text:
+        widget.card?.name ??
+        (hasFixedName(widget.type) ? widget.type.name : ''),
   );
-  final _code = TextEditingController();
+  late final _code = TextEditingController(text: widget.card?.code);
   final _codeFocus = FocusNode();
-  final _holder = TextEditingController();
-  final _notes = TextEditingController();
+  late final _holder = TextEditingController(text: widget.card?.holder);
+  late final _notes = TextEditingController(text: widget.card?.notes);
 
   List<db.Section> _sections = const [];
   db.Section? _section;
   int _count = 0;
-  DateTime? _expiresOn;
-  bool _favorite = false;
-  String? _scannedFormat; // formato letto (fotocamera o galleria), se c'è
+  late DateTime? _expiresOn = widget.card?.expiresOn;
+  late bool _favorite = widget.card?.favorite ?? false;
+  // Formato del codice: quello letto (fotocamera o galleria) o, modificando,
+  // quello salvato; si azzera se il codice si riscrive a mano.
+  late String? _scannedFormat = widget.card?.codeFormat;
   // Foto scelte, tenute in memoria fino al salvataggio.
   final Map<String, Uint8List> _photos = {};
+  // Modificando: foto già salvate (lato → file) e lati da togliere.
+  Map<String, String> _savedPhotos = const {};
+  final Set<String> _removedPhotos = {};
+  PhotoStore? _store;
   bool _saving = false;
+
+  bool get _editing => widget.card != null;
+
+  /// C'è una foto per quel lato, nuova o già salvata e non tolta?
+  bool _hasPhoto(String side) =>
+      _photos.containsKey(side) ||
+      (_savedPhotos.containsKey(side) && !_removedPhotos.contains(side));
 
   /// Tessera generica: codice e foto del fronte obbligatori (decisione 72).
   bool get _frontRequired => widget.type.isGeneric;
@@ -58,17 +76,33 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   }
 
   Future<void> _load() async {
-    final sections = await widget.database.visibleSections();
-    final count = await widget.database.activeCardCount();
-    // Intestatario proposto: il nome dato nella configurazione iniziale.
-    final holder = await widget.database.setting(db.SettingKeys.holderName);
+    final d = widget.database;
+    final sections = await d.visibleSections();
+    final count = await d.activeCardCount();
+    final card = widget.card;
+    final store = await PhotoStore.instance;
+    final saved = card == null
+        ? const <String, String>{}
+        : await d.cardPhotos(card.id);
+    // Intestatario proposto (solo per una tessera nuova): il nome dato nella
+    // configurazione iniziale.
+    final holder = card == null
+        ? await d.setting(db.SettingKeys.holderName)
+        : null;
     if (!mounted) return;
     if (_holder.text.isEmpty && holder != null) _holder.text = holder;
     setState(() {
       _sections = sections;
-      _section = sections.firstWhere((s) => s.isDefault,
-          orElse: () => sections.first);
+      _section = sections.firstWhere(
+        (s) => card != null ? s.id == card.sectionId : s.isDefault,
+        orElse: () => sections.firstWhere(
+          (s) => s.isDefault,
+          orElse: () => sections.first,
+        ),
+      );
       _count = count;
+      _store = store;
+      _savedPhotos = saved;
     });
   }
 
@@ -123,8 +157,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   }
 
   Future<void> _pickPhoto(String side) async {
-    final title = side == PhotoSide.front ? 'Foto del fronte' : 'Foto del retro';
-    if (_photos.containsKey(side)) {
+    final title = side == PhotoSide.front
+        ? 'Foto del fronte'
+        : 'Foto del retro';
+    if (_hasPhoto(side)) {
       final remove = await showModalBottomSheet<bool>(
         context: context,
         showDragHandle: true,
@@ -148,14 +184,26 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         ),
       );
       if (remove == null || !mounted) return;
-      if (remove) return setState(() => _photos.remove(side));
+      if (remove) {
+        return setState(() {
+          _photos.remove(side);
+          if (_savedPhotos.containsKey(side)) _removedPhotos.add(side);
+        });
+      }
     }
     final bytes = await pickCardPhoto(context, title: title);
-    if (bytes != null && mounted) setState(() => _photos[side] = bytes);
+    if (bytes != null && mounted) {
+      setState(() {
+        _photos[side] = bytes;
+        _removedPhotos.remove(side);
+      });
+    }
   }
 
   Widget _photoSlot(String side) {
     final bytes = _photos[side];
+    final saved = _removedPhotos.contains(side) ? null : _savedPhotos[side];
+    final store = _store;
     final scheme = Theme.of(context).colorScheme;
     return Expanded(
       child: InkWell(
@@ -170,14 +218,20 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           ),
           child: bytes != null
               ? Image.memory(bytes, fit: BoxFit.cover)
+              : saved != null && store != null
+              ? Image.file(store.file(saved), fit: BoxFit.cover)
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.photo_camera_outlined,
-                        color: scheme.onSurfaceVariant),
+                    Icon(
+                      Icons.photo_camera_outlined,
+                      color: scheme.onSurfaceVariant,
+                    ),
                     const SizedBox(height: 8),
-                    Text(sideLabel(side),
-                        style: TextStyle(color: scheme.onSurfaceVariant)),
+                    Text(
+                      sideLabel(side),
+                      style: TextStyle(color: scheme.onSurfaceVariant),
+                    ),
                   ],
                 ),
         ),
@@ -202,17 +256,22 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.type.name,
-                    style: TextStyle(
-                        color: c.infoText,
-                        fontSize: 16.5,
-                        fontWeight: FontWeight.w600)),
+                Text(
+                  widget.type.name,
+                  style: TextStyle(
+                    color: c.infoText,
+                    fontSize: 16.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 Text(
                   format == null
                       ? 'Qualunque formato di codice'
                       : 'Formato del codice: ${formatLabel(formatFromText(format))}',
                   style: TextStyle(
-                      color: c.infoText.withValues(alpha: 0.8), fontSize: 12.5),
+                    color: c.infoText.withValues(alpha: 0.8),
+                    fontSize: 12.5,
+                  ),
                 ),
               ],
             ),
@@ -250,9 +309,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           value,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: muted ? c.muted : c.text,
-              fontSize: 15.5,
-              fontWeight: FontWeight.w500),
+            color: muted ? c.muted : c.text,
+            fontSize: 15.5,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
@@ -286,18 +346,58 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     if (chosen != null && mounted) setState(() => _section = chosen);
   }
 
+  /// Modifica: prima i file delle foto nuove, poi la tessera e le foto in una
+  /// transazione, infine via i file non più usati.
+  Future<void> _saveEdits(
+    db.Card card,
+    String name,
+    String code,
+    String format,
+    db.Section section,
+    String holder,
+    String notes,
+  ) async {
+    final d = widget.database;
+    final store = await PhotoStore.instance;
+    final files = <String, String>{};
+    for (final e in _photos.entries) {
+      final fileName = await store.write(card.id, e.key, e.value);
+      if (fileName != null) files[e.key] = fileName;
+    }
+    final obsolete = await d.updateCard(
+      card.id,
+      db.CardsCompanion(
+        name: Value(name),
+        code: Value(code),
+        codeFormat: Value(format),
+        sectionId: Value(section.id),
+        holder: Value(holder.isEmpty ? null : holder),
+        notes: Value(notes.isEmpty ? null : notes),
+        expiresOn: Value(_expiresOn),
+        favorite: Value(_favorite),
+      ),
+      newPhotos: files,
+      removedPhotos: _removedPhotos,
+    );
+    for (final f in obsolete) {
+      await store.delete(f);
+    }
+  }
+
   Future<void> _save() async {
     final name = _name.text.trim();
     final code = _code.text.trim();
     final section = _section;
     if (name.isEmpty) return _message('Scrivi il nome della tessera.');
     if (code.isEmpty) return _message('Inserisci o scansiona il codice.');
-    if (_frontRequired && !_photos.containsKey(PhotoSide.front)) {
+    if (_frontRequired && !_hasPhoto(PhotoSide.front)) {
       return _message('Per la tessera generica serve la foto del fronte.');
     }
     if (section == null) return;
-    if (_count >= db.AppDatabase.freeCardLimit) {
-      return _message('Hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere.');
+    if (!_editing && _count >= db.AppDatabase.freeCardLimit) {
+      return _message(
+        'Hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere.',
+      );
     }
     // Il formato si salva sempre sulla singola tessera. Scritto a mano e senza
     // formato indicato dalla tipologia: si usa Code 128, che accetta testo libero.
@@ -307,6 +407,12 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     setState(() => _saving = true);
     try {
       final d = widget.database;
+      final card = widget.card;
+      if (card != null) {
+        await _saveEdits(card, name, code, format, section, holder, notes);
+        if (mounted) Navigator.of(context).pop(true);
+        return;
+      }
       final id = db.newId();
       // Prima i file (la riduzione può richiedere un attimo), poi tutto il
       // database in una transazione.
@@ -317,7 +423,9 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         if (fileName != null) files[e.key] = fileName;
       }
       await d.transaction(() async {
-        await d.into(d.cards).insert(
+        await d
+            .into(d.cards)
+            .insert(
               db.CardsCompanion.insert(
                 id: Value(id),
                 typeId: widget.type.id,
@@ -346,7 +454,9 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     final date = _expiresOn;
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuova tessera')),
+      appBar: AppBar(
+        title: Text(_editing ? 'Modifica tessera' : 'Nuova tessera'),
+      ),
       // "Salva" fisso in basso: resta visibile anche sui telefoni piccoli.
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -365,17 +475,13 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'Nome',
-            ),
+            decoration: const InputDecoration(labelText: 'Nome'),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _code,
             focusNode: _codeFocus,
-            decoration: const InputDecoration(
-              labelText: 'Codice',
-            ),
+            decoration: const InputDecoration(labelText: 'Codice'),
             onChanged: (_) => _scannedFormat = null,
           ),
           const SizedBox(height: 12),
@@ -412,7 +518,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
               Expanded(
                 child: _pickerBox(
                   label: 'Scadenza',
-                  value: date == null ? 'Nessuna' : longDate(date),
+                  value: date == null ? 'Nessuna' : shortDate(date),
                   muted: date == null,
                   onTap: _pickDate,
                   onClear: date == null
@@ -425,9 +531,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           const SizedBox(height: 10),
           TextField(
             controller: _holder,
-            decoration: const InputDecoration(
-              labelText: 'Intestatario',
-            ),
+            decoration: const InputDecoration(labelText: 'Intestatario'),
           ),
           const SizedBox(height: 10),
           TextField(
@@ -446,7 +550,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                 ? 'FOTO (IL FRONTE È OBBLIGATORIO)'
                 : 'FOTO (FACOLTATIVE)',
             style: TextStyle(
-                color: c.muted, fontSize: 12.5, fontWeight: FontWeight.w700),
+              color: c.muted,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 10),
           Row(
@@ -469,8 +576,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                     size: 26,
                   ),
                   const SizedBox(width: 10),
-                  Text('Aggiungi alle preferite',
-                      style: TextStyle(color: c.text, fontSize: 15)),
+                  Text(
+                    'Aggiungi alle preferite',
+                    style: TextStyle(color: c.text, fontSize: 15),
+                  ),
                 ],
               ),
             ),
