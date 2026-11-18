@@ -12,6 +12,7 @@ import 'expiry_panel.dart';
 import 'import_screen.dart';
 import 'new_card_type_screen.dart';
 import 'search_field.dart';
+import 'swipe_to_delete.dart';
 import 'sections_screen.dart';
 import 'settings_screen.dart';
 import '../theme.dart';
@@ -140,7 +141,7 @@ class _CardListScreenState extends State<CardListScreen> {
                 // tessera sono (la sezione è già nell'intestazione).
                 : (inFavorites ? section : categoryLabel(type)),
           );
-    return ListTile(
+    final tile = ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       minVerticalPadding: 6,
       leading: type == null
@@ -152,6 +153,14 @@ class _CardListScreenState extends State<CardListScreen> {
           ? Icon(Icons.star_rounded, color: colors.star, size: 28)
           : const Chevron(),
       onTap: () => _open(c),
+    );
+    // Videata 17: trascinando a sinistra compare "Elimina". La stessa
+    // tessera può stare in "Preferite" e nella sua sezione: righe distinte.
+    return SwipeToDelete(
+      key: ValueKey('${inFavorites ? 'fav' : 'row'}-${c.id}'),
+      id: '${inFavorites ? 'fav' : 'row'}-${c.id}',
+      onDelete: () => confirmDeleteCard(context, widget.database, c),
+      child: tile,
     );
   }
 

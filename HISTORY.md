@@ -178,3 +178,9 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Limite di Android: 25 MB per app, e oltre quel limite l'app non viene salvata per niente. Con 50 tessere e due foto da 500 KB al massimo si potrebbe arrivare a 50 MB, ma di solito le foto sono poche: invece di complicare il backup, la schermata Dati avvisa oltre 20 MB e invita a "Esporta tutto".
 - Provato sull'emulatore con il trasporto locale (`bmgr`): backup, disinstallazione, reinstallazione, tessere tornate. Nota per le prove: un'app fermata con "Forza interruzione" non viene salvata finché non la si riapre.
 - Fabio ha provato il backup di Android sul telefono: funziona.
+
+## 18 novembre 2026: eliminazione trascinando la riga
+
+- Come nel disegno 17: la riga trascinata a sinistra scopre il pulsante "Elimina", che porta alla stessa scelta della scheda (cestino o eliminazione definitiva, decisione 75). Avevo proposto un'eliminazione immediata con "Annulla", ma il disegno e la decisione chiedono la scelta: si è seguito il disegno.
+- Widget nostro (`swipe_to_delete.dart`), senza plugin: una sola riga aperta alla volta, un tocco sulla riga aperta la richiude invece di aprire la tessera.
+- Fabio ha provato l'eliminazione trascinando sul telefono: funziona.

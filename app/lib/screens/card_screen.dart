@@ -233,37 +233,9 @@ class _CardScreenState extends State<CardScreen> {
 
   /// Videata 18: cestino o eliminazione definitiva.
   Future<void> _delete() async {
-    final choice = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.t.deleteCardQuestion(_card.name)),
-        content: Text(
-          context.t.trashRecoverable(db.AppDatabase.trashDays),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.t.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop('forever'),
-            child: Text(context.t.deleteForever),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop('trash'),
-            child: Text(context.t.moveToTrash),
-          ),
-        ],
-      ),
-    );
-    if (choice == null) return;
-    final d = widget.database;
-    if (choice == 'trash') {
-      await d.moveCardToTrash(_card.id);
-    } else {
-      await d.deleteCardForever(_card.id);
+    if (await confirmDeleteCard(context, widget.database, _card) && mounted) {
+      Navigator.of(context).pop();
     }
-    if (mounted) Navigator.of(context).pop();
   }
 
   /// Riga dei dettagli: etichetta a sinistra, valore a destra.
@@ -511,4 +483,42 @@ class _CardScreenState extends State<CardScreen> {
       ),
     );
   }
+}
+
+/// Videata 18 (decisioni 20 e 75): cestino o eliminazione definitiva, sia
+/// dalla barra della tessera sia trascinando la riga dell'elenco.
+/// Restituisce true se la tessera è stata eliminata.
+Future<bool> confirmDeleteCard(
+  BuildContext context,
+  db.AppDatabase database,
+  db.Card card,
+) async {
+  final choice = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(context.t.deleteCardQuestion(card.name)),
+      content: Text(context.t.trashRecoverable(db.AppDatabase.trashDays)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.t.cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop('forever'),
+          child: Text(context.t.deleteForever),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop('trash'),
+          child: Text(context.t.moveToTrash),
+        ),
+      ],
+    ),
+  );
+  if (choice == null) return false;
+  if (choice == 'trash') {
+    await database.moveCardToTrash(card.id);
+  } else {
+    await database.deleteCardForever(card.id);
+  }
+  return true;
 }
