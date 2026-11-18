@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart' show compute;
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,18 +12,36 @@ import '../photos.dart';
 import '../system_settings.dart';
 import '../theme.dart';
 import '../transfer/archive_format.dart';
+import '../transfer/crypto.dart';
 import '../transfer/import.dart';
 import '../ui.dart';
 
 /// Legge e controlla il file scelto; gira in un isolate (il file può essere
 /// grande). Funzione a sé: una funzione interna si porterebbe dietro lo stato
 /// della schermata, che non può passare a un altro isolate.
-Future<({ArchiveHeader header, ArchiveContent? content})> _readArchiveFile(
-    String path) async {
+typedef _ReadFile = ({
+  ArchiveHeader header,
+  ArchiveContent? content,
+  Uint8List? encrypted,
+});
+
+Future<_ReadFile> _readArchiveFile(String path) async {
   final file = decodeArchive(await File(path).readAsBytes());
-  if (file.header.encrypted) return (header: file.header, content: null);
-  return (header: file.header, content: decodeContent(file.content));
+  if (file.header.encrypted) {
+    return (header: file.header, content: null, encrypted: file.content);
+  }
+  return (
+    header: file.header,
+    content: decodeContent(file.content),
+    encrypted: null,
+  );
 }
+
+/// Decifra e legge il contenuto; anche questo in un isolate (la chiave
+/// richiede circa un secondo di calcolo).
+Future<ArchiveContent> _decryptArchive(
+  ({Uint8List data, Map<String, Object?> params, String password}) a,
+) async => decodeContent(await decryptContent(a.data, a.params, a.password));
 
 /// "Importa tutto" da Sezioni → Archivio: scelta del file, lettura, poi la
 /// schermata del riepilogo. Restituisce true se si è importato qualcosa.
@@ -62,7 +82,7 @@ Future<bool> startImportAll(
   }
 
   // Lettura e controlli in un isolate: il file può essere grande.
-  final ({ArchiveHeader header, ArchiveContent? content}) read;
+  final _ReadFile read;
   try {
     read = await compute(_readArchiveFile, path);
   } on TransferException catch (e) {
@@ -81,22 +101,25 @@ Future<bool> startImportAll(
     );
     return false;
   }
-  final content = read.content;
-  if (content == null) {
-    fail(
-      'Il file è protetto da password: l\'apertura dei file protetti '
-      'arriverà presto.',
-    );
-    return false;
-  }
+  var content = read.content;
   if (!context.mounted) return false;
+  final encrypted = read.encrypted;
+  if (content == null && encrypted != null) {
+    // Videate 34 e 35: si chiede la password finché non è giusta.
+    content = await Navigator.of(context).push<ArchiveContent>(
+      MaterialPageRoute(
+        builder: (_) =>
+            PasswordScreen(header: read.header, encrypted: encrypted),
+      ),
+    );
+    if (content == null || !context.mounted) return false;
+  }
+  final ready = content;
+  if (ready == null) return false;
   final done = await Navigator.of(context).push<bool>(
     MaterialPageRoute(
-      builder: (_) => ImportScreen(
-        database: database,
-        header: read.header,
-        content: content,
-      ),
+      builder: (_) =>
+          ImportScreen(database: database, header: read.header, content: ready),
     ),
   );
   return done == true;
@@ -163,8 +186,8 @@ class _ImportScreenState extends State<ImportScreen> {
     final others = kept == 0
         ? ''
         : kept == 1
-            ? " L'altra è anche nel file e resta."
-            : ' Le altre $kept sono anche nel file e restano.';
+        ? " L'altra è anche nel file e resta."
+        : ' Le altre $kept sono anche nel file e restano.';
     return '$trashed $stays per 30 giorni.$others';
   }
 
@@ -199,8 +222,10 @@ class _ImportScreenState extends State<ImportScreen> {
                 style: TextStyle(color: c.text, fontSize: 15.5),
               ),
               const SizedBox(height: 8),
-              Text(_trashText(p),
-                  style: TextStyle(color: c.muted, fontSize: 14)),
+              Text(
+                _trashText(p),
+                style: TextStyle(color: c.muted, fontSize: 14),
+              ),
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -495,6 +520,164 @@ class _ImportScreenState extends State<ImportScreen> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Videate 34 e 35: file protetto da password. Restituisce il contenuto
+/// decifrato; la password errata si può ritentare senza limiti
+/// (decisione 103).
+class PasswordScreen extends StatefulWidget {
+  const PasswordScreen({
+    super.key,
+    required this.header,
+    required this.encrypted,
+  });
+
+  final ArchiveHeader header;
+  final Uint8List encrypted;
+
+  @override
+  State<PasswordScreen> createState() => _PasswordScreenState();
+}
+
+class _PasswordScreenState extends State<PasswordScreen> {
+  final _password = TextEditingController();
+  bool _show = false;
+  bool _busy = false;
+  bool _wrong = false;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _open() async {
+    setState(() {
+      _busy = true;
+      _wrong = false;
+    });
+    try {
+      final content = await compute(_decryptArchive, (
+        data: widget.encrypted,
+        params: widget.header.encryption!,
+        password: _password.text,
+      ));
+      if (mounted) Navigator.of(context).pop(content);
+    } on WrongPasswordException {
+      if (mounted) setState(() => _wrong = true);
+    } on TransferException catch (e) {
+      _fail(e.message);
+    } catch (_) {
+      _fail('Il file protetto è rovinato.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _fail(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppColors.of(context);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Importa tutto')),
+      body: Column(
+        children: [
+          if (_busy) const LinearProgressIndicator(),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: c.infoBg,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lock_outline, color: c.infoText),
+                          const SizedBox(width: 10),
+                          Text(
+                            'File protetto da password',
+                            style: TextStyle(
+                              color: c.infoText,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Creato il ${longDate(widget.header.createdAt)}',
+                        style: TextStyle(color: c.infoText, fontSize: 13.5),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Inserisci la password scelta da chi ha creato il file.',
+                  style: TextStyle(color: c.muted, fontSize: 14.5),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: _password,
+                  autofocus: true,
+                  obscureText: !_show,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  onChanged: (_) => setState(() => _wrong = false),
+                  onSubmitted: (_) {
+                    if (_password.text.isNotEmpty && !_busy) _open();
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: _wrong
+                        ? 'Password errata. Controlla e riprova.'
+                        : null,
+                    suffixIcon: IconButton(
+                      tooltip: _show ? 'Nascondi' : 'Mostra',
+                      icon: Icon(
+                        _show
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                      onPressed: () => setState(() => _show = !_show),
+                    ),
+                  ),
+                ),
+                if (_wrong) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Il file non è stato modificato. Puoi riprovare.',
+                    style: TextStyle(color: c.muted, fontSize: 13.5),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: FilledButton(
+            // A campo vuoto il pulsante resta spento (decisione 103).
+            onPressed: _password.text.isEmpty || _busy ? null : _open,
+            child: Text(_busy ? 'Apertura…' : 'Apri il file'),
           ),
         ),
       ),

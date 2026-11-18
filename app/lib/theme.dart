@@ -206,8 +206,13 @@ ThemeData buildTheme(Brightness brightness) {
     ),
     snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
     badgeTheme: BadgeThemeData(backgroundColor: c.danger),
+    // Interruttore: spento grigio ben visibile, acceso blu (videate 1, 14, 33).
     switchTheme: SwitchThemeData(
       trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+      thumbColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected) ? Colors.white : c.surface),
+      trackColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected) ? c.primary : c.muted.withValues(alpha: 0.45)),
     ),
   );
 }

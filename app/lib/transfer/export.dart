@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart' show compute;
 import '../data/database.dart';
 import '../photos.dart';
 import 'archive_format.dart';
+import 'crypto.dart';
 
 /// Riepilogo per il passo 1: quante tessere e sezioni, peso stimato.
 class ExportSummary {
@@ -93,20 +94,35 @@ Future<ArchiveContent> collectBackup(AppDatabase db, PhotoStore store) async {
   );
 }
 
-/// Costruisce il file del backup completo. La compressione gira in un
-/// isolate, per non bloccare l'interfaccia.
+/// Costruisce il file del backup completo, protetto da [password] se c'è
+/// (decisione 103). Compressione e cifratura girano in un isolate, per non
+/// bloccare l'interfaccia.
 Future<Uint8List> buildBackupFile(AppDatabase db, PhotoStore store,
-    {DateTime? now}) async {
+    {DateTime? now, String? password}) async {
   final content = await collectBackup(db, store);
-  final header =
-      ArchiveHeader(kind: ArchiveKind.all, createdAt: now ?? DateTime.now());
-  return compute(_encodeBackup, (header: header, content: content));
+  return compute(_encodeBackup, (
+    createdAt: now ?? DateTime.now(),
+    content: content,
+    password: password,
+  ));
 }
 
 /// Funzione a sé, perché all'isolate passino solo i dati (vedi
 /// `_readArchiveFile` in import_screen.dart).
-Uint8List _encodeBackup(({ArchiveHeader header, ArchiveContent content}) a) =>
-    encodeArchive(a.header, encodeContent(a.content));
+Future<Uint8List> _encodeBackup(
+    ({DateTime createdAt, ArchiveContent content, String? password}) a) async {
+  final plain = encodeContent(a.content);
+  final password = a.password;
+  if (password == null) {
+    return encodeArchive(
+        ArchiveHeader(kind: ArchiveKind.all, createdAt: a.createdAt), plain);
+  }
+  final enc = await encryptContent(plain, password);
+  return encodeArchive(
+      ArchiveHeader(
+          kind: ArchiveKind.all, createdAt: a.createdAt, encryption: enc.params),
+      enc.data);
+}
 
 /// Scrive il file in una cartella temporanea e restituisce il percorso.
 Future<String> writeTempFile(Directory dir, String name, Uint8List bytes) async {

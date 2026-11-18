@@ -46,6 +46,7 @@ dependencies:
   path: ^1.9.1
   flutter_svg: ^2.4.0
   archive: ^4.7.1
+  cryptography: ^2.9.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

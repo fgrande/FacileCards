@@ -119,3 +119,12 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Nella conferma di "Sostituisci tutto" il numero di tessere che finiscono nel cestino è quello vero: quelle presenti anche nel file restano in uso (visto provando sull'emulatore, dove il testo del disegno sarebbe stato sbagliato).
 - Trovato provando: la lettura in un isolate falliva perché la funzione interna si portava dietro lo stato della schermata; ora le funzioni passate agli isolate sono a sé, anche nell'esportazione.
 - Fabio ha provato "Importa tutto" sul telefono: funziona.
+
+## 18 novembre 2026: password sui file (tappa 3 di 3)
+
+- **Password facoltativa** (decisione 103). In "Esporta tutto", passo 2: interruttore "Proteggi con password", password scritta due volte (almeno 8 caratteri, controllo in tempo reale) e l'avvertenza che senza password il file non si riapre. Il contenuto (dati e foto, compresi nomi e numero di tessere) si cifra con AES-256-GCM; la chiave si ricava dalla password con PBKDF2-HMAC-SHA256 a 200.000 ripetizioni (sul Mac 50.000 richiedono circa 150 ms: circa un secondo su un telefono medio). Sale, nonce e ripetizioni stanno nell'intestazione in chiaro, così un file protetto si riconosce senza password e il numero si potrà alzare in futuro. Libreria `cryptography`, Dart puro. Nessuna chiave dentro l'app.
+- **All'importazione** un file protetto apre la richiesta della password (videate 34, 35): pulsante spento a campo vuoto, password errata ritentabile senza limiti, "Il file non è stato modificato". Decifratura in un isolate. I parametri letti dal file sono controllati (per esempio un numero di ripetizioni enorme, che bloccherebbe il telefono, si rifiuta).
+- Provato sull'emulatore: file salvato con la password, intestazione leggibile e nessun nome in chiaro nel contenuto; password sbagliata segnalata, password giusta porta al riepilogo.
+- L'interruttore spento era quasi invisibile su fondo bianco: ora ha un grigio ben leggibile in tutta l'app.
+- Con questo "Esporta tutto" e "Importa tutto" sono completi. Prossimo passo proposto: condivisione di una sezione e di una tessera, con lo stesso file.
+- Fabio ha provato la password sul telefono: funziona.
