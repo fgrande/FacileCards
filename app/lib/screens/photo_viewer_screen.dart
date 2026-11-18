@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../l10n/l10n.dart';
 import '../photos.dart';
 import '../theme.dart';
 import 'photo_picker.dart';
@@ -49,13 +50,15 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
 
   Future<void> _put(String side) async {
     final bytes = await pickCardPhoto(context,
-        title: 'Foto del ${side == PhotoSide.front ? 'fronte' : 'retro'}');
+        title: side == PhotoSide.front
+            ? context.t.photoFront
+            : context.t.photoBack);
     if (bytes == null || !mounted) return;
     setState(() => _busy = true);
     try {
       final name = await widget.store.write(widget.card.id, side, bytes);
       if (name == null) {
-        _message('Il file scelto non è un\'immagine.');
+        _message(tr.notAnImage);
         return;
       }
       final old = await widget.database.setCardPhoto(widget.card.id, side, name);
@@ -74,19 +77,18 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   /// Videata 39: conferma dentro il visualizzatore.
   Future<void> _delete(String side) async {
     if (side == PhotoSide.front && widget.frontRequired) {
-      _message('Per la tessera generica la foto del fronte è obbligatoria: '
-          'puoi sostituirla.');
+      _message(context.t.frontPhotoRequired);
       return;
     }
-    final which = side == PhotoSide.front ? 'del fronte' : 'del retro';
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) {
         final error = Theme.of(context).colorScheme.error;
         return AlertDialog(
-          title: Text('Eliminare la foto $which?'),
-          content: const Text(
-              'La foto viene rimossa da questa tessera.\nIl codice resta com\'è.'),
+          title: Text(side == PhotoSide.front
+              ? context.t.deleteFrontPhotoQuestion
+              : context.t.deleteBackPhotoQuestion),
+          content: Text(context.t.deletePhotoExplain),
           actionsAlignment: MainAxisAlignment.center,
           actionsOverflowDirection: VerticalDirection.down,
           actionsOverflowButtonSpacing: 4,
@@ -96,12 +98,12 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
               child: FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: error),
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Elimina foto'),
+                child: Text(context.t.deletePhoto),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Annulla'),
+              child: Text(context.t.cancel),
             ),
           ],
         );
@@ -147,14 +149,14 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                   const SizedBox(height: 12),
                   Text(
                     side == PhotoSide.front
-                        ? 'Nessuna foto del fronte'
-                        : 'Nessuna foto del retro',
+                        ? context.t.noFrontPhoto
+                        : context.t.noBackPhoto,
                     style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: _busy ? null : () => _put(side),
-                    child: const Text('Aggiungi foto'),
+                    child: Text(context.t.addPhoto),
                   ),
                 ],
               ),
@@ -189,10 +191,10 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
           final photos = snap.data ?? const <String, String>{};
           final current = photos[_side];
           final hint = current == null
-              ? (_page == 0 ? 'Scorri per vedere il retro' : 'Scorri per tornare al fronte')
+              ? (_page == 0 ? context.t.swipeToBack : context.t.swipeToFront)
               : (_page == 0
-                  ? 'Scorri per vedere il retro · pizzica per ingrandire\nTocca la foto per chiudere'
-                  : 'Scorri per tornare al fronte · pizzica per ingrandire\nTocca la foto per chiudere');
+                  ? context.t.swipeToBackZoom
+                  : context.t.swipeToFrontZoom);
           return Scaffold(
             backgroundColor: const Color(0xFF0B0F16),
             appBar: AppBar(
@@ -236,7 +238,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                               child: FilledButton.tonalIcon(
                                 onPressed: () => _put(_side),
                                 icon: const Icon(Icons.photo_camera_outlined),
-                                label: const Text('Sostituisci'),
+                                label: Text(context.t.replace),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -247,7 +249,7 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                                 ),
                                 onPressed: () => _delete(_side),
                                 icon: const Icon(Icons.delete_outline),
-                                label: const Text('Elimina foto'),
+                                label: Text(context.t.deletePhoto),
                               ),
                             ),
                           ],

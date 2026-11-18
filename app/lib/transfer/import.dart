@@ -93,7 +93,9 @@ Future<int> runImport(
   final plan = await planImport(db, content, mode);
   if (!plan.fits) {
     throw TransferException(
-      'Con questa importazione saresti a ${plan.result} tessere: il limite è ${plan.limit}.',
+      TransferProblem.limitExceeded,
+      count: plan.result,
+      limit: plan.limit,
     );
   }
 

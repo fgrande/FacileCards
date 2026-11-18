@@ -6,8 +6,10 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show compute;
+import 'package:intl/intl.dart' show NumberFormat;
 
 import '../data/database.dart';
+import '../l10n/l10n.dart';
 import '../photos.dart';
 import 'archive_format.dart';
 import 'crypto.dart';
@@ -26,14 +28,20 @@ String backupFileName(DateTime now) =>
     'FacileCards-${now.year}-${now.month.toString().padLeft(2, '0')}-'
     '${now.day.toString().padLeft(2, '0')}$archiveExtension';
 
-/// "circa 12 MB", "circa 300 KB".
-String sizeLabel(int bytes) {
+/// "12 MB", "4,5 MB", "300 KB" (decimali secondo la lingua).
+String sizeValue(int bytes) {
   if (bytes >= 1024 * 1024) {
     final mb = bytes / (1024 * 1024);
-    return 'circa ${mb < 10 ? mb.toStringAsFixed(1).replaceAll('.', ',') : mb.round()} MB';
+    final n = mb < 10
+        ? NumberFormat('0.0', dateLocale).format(mb)
+        : '${mb.round()}';
+    return '$n MB';
   }
-  return 'circa ${(bytes / 1024).ceil().clamp(1, 1023)} KB';
+  return '${(bytes / 1024).ceil().clamp(1, 1023)} KB';
 }
+
+/// "circa 12 MB", "circa 300 KB".
+String sizeLabel(int bytes) => tr.aboutSize(sizeValue(bytes));
 
 /// Cosa si esporta: tutto (backup), una sezione o una tessera
 /// (condivisione, decisione 23).

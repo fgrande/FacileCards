@@ -7,6 +7,7 @@ import '../barcode_support.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../photos.dart';
 import '../theme.dart';
 import '../ui.dart';
@@ -83,7 +84,7 @@ class _CardScreenState extends State<CardScreen> {
   Future<void> _addPhoto(Map<String, String> photos) async {
     final store = _store;
     if (store == null) return;
-    final bytes = await pickCardPhoto(context, title: 'Foto del fronte');
+    final bytes = await pickCardPhoto(context, title: context.t.photoFront);
     if (bytes == null || !mounted) return;
     final name = await store.write(_card.id, PhotoSide.front, bytes);
     if (name == null) return;
@@ -136,7 +137,7 @@ class _CardScreenState extends State<CardScreen> {
     final chosen = await showDialog<db.Section>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Sposta nella sezione'),
+        title: Text(context.t.moveToSection),
         children: [
           for (final s in sections)
             SimpleDialogOption(
@@ -178,7 +179,7 @@ class _CardScreenState extends State<CardScreen> {
           ),
           onPressed: store == null ? null : () => _addPhoto(photos),
           icon: const Icon(Icons.photo_camera_outlined),
-          label: const Text('Aggiungi foto'),
+          label: Text(context.t.addPhoto),
         );
       }
       return InkWell(
@@ -205,7 +206,7 @@ class _CardScreenState extends State<CardScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      photos.length == 1 ? '1 foto' : '${photos.length} foto',
+                      context.t.photoCount(photos.length),
                       style: TextStyle(
                         color: scheme.onInverseSurface,
                         fontSize: 12,
@@ -235,20 +236,22 @@ class _CardScreenState extends State<CardScreen> {
     final choice = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Eliminare «${_card.name}»?'),
-        content: const Text('Nel cestino resta recuperabile per 30 giorni.'),
+        title: Text(context.t.deleteCardQuestion(_card.name)),
+        content: Text(
+          context.t.trashRecoverable(db.AppDatabase.trashDays),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annulla'),
+            child: Text(context.t.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop('forever'),
-            child: const Text('Elimina definitivamente'),
+            child: Text(context.t.deleteForever),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop('trash'),
-            child: const Text('Sposta nel cestino'),
+            child: Text(context.t.moveToTrash),
           ),
         ],
       ),
@@ -302,9 +305,9 @@ class _CardScreenState extends State<CardScreen> {
     // L'intestazione ha il colore della tipologia, uguale nei due temi.
     final headerColor = Color(type?.color ?? TypeLogo.fallbackColor);
     final details = [
-      if (holder != null) _info('Intestatario', holder),
-      if (expires != null) _info('Scadenza', longDate(expires)),
-      if (notes != null) _info('Note', notes),
+      if (holder != null) _info(context.t.holder, holder),
+      if (expires != null) _info(context.t.expiry, longDate(expires)),
+      if (notes != null) _info(context.t.notes, notes),
     ];
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -320,7 +323,7 @@ class _CardScreenState extends State<CardScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Preferita',
+            tooltip: context.t.favorite,
             icon: Icon(
               _favorite ? Icons.star_rounded : Icons.star_outline_rounded,
               color: _favorite ? const Color(0xFFFFD166) : Colors.white,
@@ -330,12 +333,12 @@ class _CardScreenState extends State<CardScreen> {
           ),
           if (widget.type != null)
             IconButton(
-              tooltip: 'Modifica',
+              tooltip: context.t.edit,
               icon: const Icon(Icons.edit_outlined),
               onPressed: _edit,
             ),
           IconButton(
-            tooltip: 'Condividi',
+            tooltip: context.t.share,
             icon: const Icon(Icons.share),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -348,7 +351,7 @@ class _CardScreenState extends State<CardScreen> {
             ),
           ),
           IconButton(
-            tooltip: 'Elimina',
+            tooltip: context.t.delete,
             icon: const Icon(Icons.delete_outline),
             onPressed: _delete,
           ),
@@ -436,7 +439,7 @@ class _CardScreenState extends State<CardScreen> {
                   children: [
                     if (barcode == null)
                       Text(
-                        'Formato non disegnabile: ${c.codeFormat}',
+                        context.t.formatNotDrawable(c.codeFormat),
                         style: const TextStyle(color: Colors.black),
                       )
                     else
@@ -452,7 +455,7 @@ class _CardScreenState extends State<CardScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                         errorBuilder: (context, error) => Text(
-                          'Codice non valido: $error',
+                          context.t.invalidCode(error.toString()),
                           style: const TextStyle(color: Colors.black),
                         ),
                       ),
@@ -492,14 +495,14 @@ class _CardScreenState extends State<CardScreen> {
                         minimumSize: const Size.fromHeight(64),
                       ),
                       onPressed: _move,
-                      child: const Text('Sposta'),
+                      child: Text(context.t.move),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 14),
               Text(
-                'Inserita il ${longDate(c.createdAt)}',
+                context.t.addedOn(longDate(c.createdAt)),
                 style: TextStyle(color: colors.muted, fontSize: 13),
               ),
             ],

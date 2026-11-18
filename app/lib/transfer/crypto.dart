@@ -10,6 +10,7 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 
+import '../l10n/l10n.dart';
 import 'archive_format.dart';
 
 /// Ripetizioni di PBKDF2: circa un secondo su un telefono medio. Il valore
@@ -34,9 +35,9 @@ class WrongPasswordException implements Exception {
 /// motivo (videata 33).
 String? passwordProblem(String password, String repeat) {
   if (password.length < minPasswordLength) {
-    return 'Almeno $minPasswordLength caratteri.';
+    return tr.passwordTooShort(minPasswordLength);
   }
-  if (password != repeat) return 'Le due password non sono uguali.';
+  if (password != repeat) return tr.passwordsDiffer;
   return null;
 }
 
@@ -86,7 +87,7 @@ Future<Uint8List> decryptContent(
     salt = base64Decode(params['salt'] as String);
     nonce = base64Decode(params['nonce'] as String);
   } catch (_) {
-    throw const TransferException('Il file protetto è rovinato.');
+    throw const TransferException(TransferProblem.protectedDamaged);
   }
   if (params['cipher'] != _cipherName ||
       params['kdf'] != _kdfName ||
@@ -96,7 +97,7 @@ Future<Uint8List> decryptContent(
       salt.length < 8 ||
       nonce.length != 12 ||
       data.length < 16) {
-    throw const TransferException('Il file protetto è rovinato.');
+    throw const TransferException(TransferProblem.protectedDamaged);
   }
   final key = await _deriveKey(password, salt, iterations);
   final box = SecretBox(

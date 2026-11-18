@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
 import '../transfer/export.dart' show ExportTarget;
@@ -48,12 +49,12 @@ class _SectionsScreenState extends State<SectionsScreen> {
   Future<void> _create() async {
     final name = await showDialog<String>(
       context: context,
-      builder: (_) => const _NameDialog(title: 'Nuova sezione'),
+      builder: (_) => _NameDialog(title: context.t.newSection),
     );
     if (name == null) return;
     final ok = await widget.database.createSection(name);
     if (!ok) {
-      _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+      _message(tr.sectionNameTaken);
     }
     _load();
   }
@@ -72,12 +73,13 @@ class _SectionsScreenState extends State<SectionsScreen> {
   Future<void> _rename(db.Section s) async {
     final name = await showDialog<String>(
       context: context,
-      builder: (_) => _NameDialog(title: 'Rinomina sezione', initial: s.name),
+      builder: (_) =>
+          _NameDialog(title: context.t.renameSection, initial: s.name),
     );
     if (name == null) return;
     final ok = await widget.database.renameSection(s.id, name);
     if (!ok) {
-      _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+      _message(tr.sectionNameTaken);
     }
     _load();
   }
@@ -88,16 +90,16 @@ class _SectionsScreenState extends State<SectionsScreen> {
       final ok = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Eliminare «${s.name}»?'),
-          content: const Text('La sezione è vuota.'),
+          title: Text(context.t.deleteQuestion(s.name)),
+          content: Text(context.t.sectionEmpty),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Annulla'),
+              child: Text(context.t.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Elimina'),
+              child: Text(context.t.delete),
             ),
           ],
         ),
@@ -121,13 +123,13 @@ class _SectionsScreenState extends State<SectionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String count(int n) => n == 1 ? '1 tessera' : '$n tessere';
+    String count(int n) => context.t.cardCount(n);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sezioni'),
+        title: Text(context.t.menuSections),
         actions: [
           IconButton(
-            tooltip: 'Nuova sezione',
+            tooltip: context.t.newSection,
             icon: const Icon(Icons.add, size: 30),
             onPressed: _create,
           ),
@@ -146,9 +148,9 @@ class _SectionsScreenState extends State<SectionsScreen> {
                   title: Text(s.name),
                   subtitle: Text(
                     s.isDefault
-                        ? '${count(_counts[s.id] ?? 0)} · non eliminabile'
+                        ? context.t.notDeletable(count(_counts[s.id] ?? 0))
                         : ((_counts[s.id] ?? 0) == 0
-                              ? 'Vuota'
+                              ? context.t.emptySection
                               : count(_counts[s.id]!)),
                   ),
                   trailing: Row(
@@ -156,7 +158,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
                     children: [
                       if ((_counts[s.id] ?? 0) > 0)
                         IconButton(
-                          tooltip: 'Condividi',
+                          tooltip: context.t.share,
                           icon: Icon(
                             Icons.share,
                             color: AppColors.of(context).primary,
@@ -171,18 +173,18 @@ class _SectionsScreenState extends State<SectionsScreen> {
                         },
                         itemBuilder: (_) => [
                           if ((_counts[s.id] ?? 0) > 0)
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'share',
-                              child: Text('Condividi'),
+                              child: Text(context.t.share),
                             ),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'rename',
-                            child: Text('Rinomina'),
+                            child: Text(context.t.rename),
                           ),
                           if (!s.isDefault)
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
-                              child: Text('Elimina sezione'),
+                              child: Text(context.t.deleteSection),
                             ),
                         ],
                       ),
@@ -231,7 +233,7 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
     final chosen = await showDialog<db.Section>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Sezione'),
+        title: Text(context.t.section),
         children: [
           for (final s in widget.others)
             SimpleDialogOption(
@@ -247,21 +249,21 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
   @override
   Widget build(BuildContext context) {
     final n = widget.count;
-    final tessere = n == 1 ? '1 tessera' : '$n tessere';
+    final tessere = context.t.cardCount(n);
     return AlertDialog(
-      title: Text('Eliminare «${widget.section.name}»?'),
+      title: Text(context.t.deleteQuestion(widget.section.name)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('La sezione contiene $tessere. Cosa ne facciamo?'),
+          Text(context.t.sectionContains(tessere)),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Icon(
               _move ? Icons.radio_button_checked : Icons.radio_button_off,
             ),
-            title: const Text('Sposta le tessere in un\'altra sezione'),
-            subtitle: _move ? Text('Sezione: ${_target.name}') : null,
+            title: Text(context.t.moveCardsToOtherSection),
+            subtitle: _move ? Text(context.t.sectionIs(_target.name)) : null,
             onTap: () => setState(() => _move = true),
           ),
           if (_move)
@@ -269,7 +271,7 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: _chooseTarget,
-                child: const Text('Cambia sezione'),
+                child: Text(context.t.changeSection),
               ),
             ),
           ListTile(
@@ -277,15 +279,15 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
             leading: Icon(
               !_move ? Icons.radio_button_checked : Icons.radio_button_off,
             ),
-            title: const Text('Elimina anche le tessere'),
-            subtitle: const Text('Restano 30 giorni nel cestino.'),
+            title: Text(context.t.deleteCardsToo),
+            subtitle: Text(context.t.staysInTrash(db.AppDatabase.trashDays)),
             onTap: () => setState(() => _move = false),
           ),
           const SizedBox(height: 8),
           Text(
             _move
-                ? 'Risultato: $tessere in ${_target.name}'
-                : 'Risultato: $tessere nel cestino',
+                ? context.t.resultIn(tessere, _target.name)
+                : context.t.resultInTrash(tessere),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -293,13 +295,13 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+          child: Text(context.t.cancel),
         ),
         FilledButton(
           onPressed: () =>
               Navigator.of(context)
                   .pop(_DeleteChoice(_move ? _target.id : null)),
-          child: const Text('Elimina sezione'),
+          child: Text(context.t.deleteSection),
         ),
       ],
     );
@@ -333,17 +335,17 @@ class _NameDialogState extends State<_NameDialog> {
         controller: _controller,
         autofocus: true,
         textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(hintText: 'Es. Famiglia'),
+        decoration: InputDecoration(hintText: context.t.sectionNameHint),
         onSubmitted: (v) => Navigator.of(context).pop(v),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+          child: Text(context.t.cancel),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_controller.text),
-          child: const Text('Salva'),
+          child: Text(context.t.save),
         ),
       ],
     );

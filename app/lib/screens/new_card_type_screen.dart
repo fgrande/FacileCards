@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
+import '../l10n/l10n.dart';
 import '../ui.dart';
 import 'new_card_data_screen.dart';
 import 'search_field.dart';
@@ -34,10 +35,10 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
   Widget _tile(db.CardType t) => ListTile(
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
     leading: TypeLogo(type: t, size: 44),
-    title: Text(t.name),
+    title: Text(typeName(t)),
     subtitle: hasFixedName(t)
         ? null
-        : Text(t.isGeneric ? 'Codice e foto del fronte' : 'Nome a scelta'),
+        : Text(t.isGeneric ? context.t.genericTypeHint : context.t.freeNameHint),
     trailing: const Chevron(),
     onTap: () => _open(t),
   );
@@ -45,14 +46,14 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuova tessera')),
+      appBar: AppBar(title: Text(context.t.newCard)),
       body: FutureBuilder<List<db.CardType>>(
         future: _types,
         builder: (context, snap) {
           final all = snap.data ?? const <db.CardType>[];
           final q = _query.trim().toLowerCase();
           final shown = all
-              .where((t) => t.name.toLowerCase().contains(q))
+              .where((t) => typeName(t).toLowerCase().contains(q))
               .toList();
           final shops = shown.where(hasFixedName).toList();
           final others = shown
@@ -65,16 +66,16 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
                 child: SearchField(
-                  hint: 'Cerca un negozio',
+                  hint: context.t.searchShop,
                   onChanged: (v) => setState(() => _query = v),
                 ),
               ),
               if (shops.isNotEmpty) ...[
-                const GroupHeader('Negozi'),
+                GroupHeader(context.t.shops),
                 TileGroup(indent: 74, children: shops.map(_tile).toList()),
               ],
               if (others.isNotEmpty || generic.isNotEmpty) ...[
-                const GroupHeader('Altre tessere'),
+                GroupHeader(context.t.otherCards),
                 TileGroup(
                   indent: 74,
                   children: [...others, ...generic].map(_tile).toList(),

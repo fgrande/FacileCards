@@ -2,12 +2,12 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../expiry.dart';
+import '../l10n/l10n.dart';
 import '../links.dart';
 import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'about_screen.dart';
-import 'setup_screen.dart' show languageNames;
 
 /// Videata 14: impostazioni. Gli stessi valori della configurazione iniziale,
 /// più tema, versione e collegamenti.
@@ -56,25 +56,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final value = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Il tuo nome'),
+        title: Text(context.t.yourName),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            hintText: 'Facoltativo',
-            helperText: 'Lo proponiamo come intestatario delle nuove tessere.',
+          decoration: InputDecoration(
+            hintText: context.t.optional,
+            helperText: context.t.setupNameHelp,
           ),
           onSubmitted: (v) => Navigator.of(context).pop(v),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annulla'),
+            child: Text(context.t.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(controller.text),
-            child: const Text('Salva'),
+            child: Text(context.t.save),
           ),
         ],
       ),
@@ -115,18 +115,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
   Future<void> _chooseLanguage() async {
-    final chosen = await _choose('Lingua', {
-      for (final l in db.supportedLanguages) l: languageNames[l]!,
+    final chosen = await _choose(context.t.language, {
+      for (final l in supportedLanguages) l: languageNames[l]!,
     }, _language);
     if (chosen == null || chosen == _language) return;
     await _db.setSetting(db.SettingKeys.language, chosen);
     setState(() => _language = chosen);
-    _message('Le traduzioni arriveranno presto: per ora l\'app è in italiano.');
+    setAppLanguage(chosen); // l'app cambia subito
   }
 
   Future<void> _chooseTheme() async {
     final current = appThemeMode.value;
-    final chosen = await _choose('Tema', {
+    final chosen = await _choose(context.t.theme, {
       for (final m in [ThemeMode.system, ThemeMode.light, ThemeMode.dark])
         m: themeModeLabel(m),
     }, current);
@@ -155,7 +155,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _open(String url) async {
-    if (!await openUrl(url)) _message('Non c\'è un\'app per aprire $url');
+    if (!await openUrl(url)) _message(tr.noAppToOpen(url));
   }
 
   Widget _row({
@@ -175,34 +175,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Impostazioni')),
+      appBar: AppBar(title: Text(context.t.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
-          const GroupHeader('Personali'),
+          GroupHeader(context.t.settingsPersonal),
           TileGroup(
             indent: 16,
             children: [
               _row(
-                title: 'Il tuo nome',
-                subtitle: _name.isEmpty ? 'Non indicato' : _name,
+                title: context.t.yourName,
+                subtitle: _name.isEmpty ? context.t.nameNotSet : _name,
                 onTap: _editName,
               ),
               _row(
-                title: 'Lingua',
+                title: context.t.language,
                 subtitle: languageNames[_language] ?? _language,
                 onTap: _chooseLanguage,
               ),
               _row(
-                title: 'Tema',
+                title: context.t.theme,
                 subtitle: themeModeLabel(appThemeMode.value),
                 onTap: _chooseTheme,
               ),
               _row(
-                title: 'Avviso scadenze',
+                title: context.t.expiryAlerts,
                 subtitle: _expiry.enabled
-                    ? '${_expiry.days} giorni prima · tocca per cambiare'
-                    : 'Spento',
+                    ? context.t.expiryAlertsOn(_expiry.days)
+                    : context.t.off,
                 onTap: _expiry.enabled ? _chooseDays : null,
                 trailing: Switch(
                   value: _expiry.enabled,
@@ -211,7 +211,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          const GroupHeader('Versione'),
+          GroupHeader(context.t.settingsVersion),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -224,7 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Versione gratuita',
+                    context.t.freeVersion,
                     style: TextStyle(
                       color: c.infoText,
                       fontSize: 17,
@@ -233,7 +233,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '$_count di ${db.AppDatabase.freeCardLimit} tessere · con annunci',
+                    context.t.freeVersionCount(
+                      _count,
+                      db.AppDatabase.freeCardLimit,
+                    ),
                     style: TextStyle(color: c.infoText, fontSize: 13.5),
                   ),
                   const SizedBox(height: 6),
@@ -247,10 +250,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        onPressed: () => _message(
-                          'L\'acquisto arriverà con la pubblicazione su Google Play.',
-                        ),
-                        child: const Text('Passa a Pro · 2,00 €  →'),
+                        onPressed: () => _message(context.t.purchaseComing),
+                        child: Text(context.t.upgradePro),
                       ),
                       const Spacer(),
                       TextButton(
@@ -261,10 +262,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        onPressed: () => _message(
-                          'L\'acquisto arriverà con la pubblicazione su Google Play.',
-                        ),
-                        child: const Text('Ripristina acquisto'),
+                        onPressed: () => _message(context.t.purchaseComing),
+                        child: Text(context.t.restorePurchase),
                       ),
                     ],
                   ),
@@ -272,23 +271,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          const GroupHeader('Altro'),
+          GroupHeader(context.t.settingsOther),
           TileGroup(
             indent: 16,
             children: [
               if (contactEmail != null)
                 _row(
-                  title: 'Richiedi una tessera mancante',
+                  title: context.t.requestMissingCard,
                   onTap: () => _open(
-                    'mailto:$contactEmail?subject=Tessera mancante in FacileCards',
+                    'mailto:$contactEmail?subject=${Uri.encodeComponent(context.t.missingCardSubject)}',
                   ),
                 ),
               _row(
-                title: 'Informativa sulla privacy',
+                title: context.t.privacyPolicy,
                 onTap: () => _open(privacyUrl),
               ),
               _row(
-                title: 'Informazioni su FacileCards',
+                title: context.t.aboutApp,
                 onTap: () => Navigator.of(
                   context,
                 ).push(MaterialPageRoute(builder: (_) => const AboutScreen())),
@@ -317,7 +316,7 @@ class _DaysDialogState extends State<_DaysDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Giorni di preavviso'),
+      title: Text(context.t.expiryDaysTitle),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -342,11 +341,11 @@ class _DaysDialogState extends State<_DaysDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Annulla'),
+          child: Text(context.t.cancel),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_days),
-          child: const Text('Salva'),
+          child: Text(context.t.save),
         ),
       ],
     );

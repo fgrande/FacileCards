@@ -4,6 +4,7 @@ import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../system_settings.dart';
 import 'card_screen.dart';
 import 'data_screen.dart';
@@ -126,7 +127,7 @@ class _CardListScreenState extends State<CardListScreen> {
     final warn = _expiry.enabled
         ? expiryLabel(c.expiresOn, now, days: _expiry.days)
         : null;
-    final expired = warn == 'Scaduta';
+    final expired = warn == tr.expired;
     final subtitle = warn != null
         ? Text(
             warn,
@@ -174,7 +175,7 @@ class _CardListScreenState extends State<CardListScreen> {
     final flagged = cardsToFlag(all, DateTime.now(), _expiry);
     if (flagged.isEmpty) return const SizedBox.shrink();
     return IconButton(
-      tooltip: 'Scadenze',
+      tooltip: context.t.expiryTooltip,
       icon: Badge(
         label: Text('${flagged.length}'),
         child: const Icon(Icons.notifications_outlined),
@@ -196,28 +197,25 @@ class _CardListScreenState extends State<CardListScreen> {
     final q = _query.trim().toLowerCase();
     final cards = all.where((c) => _matches(c, q)).toList()..sort(_compare);
     if (all.isEmpty) {
-      return const [
+      return [
         Padding(
-          padding: EdgeInsets.all(32),
-          child: Text(
-            'Nessuna tessera. Tocca + e scegli il negozio.',
-            textAlign: TextAlign.center,
-          ),
+          padding: const EdgeInsets.all(32),
+          child: Text(context.t.listEmpty, textAlign: TextAlign.center),
         ),
       ];
     }
     if (cards.isEmpty) {
-      return const [
+      return [
         Padding(
-          padding: EdgeInsets.all(32),
-          child: Text('Nessuna tessera trovata.', textAlign: TextAlign.center),
+          padding: const EdgeInsets.all(32),
+          child: Text(context.t.listNoMatch, textAlign: TextAlign.center),
         ),
       ];
     }
     final favorites = cards.where((c) => c.favorite).toList();
     final widgets = <Widget>[];
     if (favorites.isNotEmpty) {
-      widgets.add(const GroupHeader('Preferite'));
+      widgets.add(GroupHeader(context.t.favorites));
       widgets.add(
         TileGroup(
           children: [
@@ -231,8 +229,11 @@ class _CardListScreenState extends State<CardListScreen> {
       if (rest.isNotEmpty) {
         widgets.add(
           GroupHeader(
-            'Tutte le tessere',
-            trailing: '${all.length} di ${db.AppDatabase.freeCardLimit}',
+            context.t.allCards,
+            trailing: context.t.countOfLimit(
+              all.length,
+              db.AppDatabase.freeCardLimit,
+            ),
           ),
         );
         widgets.add(TileGroup(children: [for (final c in rest) _row(c, now)]));
@@ -254,7 +255,7 @@ class _CardListScreenState extends State<CardListScreen> {
         widgets.add(
           GroupHeader(
             _sections[id]?.name ?? '',
-            trailing: n == 1 ? '1 tessera' : '$n tessere',
+            trailing: context.t.cardCount(n),
           ),
         );
         widgets.add(
@@ -352,8 +353,8 @@ class _CardListScreenState extends State<CardListScreen> {
       ),
       child: Row(
         children: [
-          option('Tutte', _ViewMode.all),
-          option('Per sezione', _ViewMode.bySection),
+          option(context.t.viewAll, _ViewMode.all),
+          option(context.t.viewBySection, _ViewMode.bySection),
         ],
       ),
     );
@@ -362,9 +363,12 @@ class _CardListScreenState extends State<CardListScreen> {
   /// Menu a pillola per l'ordinamento.
   Widget _sortButton(AppColors c) => PopupMenuButton<_SortMode>(
     onSelected: _setSort,
-    itemBuilder: (_) => const [
-      PopupMenuItem(value: _SortMode.lastUsed, child: Text('Ultimo utilizzo')),
-      PopupMenuItem(value: _SortMode.name, child: Text('Nome A–Z')),
+    itemBuilder: (_) => [
+      PopupMenuItem(
+        value: _SortMode.lastUsed,
+        child: Text(context.t.sortLastUsed),
+      ),
+      PopupMenuItem(value: _SortMode.name, child: Text(context.t.sortName)),
     ],
     child: Container(
       height: 36,
@@ -378,7 +382,9 @@ class _CardListScreenState extends State<CardListScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            _sort == _SortMode.lastUsed ? 'Ultimo utilizzo' : 'Nome A–Z',
+            _sort == _SortMode.lastUsed
+                ? context.t.sortLastUsed
+                : context.t.sortName,
             style: TextStyle(color: c.text, fontSize: 14),
           ),
           const SizedBox(width: 4),
@@ -414,10 +420,16 @@ class _CardListScreenState extends State<CardListScreen> {
                   'data' => _openData(),
                   _ => _openSettings(),
                 },
-                itemBuilder: (_) => const [
-                  PopupMenuItem(value: 'sections', child: Text('Sezioni')),
-                  PopupMenuItem(value: 'data', child: Text('Dati')),
-                  PopupMenuItem(value: 'settings', child: Text('Impostazioni')),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'sections',
+                    child: Text(context.t.menuSections),
+                  ),
+                  PopupMenuItem(value: 'data', child: Text(context.t.menuData)),
+                  PopupMenuItem(
+                    value: 'settings',
+                    child: Text(context.t.settingsTitle),
+                  ),
                 ],
               ),
             ],
@@ -428,7 +440,7 @@ class _CardListScreenState extends State<CardListScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
                 child: SearchField(
-                  hint: 'Cerca tessere',
+                  hint: context.t.searchCards,
                   onChanged: (v) => setState(() => _query = v),
                 ),
               ),
@@ -449,7 +461,7 @@ class _CardListScreenState extends State<CardListScreen> {
             width: 60,
             height: 60,
             child: FloatingActionButton(
-              tooltip: 'Aggiungi una tessera',
+              tooltip: context.t.addCard,
               onPressed: _add,
               child: const Icon(Icons.add, size: 34),
             ),

@@ -1,0 +1,7 @@
+# Traduzioni (analisi, sezione 5.8): un file per lingua in lib/l10n/,
+# l'italiano è il riferimento. Aggiungere una lingua = aggiungere un file.
+arb-dir: lib/l10n
+template-arb-file: app_it.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

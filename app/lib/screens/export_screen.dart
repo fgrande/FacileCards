@@ -7,6 +7,7 @@ import '../data/database.dart' as db;
 import '../photos.dart';
 import '../system_settings.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 import '../links.dart';
 import '../transfer/archive_format.dart';
 import '../transfer/crypto.dart';
@@ -51,19 +52,17 @@ class _ExportScreenState extends State<ExportScreen> {
   bool get _single => widget.target.kind == ArchiveKind.card;
 
   String get _title => switch (widget.target.kind) {
-    ArchiveKind.all => 'Esporta tutto',
-    ArchiveKind.section => 'Condividi sezione',
-    ArchiveKind.card => 'Condividi tessera',
+    ArchiveKind.all => context.t.exportAll,
+    ArchiveKind.section => context.t.shareSection,
+    ArchiveKind.card => context.t.shareCard,
   };
 
-  String _cards(int n) => n == 1 ? '1 tessera' : '$n tessere';
+  String _cards(int n) => context.t.cardCount(n);
 
   /// Messaggio che accompagna il file condiviso (decisione 64).
   String get _shareMessage => _single
-      ? 'Ti invio la tessera «${widget.name}».\n'
-            'Per aprirla serve FacileCards:\n$storeUrl'
-      : 'Ti invio le tessere della sezione «${widget.name}».\n'
-            'Per aprirle serve FacileCards:\n$storeUrl';
+      ? context.t.shareMessageCard(widget.name, storeUrl)
+      : context.t.shareMessageSection(widget.name, storeUrl);
 
   String get _fileName =>
       _backup ? backupFileName(DateTime.now()) : sharedFileName(widget.name);
@@ -138,10 +137,10 @@ class _ExportScreenState extends State<ExportScreen> {
         DateTime.now().toIso8601String(),
       );
       if (!mounted) return;
-      _message('Copia salvata.');
+      _message(context.t.copySaved);
       Navigator.of(context).pop(true);
     } catch (_) {
-      _message('Non sono riuscito a salvare la copia. Riprova.');
+      _message(context.t.copySaveFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -149,26 +148,21 @@ class _ExportScreenState extends State<ExportScreen> {
 
   Future<void> _share() async {
     setState(() => _busy = true);
+    // Testi presi prima delle attese.
+    final t = context.t;
+    final title = _backup ? t.saveCopyTitle : _title;
+    final text = _backup ? t.backupShareText : _shareMessage;
     try {
       final path = await _prepareFile(_fileName);
-      if (!_backup) {
-        await shareFile(path: path, title: _title, text: _shareMessage);
-        return;
-      }
-      await shareFile(
-        path: path,
-        title: 'Salva la copia delle tessere',
-        text:
-            'Copia di tutte le mie tessere di FacileCards. '
-            'Si apre con l\'app FacileCards, da "Importa da file".',
-      );
+      await shareFile(path: path, title: title, text: text);
+      if (!_backup) return;
       // Non si sa se l'altra app salverà davvero: la si conta come copia fatta.
       await _db.setSetting(
         db.SettingKeys.lastBackupAt,
         DateTime.now().toIso8601String(),
       );
     } catch (_) {
-      _message('Non sono riuscito a preparare la copia. Riprova.');
+      _message(t.copyPrepareFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -197,7 +191,7 @@ class _ExportScreenState extends State<ExportScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Passo $_step di 2',
+          context.t.stepOf(_step, 2),
           style: TextStyle(color: c.muted, fontSize: 12.5),
         ),
       ],
@@ -255,7 +249,7 @@ class _ExportScreenState extends State<ExportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _backup ? 'Tutte le tue tessere' : widget.name,
+                      _backup ? context.t.allYourCards : widget.name,
                       style: TextStyle(
                         color: c.infoText,
                         fontSize: 17,
@@ -267,10 +261,10 @@ class _ExportScreenState extends State<ExportScreen> {
                           ? '…'
                           : _backup
                           ? '${_cards(s.cards)} · '
-                                '${s.sections == 1 ? '1 sezione' : '${s.sections} sezioni'} · '
+                                '${context.t.sectionCount(s.sections)} · '
                                 '${sizeLabel(s.bytes)}'
                           : _single
-                          ? 'Tessera · ${sizeLabel(s.bytes)}'
+                          ? '${context.t.categoryOther} · ${sizeLabel(s.bytes)}'
                           : '${_cards(s.cards)} · ${sizeLabel(s.bytes)}',
                       style: TextStyle(color: c.infoText, fontSize: 13.5),
                     ),
@@ -283,10 +277,10 @@ class _ExportScreenState extends State<ExportScreen> {
         const SizedBox(height: 22),
         Text(
           _backup
-              ? 'Stai per creare una copia di tutte le tue tessere'
+              ? context.t.aboutToBackup
               : _single
-              ? 'Stai per consegnare questa tessera ad altre persone'
-              : 'Stai per consegnare queste tessere ad altre persone',
+              ? context.t.aboutToShareCard
+              : context.t.aboutToShareCards,
           style: TextStyle(color: c.text, fontSize: 20),
         ),
         const SizedBox(height: 22),
@@ -295,23 +289,23 @@ class _ExportScreenState extends State<ExportScreen> {
         else ...[
           _point(
             c,
-            'Il file contiene tutto',
-            'Codici, intestatari, note e foto.',
+            context.t.backupPoint1,
+            context.t.backupPoint1Detail,
           ),
           _point(
             c,
-            'Chi lo apre può usare le tessere',
-            'Alla cassa valgono come le tue.',
+            context.t.backupPoint2,
+            context.t.validAtCheckout,
           ),
           _point(
             c,
-            'Conservalo in un posto sicuro',
-            'Un archivio personale, non una chat.',
+            context.t.backupPoint3,
+            context.t.backupPoint3Detail,
           ),
           _point(
             c,
-            'Puoi proteggerlo con una password',
-            'Al prossimo passaggio, se vuoi.',
+            context.t.backupPoint4,
+            context.t.backupPoint4Detail,
           ),
         ],
         if (!_backup && (s?.bytes ?? 0) > largeShareBytes) _largeWarning(c, s!),
@@ -324,20 +318,20 @@ class _ExportScreenState extends State<ExportScreen> {
     _point(
       c,
       _single
-          ? 'Chi riceve il file può usare la tessera'
-          : 'Chi riceve il file può usare le tessere',
-      'Alla cassa valgono come le tue.',
+          ? context.t.sharePoint1Card
+          : context.t.sharePoint1Cards,
+      context.t.validAtCheckout,
     ),
     _point(
       c,
-      _single ? 'Vede tutto ciò che contiene' : 'Vede tutto ciò che contengono',
-      'Codici, intestatario, note e foto.',
+      _single ? context.t.sharePoint2Card : context.t.sharePoint2Cards,
+      context.t.sharePoint2Detail,
     ),
-    _point(c, 'Può inoltrarlo a chiunque', 'FacileCards non può impedirlo.'),
+    _point(c, context.t.sharePoint3, context.t.sharePoint3Detail),
     _point(
       c,
-      'Non puoi ritirarlo',
-      'Una volta inviato, il file non è più tuo.',
+      context.t.sharePoint4,
+      context.t.sharePoint4Detail,
     ),
   ];
 
@@ -350,8 +344,7 @@ class _ExportScreenState extends State<ExportScreen> {
       borderRadius: BorderRadius.circular(12),
     ),
     child: Text(
-      'Il file è grande (${sizeLabel(s.bytes)}), soprattutto per le foto: '
-      'alcune app potrebbero non riuscire a inviarlo.',
+      context.t.largeFileWarning(sizeLabel(s.bytes)),
       style: TextStyle(color: c.warn, fontSize: 13.5, height: 1.4),
     ),
   );
@@ -384,12 +377,10 @@ class _ExportScreenState extends State<ExportScreen> {
                 Expanded(
                   child: Text(
                     _backup
-                        ? 'Ho capito: sto esportando ${_cards(n)} in un unico file.'
+                        ? context.t.understoodBackup(_cards(n))
                         : _single
-                        ? 'Ho capito: sto condividendo la tessera «${widget.name}» '
-                              'con le persone a cui invierò il file.'
-                        : 'Ho capito: sto condividendo ${_cards(n)} della sezione '
-                              '«${widget.name}» con le persone a cui invierò il file.',
+                        ? context.t.understoodCard(widget.name)
+                        : context.t.understoodSection(_cards(n), widget.name),
                     style: TextStyle(color: c.text, fontSize: 15.5),
                   ),
                 ),
@@ -398,7 +389,7 @@ class _ExportScreenState extends State<ExportScreen> {
           ),
         ),
         if (!_backup) ...[
-          const GroupHeader('Messaggio che accompagna il file'),
+          GroupHeader(context.t.messageWithFile),
           _messagePreview(c),
         ],
         const SizedBox(height: 14),
@@ -412,8 +403,7 @@ class _ExportScreenState extends State<ExportScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              'Se la dimentichi non potrai riaprire il file.\n'
-              'Nessuno può recuperarla, nemmeno noi.',
+              context.t.passwordForgetWarning,
               style: TextStyle(color: c.warn, fontSize: 13.5, height: 1.4),
             ),
           ),
@@ -421,8 +411,7 @@ class _ExportScreenState extends State<ExportScreen> {
         if (!_backup) ...[
           const SizedBox(height: 16),
           Text(
-            'Si aprirà il pannello di condivisione del telefono: '
-            'scegli tu l\'app e il destinatario.',
+            context.t.sharePanelHint,
             style: TextStyle(color: c.muted, fontSize: 13.5),
           ),
         ],
@@ -466,7 +455,7 @@ class _ExportScreenState extends State<ExportScreen> {
                 ),
                 if (s != null)
                   Text(
-                    sizeLabel(s.bytes).replaceFirst('circa ', ''),
+                    sizeValue(s.bytes),
                     style: TextStyle(color: c.muted, fontSize: 13),
                   ),
               ],
@@ -487,7 +476,7 @@ class _ExportScreenState extends State<ExportScreen> {
         decoration: InputDecoration(
           labelText: label,
           suffixIcon: IconButton(
-            tooltip: _showPassword ? 'Nascondi' : 'Mostra',
+            tooltip: _showPassword ? context.t.hide : context.t.show,
             icon: Icon(
               _showPassword
                   ? Icons.visibility_off_outlined
@@ -515,22 +504,22 @@ class _ExportScreenState extends State<ExportScreen> {
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
-              'Proteggi con password',
+              context.t.protectWithPassword,
               style: TextStyle(color: c.text, fontSize: 16.5),
             ),
             subtitle: Text(
               _backup
-                  ? 'Facoltativa.'
-                  : 'Facoltativa: chi apre il file dovrà inserirla.',
+                  ? context.t.passwordOptional
+                  : context.t.passwordOptionalShare,
             ),
             value: _protect,
             onChanged: _busy ? null : (v) => setState(() => _protect = v),
           ),
           if (_protect) ...[
             const SizedBox(height: 6),
-            _passwordField(_password, 'Password'),
+            _passwordField(_password, context.t.password),
             const SizedBox(height: 10),
-            _passwordField(_repeat, 'Ripeti la password'),
+            _passwordField(_repeat, context.t.repeatPassword),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -551,10 +540,10 @@ class _ExportScreenState extends State<ExportScreen> {
                   Expanded(
                     child: Text(
                       problem == null
-                          ? 'Password uguali · almeno $minPasswordLength caratteri'
+                          ? context.t.passwordsOk(minPasswordLength)
                           : (typed
                                 ? problem
-                                : 'Almeno $minPasswordLength caratteri, scritta due volte.'),
+                                : context.t.passwordRule(minPasswordLength)),
                       style: TextStyle(
                         color: problem == null
                             ? c.success
@@ -603,34 +592,34 @@ class _ExportScreenState extends State<ExportScreen> {
                         onPressed: ready && _summary!.cards > 0
                             ? () => setState(() => _step = 2)
                             : null,
-                        child: const Text('Continua'),
+                        child: Text(context.t.continueButton),
                       ),
                       const SizedBox(height: 4),
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Annulla'),
+                        child: Text(context.t.cancel),
                       ),
                     ]
                   : [
                       if (_backup) ...[
                         FilledButton(
                           onPressed: ready && _canExport ? _save : null,
-                          child: const Text('Salva sul telefono'),
+                          child: Text(context.t.saveOnPhone),
                         ),
                         const SizedBox(height: 10),
                         OutlinedButton(
                           onPressed: ready && _canExport ? _share : null,
-                          child: const Text('Condividi…'),
+                          child: Text(context.t.shareEllipsis),
                         ),
                       ] else
                         FilledButton(
                           onPressed: ready && _canExport ? _share : null,
-                          child: const Text('Condividi'),
+                          child: Text(context.t.share),
                         ),
                       const SizedBox(height: 4),
                       TextButton(
                         onPressed: _busy ? null : _backToStepOne,
-                        child: const Text('Indietro'),
+                        child: Text(context.t.back),
                       ),
                     ],
             ),

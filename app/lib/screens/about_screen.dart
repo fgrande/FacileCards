@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../l10n/l10n.dart';
 import '../links.dart';
 import '../system_settings.dart';
 import '../theme.dart';
@@ -13,7 +14,7 @@ class AboutScreen extends StatelessWidget {
   Future<void> _open(BuildContext context, String url) async {
     if (!await openUrl(url) && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Non c\'è un\'app per aprire $url')));
+          SnackBar(content: Text(context.t.noAppToOpen(url))));
     }
   }
 
@@ -21,7 +22,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Informazioni')),
+      appBar: AppBar(title: Text(context.t.aboutTitle)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
@@ -36,13 +37,13 @@ class AboutScreen extends StatelessWidget {
           FutureBuilder<String>(
             future: appVersion(),
             builder: (context, snap) => Text(
-              snap.hasData ? 'Versione ${snap.data}' : '',
+              snap.hasData ? context.t.versionNumber(snap.data!) : '',
               textAlign: TextAlign.center,
               style: TextStyle(color: c.muted, fontSize: 14),
             ),
           ),
           const SizedBox(height: 20),
-          Text('Sviluppata da Fabio Grande',
+          Text(context.t.developedBy('Fabio Grande'),
               textAlign: TextAlign.center,
               style: TextStyle(color: c.text, fontSize: 15)),
           const SizedBox(height: 28),
@@ -51,9 +52,7 @@ class AboutScreen extends StatelessWidget {
             child: Panel(
               padding: const EdgeInsets.all(18),
               child: Text(
-                'FacileCards è un\'app indipendente e non è affiliata, '
-                'sponsorizzata né approvata dalle aziende citate. I nomi e i '
-                'marchi appartengono ai rispettivi proprietari.',
+                context.t.trademarkDisclaimer,
                 style: TextStyle(color: c.text, fontSize: 14.5, height: 1.5),
               ),
             ),
@@ -63,12 +62,12 @@ class AboutScreen extends StatelessWidget {
             indent: 16,
             children: [
               ListTile(
-                title: const Text('Informativa sulla privacy'),
+                title: Text(context.t.privacyPolicy),
                 trailing: const Chevron(),
                 onTap: () => _open(context, privacyUrl),
               ),
               ListTile(
-                title: const Text('Sito di FacileCards'),
+                title: Text(context.t.website),
                 subtitle: const Text(siteLabel),
                 trailing: const Chevron(),
                 onTap: () => _open(context, siteUrl),

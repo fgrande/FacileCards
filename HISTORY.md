@@ -161,3 +161,13 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Il codice nativo copia subito il file (il permesso di leggerlo dura poco) e lo tiene finché Flutter non lo chiede; Flutter lo chiede dopo che l'elenco è comparso, così l'avvio resta rapido, e dopo la configurazione iniziale se è il primo avvio. Avvio dell'attività cambiato in `singleTask`: con l'app già aperta il file arriva a quella, invece di aprirne una seconda dentro l'app di provenienza.
 - "Condividi verso FacileCards" (pannello Condividi delle altre app) lasciato fuori: si aggiunge solo se le prove con le app vere lo richiedono.
 - Fabio ha provato "Apri con FacileCards" sul telefono: funziona.
+
+## 18 novembre 2026: traduzioni (inglese e francese)
+
+- Tutti i testi dell'interfaccia (357) sono passati dai sorgenti ai file di traduzione di Flutter (`lib/l10n/app_it.arb`, `app_en.arb`, `app_fr.arb`), come chiede l'analisi (5.8): niente più testi nel codice. Fatto adesso perché ogni schermata nuova avrebbe aggiunto lavoro.
+- La lingua si cambia dalle impostazioni e si applica subito; nella configurazione iniziale l'interfaccia segue la lingua man mano che la si sceglie. Prima della configurazione vale la lingua del telefono (o l'inglese).
+- I messaggi d'errore dei file `.facilecards` nascono in un isolate, dove la lingua scelta non è nota: ora la logica lancia un codice (`TransferProblem`) e il testo si ricava quando si mostra.
+- Le tipologie generiche (Biblioteca, Palestra, Tessera generica) si traducono; i nomi dei negozi sono marchi e restano come sono (analisi, 5.8). Restano com'erano anche i nomi delle sezioni: sono dati dell'utente.
+- Inglese britannico e date all'europea (decisione 115). Trovato e corretto sull'emulatore: in francese lo zero prende il singolare, e il testo "1 carte" compariva anche con zero tessere.
+- Le traduzioni le ho scritte io: da far rileggere prima della pubblicazione.
+- Fabio ha provato le traduzioni sul telefono: funziona.

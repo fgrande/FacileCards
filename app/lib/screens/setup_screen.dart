@@ -1,16 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
-
-/// Lingua proposta: quella del telefono se è tra quelle offerte, altrimenti
-/// l'inglese.
-String proposedLanguage(String phoneLanguage) =>
-    db.supportedLanguages.contains(phoneLanguage) ? phoneLanguage : 'en';
-
-/// Nome di ogni lingua scritto nella lingua stessa.
-const languageNames = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'};
 
 /// Videata 1: configurazione iniziale, solo al primo avvio (decisione 65).
 class SetupScreen extends StatefulWidget {
@@ -28,8 +21,7 @@ class _SetupScreenState extends State<SetupScreen> {
   static const _maxDays = 90;
 
   final _name = TextEditingController();
-  late final String _phoneLanguage = proposedLanguage(
-      WidgetsBinding.instance.platformDispatcher.locale.languageCode);
+  late final String _phoneLanguage = phoneLanguage();
   late String _language = _phoneLanguage;
   bool _alerts = true;
   int _days = db.AppDatabase.defaultExpiryDays;
@@ -45,9 +37,9 @@ class _SetupScreenState extends State<SetupScreen> {
     final chosen = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Lingua'),
+        title: Text(context.t.language),
         children: [
-          for (final l in db.supportedLanguages)
+          for (final l in supportedLanguages)
             SimpleDialogOption(
               onPressed: () => Navigator.of(context).pop(l),
               child: Text(languageNames[l]!),
@@ -55,7 +47,11 @@ class _SetupScreenState extends State<SetupScreen> {
         ],
       ),
     );
-    if (chosen != null && mounted) setState(() => _language = chosen);
+    if (chosen != null && mounted) {
+      setState(() => _language = chosen);
+      // L'interfaccia cambia lingua subito, già in questa schermata.
+      setAppLanguage(chosen);
+    }
   }
 
   Future<void> _start() async {
@@ -85,22 +81,21 @@ class _SetupScreenState extends State<SetupScreen> {
                   const SizedBox(height: 24),
                   const Center(child: AppMark(height: 96)),
                   const SizedBox(height: 16),
-                  Text('Benvenuto in FacileCards',
+                  Text(context.t.setupWelcome,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.w700)),
                   const SizedBox(height: 8),
-                  Text('Tre domande e sei pronto.',
+                  Text(context.t.setupIntro,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: muted)),
                   const SizedBox(height: 32),
                   TextField(
                     controller: _name,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Il tuo nome (facoltativo)',
-                      helperText:
-                          'Lo proponiamo come intestatario delle nuove tessere.',
+                    decoration: InputDecoration(
+                      labelText: context.t.setupNameLabel,
+                      helperText: context.t.setupNameHelp,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -109,9 +104,9 @@ class _SetupScreenState extends State<SetupScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: InputDecorator(
                       decoration: InputDecoration(
-                        labelText: 'Lingua',
+                        labelText: context.t.language,
                         helperText: _language == _phoneLanguage
-                            ? 'È quella del telefono. Puoi cambiarla.'
+                            ? context.t.setupLanguageHelp
                             : null,
                         suffixIcon: const Icon(Icons.expand_more),
                       ),
@@ -123,16 +118,15 @@ class _SetupScreenState extends State<SetupScreen> {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Avvisami delle scadenze'),
-                          subtitle: const Text(
-                              'Per le tessere che hanno una data di scadenza'),
+                          title: Text(context.t.expiryAlertsTitle),
+                          subtitle: Text(context.t.expiryAlertsSubtitle),
                           value: _alerts,
                           onChanged: (v) => setState(() => _alerts = v),
                         ),
                         const Divider(height: 1),
                         ListTile(
                           enabled: _alerts,
-                          title: const Text('Giorni di preavviso'),
+                          title: Text(context.t.expiryDaysTitle),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -161,7 +155,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Text('Potrai cambiare tutto dalle impostazioni.',
+                  Text(context.t.setupLater,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: muted)),
                 ],
@@ -174,7 +168,7 @@ class _SetupScreenState extends State<SetupScreen> {
                 height: 50,
                 child: FilledButton(
                   onPressed: _saving ? null : _start,
-                  child: const Text('Inizia'),
+                  child: Text(context.t.setupStart),
                 ),
               ),
             ),

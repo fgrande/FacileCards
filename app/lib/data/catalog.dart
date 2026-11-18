@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../l10n/l10n.dart';
 import 'database.dart';
 
 /// Catalogo iniziale delle tipologie. L'identificativo è stabile: serve a
@@ -42,12 +43,21 @@ CardTypesCompanion _t(
 /// Le tipologie a nome fisso (negozi) precompilano il nome della tessera.
 bool hasFixedName(CardType t) => t.category == 'fedelta';
 
+/// Nome della tipologia da mostrare: i negozi sono marchi e non si
+/// traducono; le tipologie generiche sì.
+String typeName(CardType t) => switch (t.id) {
+      'biblioteca' => tr.typeLibrary,
+      'palestra' => tr.typeGym,
+      'generic' => tr.typeGeneric,
+      _ => t.name,
+    };
+
 /// Che tessera è, come si mostra nell'elenco per sezione (videata 3).
 String categoryLabel(CardType? t) => switch (t?.category) {
-      'fedelta' => 'Tessera fedeltà',
-      'biblioteca' => 'Biblioteca',
-      'palestra' => 'Palestra',
-      _ => 'Tessera',
+      'fedelta' => tr.categoryLoyalty,
+      'biblioteca' => tr.typeLibrary,
+      'palestra' => tr.typeGym,
+      _ => tr.categoryOther,
     };
 
 /// Impronta del catalogo: cambia se cambia qualunque campo di qualunque

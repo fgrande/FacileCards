@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../barcode_support.dart';
+import '../l10n/l10n.dart';
 import '../gallery_scan.dart';
 import '../system_settings.dart';
 
@@ -151,14 +152,14 @@ class _ScanScreenState extends State<ScanScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Inquadra il codice della tessera',
-                    style: TextStyle(
+                Text(context.t.scanFrame,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
-                const Text('Si legge da solo: non serve toccare nulla.',
-                    style: TextStyle(color: Colors.white70)),
+                Text(context.t.scanAuto,
+                    style: const TextStyle(color: Colors.white70)),
                 if (label != null) ...[
                   const SizedBox(height: 4),
                   Text(label, style: const TextStyle(color: Colors.white70)),
@@ -167,11 +168,11 @@ class _ScanScreenState extends State<ScanScreen> {
                 TextButton.icon(
                   onPressed: _toggleTorch,
                   icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
-                  label: const Text('Torcia'),
+                  label: Text(context.t.torch),
                 ),
                 TextButton(
                   onPressed: _manual,
-                  child: const Text('Inserisci il codice a mano'),
+                  child: Text(context.t.enterCodeManually),
                 ),
               ],
             ),
@@ -194,30 +195,30 @@ class _ScanScreenState extends State<ScanScreen> {
             const Icon(Icons.no_photography_outlined, size: 56),
             const SizedBox(height: 16),
             Text(
-              denied ? 'Serve la fotocamera' : 'La fotocamera non è disponibile',
+              denied ? context.t.cameraNeeded : context.t.cameraUnavailable,
               style: Theme.of(context).textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               denied
-                  ? 'Per leggere il codice di una tessera FacileCards usa la fotocamera. Le immagini restano sul telefono.'
-                  : 'Puoi leggere il codice da una foto della galleria o scriverlo a mano.',
+                  ? context.t.cameraNeededDetail
+                  : context.t.cameraUnavailableDetail,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             if (denied)
               FilledButton(
                 onPressed: openAppSettings,
-                child: const Text('Apri impostazioni'),
+                child: Text(context.t.openSettings),
               ),
             TextButton(
               onPressed: _manual,
-              child: const Text('Inserisci il codice a mano'),
+              child: Text(context.t.enterCodeManually),
             ),
             TextButton(
               onPressed: _fromGallery,
-              child: const Text('Leggi da una foto della galleria'),
+              child: Text(context.t.readFromGalleryPhoto),
             ),
           ],
         ),
@@ -230,7 +231,7 @@ class _ScanScreenState extends State<ScanScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Scansiona il codice'),
+        title: Text(context.t.scanTitle),
         backgroundColor: Colors.transparent,
       ),
       body: MobileScanner(

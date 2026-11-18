@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
 
@@ -66,7 +67,7 @@ class _TrashScreenState extends State<TrashScreen> {
     if (chosen == null) return;
     final ok = await d.recoverCard(card.id, chosen);
     if (!ok) {
-      _message('Non c\'è posto: hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere.');
+      _message(tr.noRoomLimit(db.AppDatabase.freeCardLimit));
     }
   }
 
@@ -74,16 +75,16 @@ class _TrashScreenState extends State<TrashScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Eliminare «${card.name}» per sempre?'),
-        content: const Text('Non si potrà più recuperare.'),
+        title: Text(context.t.deleteForeverQuestion(card.name)),
+        content: Text(context.t.cannotRecover),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annulla'),
+            child: Text(context.t.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Elimina'),
+            child: Text(context.t.delete),
           ),
         ],
       ),
@@ -98,7 +99,7 @@ class _TrashScreenState extends State<TrashScreen> {
     final now = DateTime.now();
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Cestino')),
+      appBar: AppBar(title: Text(context.t.trash)),
       body: StreamBuilder<List<db.Card>>(
         stream: widget.database.watchTrash(),
         builder: (context, snap) {
@@ -122,14 +123,13 @@ class _TrashScreenState extends State<TrashScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
                     child: Text(
-                        'Le tessere eliminate restano qui ${db.AppDatabase.trashDays} giorni. '
-                        'Tocca una tessera per recuperarla.',
+                        context.t.trashExplain(db.AppDatabase.trashDays),
                         style: TextStyle(color: c.muted, fontSize: 13.5)),
                   ),
                   if (cards.isEmpty)
                     Padding(
                       padding: const EdgeInsets.all(32),
-                      child: Text('Il cestino è vuoto.',
+                      child: Text(context.t.trashEmpty,
                           textAlign: TextAlign.center,
                           style: TextStyle(color: c.muted)),
                     )
@@ -146,11 +146,14 @@ class _TrashScreenState extends State<TrashScreen> {
                                     type: types[card.typeId]!, name: card.name),
                             title: Text(card.name),
                             subtitle: Text(
-                              '${deletedLabel(card.deletedAt ?? now, now)} · era in ${names[card.sectionId] ?? ''}',
+                              context.t.wasIn(
+                                deletedLabel(card.deletedAt ?? now, now),
+                                names[card.sectionId] ?? '',
+                              ),
                             ),
                             onTap: () => _recover(card),
                             trailing: IconButton(
-                              tooltip: 'Elimina per sempre',
+                              tooltip: context.t.deleteForeverTooltip,
                               icon: const Icon(Icons.delete_forever_outlined),
                               onPressed: () => _deleteForever(card),
                             ),
@@ -210,7 +213,7 @@ class _RecoverSheetState extends State<_RecoverSheet> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-              child: Text('Recupera «${widget.cardName}» in…',
+              child: Text(context.t.restoreInto(widget.cardName),
                   style: TextStyle(
                       color: c.text, fontSize: 20, fontWeight: FontWeight.w500)),
             ),
@@ -240,8 +243,9 @@ class _RecoverSheetState extends State<_RecoverSheet> {
                   Expanded(
                     child: Text(
                       fits
-                          ? 'Dopo il recupero: $after di ${db.AppDatabase.freeCardLimit} tessere'
-                          : 'Hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere',
+                          ? context.t.afterRestore(
+                              after, db.AppDatabase.freeCardLimit)
+                          : context.t.limitReached(db.AppDatabase.freeCardLimit),
                       style: TextStyle(
                           color: fits ? c.success : c.warn, fontSize: 13.5),
                     ),
@@ -252,7 +256,7 @@ class _RecoverSheetState extends State<_RecoverSheet> {
             const SizedBox(height: 16),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(_selected),
-              child: const Text('Recupera'),
+              child: Text(context.t.restore),
             ),
           ],
         ),
@@ -288,8 +292,8 @@ class _RecoverSheetState extends State<_RecoverSheet> {
                       style: TextStyle(color: c.text, fontSize: 16)),
                   Text(
                     o.recreated
-                        ? 'Sezione eliminata: verrà ricreata'
-                        : (o.count == 1 ? '1 tessera' : '${o.count} tessere'),
+                        ? context.t.sectionWillBeRecreated
+                        : context.t.cardCount(o.count),
                     style: TextStyle(color: c.muted, fontSize: 13),
                   ),
                 ],

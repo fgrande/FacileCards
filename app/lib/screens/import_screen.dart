@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../data/database.dart' as db;
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../photos.dart';
 import '../system_settings.dart';
 import '../theme.dart';
@@ -49,12 +50,12 @@ void _fail(BuildContext context, String text) {
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Non si può importare'),
+      title: Text(context.t.cannotImport),
       content: Text(text),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Chiudi'),
+          child: Text(context.t.close),
         ),
       ],
     ),
@@ -82,7 +83,7 @@ Future<bool> startImportFromFile(
     if (context.mounted) {
       _fail(
         context,
-        'Non sono riuscito a leggere il file. Potrebbe essere troppo grande.',
+        context.t.fileReadFailedMaybeBig,
       );
     }
     return false;
@@ -109,8 +110,8 @@ Future<bool> openIncomingFile(
     _fail(
       context,
       incoming.error == 'too_big'
-          ? 'Il file è troppo grande.'
-          : 'Non sono riuscito a leggere il file.',
+          ? context.t.transferTooBig
+          : context.t.fileReadFailed,
     );
     return false;
   }
@@ -135,7 +136,7 @@ Future<bool> openArchiveFile(
     return false;
   } catch (_) {
     if (context.mounted) {
-      _fail(context, 'Non è un file di FacileCards, o è rovinato.');
+      _fail(context, context.t.transferNotFacileCardsOrDamaged);
     }
     return false;
   } finally {
@@ -160,7 +161,7 @@ Future<bool> openArchiveFile(
   // Un file di sezione ha una sola sezione; uno di tessera una sola tessera.
   if ((kind == ArchiveKind.section && ready.sections.length != 1) ||
       (kind == ArchiveKind.card && ready.cards.length != 1)) {
-    _fail(context, 'Il file è rovinato: il contenuto non è quello atteso.');
+    _fail(context, context.t.fileContentUnexpected);
     return false;
   }
   final done = await Navigator.of(context).push<bool>(
@@ -224,27 +225,18 @@ class _ImportScreenState extends State<ImportScreen> {
     _replan();
   }
 
-  String _cards(int n) => n == 1 ? '1 tessera' : '$n tessere';
+  String _cards(int n) => context.t.cardCount(n);
 
   /// Cosa finisce nel cestino sostituendo (videata 31).
   String _trashText(ImportPlan p) {
     final kept = p.current - p.toTrash;
     if (p.toTrash == 0) {
-      return 'Le tue tessere attuali sono tutte nel file: restano, con i dati del file.';
+      return context.t.replaceAllInFile;
     }
-    final trashed = switch ((p.toTrash, kept)) {
-      (1, 0) => 'La tua tessera attuale finirà nel cestino',
-      (_, 0) => 'Le tue ${p.toTrash} tessere attuali finiranno nel cestino',
-      (1, _) => '1 tessera attuale finirà nel cestino',
-      _ => '${p.toTrash} tessere attuali finiranno nel cestino',
-    };
-    final stays = p.toTrash == 1 ? 'e vi resterà' : 'e vi resteranno';
-    final others = kept == 0
-        ? ''
-        : kept == 1
-        ? " L'altra è anche nel file e resta."
-        : ' Le altre $kept sono anche nel file e restano.';
-    return '$trashed $stays per 30 giorni.$others';
+    const days = db.AppDatabase.trashDays;
+    if (kept == 0) return context.t.trashedAll(p.toTrash, days);
+    return '${context.t.trashedSome(p.toTrash, days)} '
+        '${context.t.othersStay(kept)}';
   }
 
   /// Videata 31: seconda conferma per "Sostituisci tutto".
@@ -266,7 +258,7 @@ class _ImportScreenState extends State<ImportScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Sostituire tutte le tessere?',
+                      context.t.replaceAllQuestion,
                       style: TextStyle(color: c.text, fontSize: 20),
                     ),
                   ),
@@ -274,7 +266,7 @@ class _ImportScreenState extends State<ImportScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Stai per sostituire ${_cards(p.current)} con ${p.incoming}.',
+                context.t.aboutToReplace(_cards(p.current), p.incoming),
                 style: TextStyle(color: c.text, fontSize: 15.5),
               ),
               const SizedBox(height: 8),
@@ -290,7 +282,7 @@ class _ImportScreenState extends State<ImportScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  'Le tessere del cestino non contano per il limite.',
+                  context.t.trashNotCounted,
                   style: TextStyle(color: c.warn, fontSize: 13),
                 ),
               ),
@@ -298,11 +290,11 @@ class _ImportScreenState extends State<ImportScreen> {
               FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: c.danger),
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Sostituisci ${p.current} con ${p.incoming}'),
+                child: Text(context.t.replaceXWithY(p.current, p.incoming)),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Annulla'),
+                child: Text(context.t.cancel),
               ),
             ],
           ),
@@ -332,7 +324,7 @@ class _ImportScreenState extends State<ImportScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            n == 1 ? 'Importata 1 tessera.' : 'Importate $n tessere.',
+            context.t.importedCount(n),
           ),
         ),
       );
@@ -340,7 +332,7 @@ class _ImportScreenState extends State<ImportScreen> {
     } on TransferException catch (e) {
       _message(e.message);
     } catch (_) {
-      _message('Importazione non riuscita: le tue tessere non sono cambiate.');
+      _message(tr.importFailedNothingChanged);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -410,21 +402,20 @@ class _ImportScreenState extends State<ImportScreen> {
     final String title;
     final String detail;
     if (!ok) {
-      title = 'Con questa scelta saresti a ${p.result} tessere';
-      detail =
-          'Il limite della versione gratuita è ${p.limit}.\nCon Pro non hai limiti.';
+      title = context.t.wouldBeOverLimit(p.result);
+      detail = context.t.freeLimitDetail(p.limit);
     } else if (p.mode == ImportMode.merge && p.added == 0) {
-      title = 'Tutte le tessere del file sono già presenti';
-      detail = 'Non c\'è niente da aggiungere.';
+      title = context.t.allAlreadyPresent;
+      detail = context.t.nothingToAdd;
     } else if (p.mode == ImportMode.merge) {
       title = p.alreadyPresent == 0
-          ? 'Aggiunge ${p.added == 1 ? '1 tessera nuova' : '${p.added} tessere nuove'}'
-          : 'Aggiunge ${p.added == 1 ? '1 tessera nuova' : '${p.added} tessere nuove'} '
-                '(${p.alreadyPresent} già present${p.alreadyPresent == 1 ? 'e' : 'i'})';
-      detail = 'Dopo l\'importazione: ${p.result} di ${p.limit} tessere';
+          ? context.t.addsNew(p.added)
+          : '${context.t.addsNew(p.added)} '
+                '(${context.t.alreadyPresent(p.alreadyPresent)})';
+      detail = context.t.afterImport(p.result, p.limit);
     } else {
-      title = 'Sostituisce ${_cards(p.current)} con ${p.incoming}';
-      detail = 'Dopo l\'importazione: ${p.result} di ${p.limit} tessere';
+      title = context.t.replacesXWithY(_cards(p.current), p.incoming);
+      detail = context.t.afterImport(p.result, p.limit);
     }
     final fg = ok ? c.success : c.danger;
     return Container(
@@ -468,7 +459,7 @@ class _ImportScreenState extends State<ImportScreen> {
     return PopScope(
       canPop: !_busy,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Importa tutto')),
+        appBar: AppBar(title: Text(context.t.importAll)),
         body: Column(
           children: [
             if (_busy) const LinearProgressIndicator(),
@@ -492,8 +483,8 @@ class _ImportScreenState extends State<ImportScreen> {
                             Expanded(
                               child: Text(
                                 owner == null
-                                    ? 'Archivio di FacileCards'
-                                    : 'Archivio di $owner',
+                                    ? context.t.archiveOfApp
+                                    : context.t.archiveOf(owner),
                                 style: TextStyle(
                                   color: c.infoText,
                                   fontSize: 17,
@@ -505,13 +496,13 @@ class _ImportScreenState extends State<ImportScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${sections == 1 ? '1 sezione' : '$sections sezioni'} · '
+                          '${context.t.sectionCount(sections)} · '
                           '${_cards(content.cards.length)}',
                           style: TextStyle(color: c.infoText, fontSize: 14),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Creato il ${longDate(widget.header.createdAt)}',
+                          context.t.createdOn(longDate(widget.header.createdAt)),
                           style: TextStyle(
                             color: c.infoText.withValues(alpha: 0.85),
                             fontSize: 13,
@@ -520,25 +511,24 @@ class _ImportScreenState extends State<ImportScreen> {
                       ],
                     ),
                   ),
-                  const GroupHeader('Come importarle'),
+                  GroupHeader(context.t.howToImport),
                   _modeOption(
                     c,
                     ImportMode.merge,
-                    'Unisci alle tessere esistenti',
-                    'Aggiunge solo quelle che mancano. Consigliato.',
+                    context.t.mergeWithExisting,
+                    context.t.mergeWithExistingDetail,
                   ),
                   _modeOption(
                     c,
                     ImportMode.replace,
-                    'Sostituisci tutto',
-                    'Le tessere attuali vanno nel cestino per 30 giorni.',
+                    context.t.replaceAll,
+                    context.t.replaceAllDetail(db.AppDatabase.trashDays),
                   ),
                   const SizedBox(height: 10),
                   if (p != null) _outcome(c, p),
                   const SizedBox(height: 16),
                   Text(
-                    'Se hai già ripristinato i dati con il backup di Android, '
-                    'le tessere già presenti non vengono duplicate.',
+                    context.t.androidBackupNote,
                     style: TextStyle(color: c.muted, fontSize: 13.5),
                   ),
                 ],
@@ -555,10 +545,8 @@ class _ImportScreenState extends State<ImportScreen> {
               children: [
                 if (p != null && !p.fits) ...[
                   FilledButton.tonal(
-                    onPressed: () => _message(
-                      'L\'acquisto arriverà con la pubblicazione su Google Play.',
-                    ),
-                    child: const Text('Scopri Pro · 2,00 €'),
+                    onPressed: () => _message(context.t.purchaseComing),
+                    child: Text(context.t.discoverPro),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -566,12 +554,12 @@ class _ImportScreenState extends State<ImportScreen> {
                   onPressed: canImport ? _import : null,
                   child: Text(
                     p == null || !p.fits
-                        ? 'Importa'
+                        ? context.t.importButton
                         : p.mode == ImportMode.merge
                         ? (p.added == 0
-                              ? 'Importa'
-                              : 'Importa ${_cards(p.added)}')
-                        : 'Sostituisci tutto',
+                              ? context.t.importButton
+                              : context.t.importCards(_cards(p.added)))
+                        : context.t.replaceAll,
                   ),
                 ),
               ],
@@ -629,7 +617,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
     } on TransferException catch (e) {
       _fail(e.message);
     } catch (_) {
-      _fail('Il file protetto è rovinato.');
+      _fail(tr.transferProtectedDamaged);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -644,7 +632,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Importa da file')),
+      appBar: AppBar(title: Text(context.t.importFromFile)),
       body: Column(
         children: [
           if (_busy) const LinearProgressIndicator(),
@@ -666,7 +654,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                           Icon(Icons.lock_outline, color: c.infoText),
                           const SizedBox(width: 10),
                           Text(
-                            'File protetto da password',
+                            context.t.passwordProtectedFile,
                             style: TextStyle(
                               color: c.infoText,
                               fontSize: 17,
@@ -677,7 +665,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Creato il ${longDate(widget.header.createdAt)}',
+                        context.t.createdOn(longDate(widget.header.createdAt)),
                         style: TextStyle(color: c.infoText, fontSize: 13.5),
                       ),
                     ],
@@ -685,7 +673,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Inserisci la password scelta da chi ha creato il file.',
+                  context.t.enterFilePassword,
                   style: TextStyle(color: c.muted, fontSize: 14.5),
                 ),
                 const SizedBox(height: 14),
@@ -700,12 +688,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     if (_password.text.isNotEmpty && !_busy) _open();
                   },
                   decoration: InputDecoration(
-                    labelText: 'Password',
-                    errorText: _wrong
-                        ? 'Password errata. Controlla e riprova.'
-                        : null,
+                    labelText: context.t.password,
+                    errorText: _wrong ? context.t.wrongPassword : null,
                     suffixIcon: IconButton(
-                      tooltip: _show ? 'Nascondi' : 'Mostra',
+                      tooltip: _show ? context.t.hide : context.t.show,
                       icon: Icon(
                         _show
                             ? Icons.visibility_off_outlined
@@ -718,7 +704,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 if (_wrong) ...[
                   const SizedBox(height: 16),
                   Text(
-                    'Il file non è stato modificato. Puoi riprovare.',
+                    context.t.fileNotModified,
                     style: TextStyle(color: c.muted, fontSize: 13.5),
                   ),
                 ],
@@ -733,7 +719,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
           child: FilledButton(
             // A campo vuoto il pulsante resta spento (decisione 103).
             onPressed: _password.text.isEmpty || _busy ? null : _open,
-            child: Text(_busy ? 'Apertura…' : 'Apri il file'),
+            child: Text(_busy ? context.t.opening : context.t.openFile),
           ),
         ),
       ),

@@ -168,15 +168,15 @@ Future<String> runSharedImport(
   );
   if (!plan.fits) {
     throw TransferException(
-      'Con questa importazione saresti a ${plan.result} tessere: il limite è ${plan.limit}.',
+      TransferProblem.limitExceeded,
+      count: plan.result,
+      limit: plan.limit,
     );
   }
   final name = newSectionName?.trim() ?? '';
   if (mode == SharedImportMode.newSection &&
       (name.isEmpty || await db.sectionNameInUse(name))) {
-    throw const TransferException(
-      'Scegli un nome che non sia già usato da un\'altra sezione.',
-    );
+    throw const TransferException(TransferProblem.sectionNameTaken);
   }
   final types = await _knownTypes(db);
   String typeOf(ArchiveCard c) =>

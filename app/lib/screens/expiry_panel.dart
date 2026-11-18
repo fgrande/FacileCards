@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
 
@@ -17,7 +18,7 @@ Future<db.Card?> showExpiryPanel(
   return showGeneralDialog<db.Card>(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Chiudi',
+    barrierLabel: context.t.close,
     barrierColor: Colors.black38,
     transitionDuration: const Duration(milliseconds: 180),
     pageBuilder: (context, _, _) => SafeArea(
@@ -73,11 +74,14 @@ class _ExpiryPanel extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text('Scadenze', style: theme.textTheme.titleLarge),
+                    child: Text(
+                      context.t.expiryTooltip,
+                      style: theme.textTheme.titleLarge,
+                    ),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Chiudi'),
+                    child: Text(context.t.close),
                   ),
                 ],
               ),
@@ -123,8 +127,7 @@ class _ExpiryPanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
               child: Text(
-                'Avviso a ${settings.days} giorni dalla scadenza\n'
-                'Le tessere restano utilizzabili.',
+                context.t.expiryPanelFooter(settings.days),
                 style: theme.textTheme.bodySmall?.copyWith(color: muted),
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'l10n/l10n.dart';
+
 /// Colori dei disegni (docs/02-videate.md, "Tema scuro"), chiari e scuri.
 /// Si leggono con `AppColors.of(context)`.
 @immutable
@@ -235,7 +237,7 @@ String themeModeToText(ThemeMode mode) => switch (mode) {
 
 /// Nome del tema come si mostra all'utente.
 String themeModeLabel(ThemeMode mode) => switch (mode) {
-      ThemeMode.light => 'Chiaro',
-      ThemeMode.dark => 'Scuro',
-      ThemeMode.system => 'Come il telefono',
+      ThemeMode.light => tr.themeLight,
+      ThemeMode.dark => tr.themeDark,
+      ThemeMode.system => tr.themeSystem,
     };

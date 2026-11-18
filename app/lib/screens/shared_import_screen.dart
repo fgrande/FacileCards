@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../format_utils.dart';
+import '../l10n/l10n.dart';
 import '../photos.dart';
 import '../theme.dart';
 import '../transfer/archive_format.dart';
@@ -110,7 +111,7 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
     _replan();
   }
 
-  String _cards(int n) => n == 1 ? '1 tessera' : '$n tessere';
+  String _cards(int n) => context.t.cardCount(n);
 
   void _message(String text) {
     if (mounted) {
@@ -135,14 +136,14 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
       final n = _plan?.added ?? 0;
       _message(
         _mode == SharedImportMode.replace
-            ? 'Sezione aggiornata.'
-            : (n == 1 ? 'Importata 1 tessera.' : 'Importate $n tessere.'),
+            ? context.t.sectionUpdated
+            : context.t.importedCount(n),
       );
       Navigator.of(context).pop(true);
     } on TransferException catch (e) {
       _message(e.message);
     } catch (_) {
-      _message('Importazione non riuscita: le tue tessere non sono cambiate.');
+      _message(context.t.importFailedNothingChanged);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -223,7 +224,7 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
         final chosen = await showDialog<String>(
           context: context,
           builder: (context) => SimpleDialog(
-            title: const Text('Sezione'),
+            title: Text(context.t.section),
             children: [
               for (final s in _sections)
                 SimpleDialogOption(
@@ -236,9 +237,9 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
         if (chosen != null) _setTarget(chosen);
       },
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'Sezione',
-          suffixIcon: Icon(Icons.expand_more),
+        decoration: InputDecoration(
+          labelText: context.t.section,
+          suffixIcon: const Icon(Icons.expand_more),
         ),
         child: Text(
           current.isEmpty ? '' : current.first.name,
@@ -253,23 +254,22 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
     final String title;
     String? detail;
     if (!ok) {
-      title = 'Con questa scelta saresti a ${p.result} tessere';
-      detail =
-          'Il limite della versione gratuita è ${p.limit}.\nCon Pro non hai limiti.';
+      title = context.t.wouldBeOverLimit(p.result);
+      detail = context.t.freeLimitDetail(p.limit);
     } else if (p.added == 0 && p.updated == 0) {
       title = _single
-          ? 'Questa tessera c\'è già nella sezione scelta'
-          : 'Tutte le tessere ci sono già nella sezione scelta';
-      detail = 'Non c\'è niente da aggiungere.';
+          ? context.t.cardAlreadyInSection
+          : context.t.allAlreadyInSection;
+      detail = context.t.nothingToAdd;
     } else {
-      title = 'Dopo l\'importazione: ${p.result} di ${p.limit} tessere';
+      title = context.t.afterImport(p.result, p.limit);
       final parts = [
         if (p.updated > 0)
-          '${_cards(p.updated)} aggiornat${p.updated == 1 ? 'a' : 'e'}',
+          context.t.updatedCount(p.updated),
         if (p.toTrash > 0)
-          '${p.toTrash} non più nel file: nel cestino per 30 giorni',
+          context.t.noLongerInFile(p.toTrash, db.AppDatabase.trashDays),
         if (p.skipped > 0)
-          '${p.skipped == 1 ? '1 già presente' : '${p.skipped} già presenti'}, non si aggiung${p.skipped == 1 ? 'e' : 'ono'}',
+          context.t.skippedCount(p.skipped),
       ];
       detail = parts.isEmpty ? null : parts.join(' · ');
     }
@@ -321,7 +321,9 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
       canPop: !_busy,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_single ? 'Importa tessera' : 'Importa sezione'),
+          title: Text(
+            _single ? context.t.importCardTitle : context.t.importSectionTitle,
+          ),
         ),
         body: Column(
           children: [
@@ -363,13 +365,18 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _single
-                              ? 'Tessera ricevuta il ${longDate(widget.header.createdAt)}'
-                              : '${_cards(_count)} · creato il ${longDate(widget.header.createdAt)}',
+                              ? context.t.cardReceivedOn(
+                                  longDate(widget.header.createdAt),
+                                )
+                              : context.t.cardsCreatedOn(
+                                  _cards(_count),
+                                  longDate(widget.header.createdAt),
+                                ),
                           style: TextStyle(color: c.infoText, fontSize: 13.5),
                         ),
                         if (previous?.receivedAt != null)
                           Text(
-                            'Già ricevuta il ${longDate(previous!.receivedAt!)}',
+                            context.t.alreadyReceivedOn(longDate(previous!.receivedAt!)),
                             style: TextStyle(
                               color: c.infoText.withValues(alpha: 0.85),
                               fontSize: 13,
@@ -379,24 +386,24 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                     ),
                   ),
                   if (_single) ...[
-                    const GroupHeader('In quale sezione'),
+                    GroupHeader(context.t.whichSection),
                     _sectionPicker(c),
                     const SizedBox(height: 12),
                   ] else ...[
-                    const GroupHeader('Dove metterle'),
+                    GroupHeader(context.t.whereToPut),
                     _option(
                       c,
                       SharedImportMode.newSection,
-                      'Nuova sezione',
-                      'Con un nome non ancora usato',
+                      context.t.newSection,
+                      context.t.newSectionDetail,
                       extra: TextField(
                         controller: _name,
                         textCapitalization: TextCapitalization.sentences,
                         onChanged: (_) => _replan(),
                         decoration: InputDecoration(
-                          labelText: 'Nome (non ancora usato)',
+                          labelText: context.t.nameNotUsedYet,
                           errorText: _nameTaken
-                              ? 'Questo nome è già usato da un\'altra sezione.'
+                              ? context.t.nameAlreadyUsed
                               : null,
                         ),
                       ),
@@ -404,16 +411,16 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                     _option(
                       c,
                       SharedImportMode.merge,
-                      'Unisci a una sezione esistente',
-                      'Aggiunge solo le tessere nuove',
+                      context.t.mergeIntoSection,
+                      context.t.mergeIntoSectionDetail,
                       extra: _sectionPicker(c),
                     ),
                     if (previous != null)
                       _option(
                         c,
                         SharedImportMode.replace,
-                        'Sostituisci «${previous.name}»',
-                        'Rimpiazza la copia ricevuta prima',
+                        context.t.replaceSection(previous.name),
+                        context.t.replaceSectionDetail,
                       ),
                     const SizedBox(height: 2),
                   ],
@@ -421,8 +428,8 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _single
-                        ? 'La tessera importata diventa tua: puoi modificarla, spostarla o eliminarla.'
-                        : 'Le tessere importate diventano tue: puoi modificarle, spostarle o eliminarle.',
+                        ? context.t.importedCardYours
+                        : context.t.importedCardsYours,
                     style: TextStyle(color: c.muted, fontSize: 13.5),
                   ),
                 ],
@@ -440,9 +447,9 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                 if (p != null && !p.fits) ...[
                   FilledButton.tonal(
                     onPressed: () => _message(
-                      'L\'acquisto arriverà con la pubblicazione su Google Play.',
+                      context.t.purchaseComing,
                     ),
-                    child: const Text('Scopri Pro · 2,00 €'),
+                    child: Text(context.t.discoverPro),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -450,10 +457,10 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                   onPressed: canImport ? _import : null,
                   child: Text(
                     _single
-                        ? 'Importa la tessera'
+                        ? context.t.importTheCard
                         : _mode == SharedImportMode.replace
-                        ? 'Sostituisci'
-                        : 'Importa ${_cards(p?.added ?? _count)}',
+                        ? context.t.replace
+                        : context.t.importCards(_cards(p?.added ?? _count)),
                   ),
                 ),
               ],

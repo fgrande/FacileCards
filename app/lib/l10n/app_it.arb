@@ -1,0 +1,960 @@
+{
+  "@@locale": "it",
+  "usedNever": "mai usata",
+  "usedToday": "usata oggi",
+  "usedYesterday": "usata ieri",
+  "daysAgo": "{count, plural, =1{1 giorno fa} other{{count} giorni fa}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aWeekAgo": "una settimana fa",
+  "weeksAgo": "{count} settimane fa",
+  "@weeksAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aMonthAgo": "un mese fa",
+  "monthsAgo": "{count} mesi fa",
+  "@monthsAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deletedToday": "Eliminata oggi",
+  "deletedYesterday": "Eliminata ieri",
+  "deletedDaysAgo": "Eliminata {count} giorni fa",
+  "@deletedDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "expired": "Scaduta",
+  "expiresToday": "Scade oggi",
+  "expiresTomorrow": "Scade domani",
+  "expiresInDays": "Scade tra {count} giorni",
+  "@expiresInDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badgeToday": "Oggi",
+  "badgeTomorrow": "Domani",
+  "badgeInDays": "Tra {count} giorni",
+  "@badgeInDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "expiredOn": "Scaduta il {date}",
+  "@expiredOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresOn": "Scade il {date}",
+  "@expiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "language": "Lingua",
+  "setupWelcome": "Benvenuto in FacileCards",
+  "setupIntro": "Tre domande e sei pronto.",
+  "setupNameLabel": "Il tuo nome (facoltativo)",
+  "setupNameHelp": "Lo proponiamo come intestatario delle nuove tessere.",
+  "setupLanguageHelp": "È quella del telefono. Puoi cambiarla.",
+  "expiryAlertsTitle": "Avvisami delle scadenze",
+  "expiryAlertsSubtitle": "Per le tessere che hanno una data di scadenza",
+  "expiryDaysTitle": "Giorni di preavviso",
+  "setupLater": "Potrai cambiare tutto dalle impostazioni.",
+  "setupStart": "Inizia",
+  "cancel": "Annulla",
+  "save": "Salva",
+  "close": "Chiudi",
+  "settingsTitle": "Impostazioni",
+  "yourName": "Il tuo nome",
+  "optional": "Facoltativo",
+  "settingsPersonal": "Personali",
+  "nameNotSet": "Non indicato",
+  "theme": "Tema",
+  "expiryAlerts": "Avviso scadenze",
+  "expiryAlertsOn": "{days} giorni prima · tocca per cambiare",
+  "@expiryAlertsOn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "off": "Spento",
+  "settingsVersion": "Versione",
+  "freeVersion": "Versione gratuita",
+  "freeVersionCount": "{count} di {limit} tessere · con annunci",
+  "@freeVersionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "purchaseComing": "L'acquisto arriverà con la pubblicazione su Google Play.",
+  "upgradePro": "Passa a Pro · 2,00 €  →",
+  "restorePurchase": "Ripristina acquisto",
+  "settingsOther": "Altro",
+  "requestMissingCard": "Richiedi una tessera mancante",
+  "missingCardSubject": "Tessera mancante in FacileCards",
+  "privacyPolicy": "Informativa sulla privacy",
+  "aboutApp": "Informazioni su FacileCards",
+  "noAppToOpen": "Non c'è un'app per aprire {url}",
+  "@noAppToOpen": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "themeLight": "Chiaro",
+  "themeDark": "Scuro",
+  "themeSystem": "Come il telefono",
+  "aboutTitle": "Informazioni",
+  "versionNumber": "Versione {version}",
+  "@versionNumber": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "developedBy": "Sviluppata da {name}",
+  "@developedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trademarkDisclaimer": "FacileCards è un'app indipendente e non è affiliata, sponsorizzata né approvata dalle aziende citate. I nomi e i marchi appartengono ai rispettivi proprietari.",
+  "website": "Sito di FacileCards",
+  "cardCount": "{count, plural, =1{1 tessera} other{{count} tessere}}",
+  "@cardCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "countOfLimit": "{count} di {limit}",
+  "@countOfLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "expiryTooltip": "Scadenze",
+  "listEmpty": "Nessuna tessera. Tocca + e scegli il negozio.",
+  "listNoMatch": "Nessuna tessera trovata.",
+  "favorites": "Preferite",
+  "allCards": "Tutte le tessere",
+  "viewAll": "Tutte",
+  "viewBySection": "Per sezione",
+  "sortLastUsed": "Ultimo utilizzo",
+  "sortName": "Nome A–Z",
+  "menuSections": "Sezioni",
+  "menuData": "Dati",
+  "searchCards": "Cerca tessere",
+  "addCard": "Aggiungi una tessera",
+  "expiryPanelFooter": "Avviso a {days} giorni dalla scadenza\nLe tessere restano utilizzabili.",
+  "@expiryPanelFooter": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "photoFront": "Foto del fronte",
+  "photoBack": "Foto del retro",
+  "moveToSection": "Sposta nella sezione",
+  "addPhoto": "Aggiungi foto",
+  "photoCount": "{count} foto",
+  "@photoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteCardQuestion": "Eliminare «{name}»?",
+  "@deleteCardQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRecoverable": "Nel cestino resta recuperabile per {days} giorni.",
+  "@trashRecoverable": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteForever": "Elimina definitivamente",
+  "moveToTrash": "Sposta nel cestino",
+  "holder": "Intestatario",
+  "expiry": "Scadenza",
+  "notes": "Note",
+  "favorite": "Preferita",
+  "edit": "Modifica",
+  "share": "Condividi",
+  "delete": "Elimina",
+  "formatNotDrawable": "Formato non disegnabile: {format}",
+  "@formatNotDrawable": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidCode": "Codice non valido: {error}",
+  "@invalidCode": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "move": "Sposta",
+  "addedOn": "Inserita il {date}",
+  "@addedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "genericTypeHint": "Codice e foto del fronte",
+  "freeNameHint": "Nome a scelta",
+  "newCard": "Nuova tessera",
+  "editCard": "Modifica tessera",
+  "searchShop": "Cerca un negozio",
+  "shops": "Negozi",
+  "otherCards": "Altre tessere",
+  "replace": "Sostituisci",
+  "removePhoto": "Togli la foto",
+  "anyCodeFormat": "Qualunque formato di codice",
+  "codeFormatIs": "Formato del codice: {format}",
+  "@codeFormatIs": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "remove": "Togli",
+  "section": "Sezione",
+  "enterCardName": "Scrivi il nome della tessera.",
+  "enterCode": "Inserisci o scansiona il codice.",
+  "genericNeedsFront": "Per la tessera generica serve la foto del fronte.",
+  "limitReached": "Hai raggiunto il limite di {limit} tessere.",
+  "@limitReached": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "saving": "Salvataggio…",
+  "name": "Nome",
+  "code": "Codice",
+  "scan": "Scansiona",
+  "fromGallery": "Da galleria",
+  "none": "Nessuna",
+  "notesHint": "Facoltative",
+  "photosFrontRequired": "FOTO (IL FRONTE È OBBLIGATORIO)",
+  "photosOptional": "FOTO (FACOLTATIVE)",
+  "addToFavorites": "Aggiungi alle preferite",
+  "sideFront": "Fronte",
+  "sideBack": "Retro",
+  "takePhoto": "Scatta una foto",
+  "chooseFromGallery": "Scegli dalla galleria",
+  "cameraDeniedUseGallery": "La fotocamera non è consentita: puoi scegliere la foto dalla galleria.",
+  "photoFailed": "Non sono riuscito a prendere la foto.",
+  "notAnImage": "Il file scelto non è un'immagine.",
+  "frontPhotoRequired": "Per la tessera generica la foto del fronte è obbligatoria: puoi sostituirla.",
+  "deleteFrontPhotoQuestion": "Eliminare la foto del fronte?",
+  "deleteBackPhotoQuestion": "Eliminare la foto del retro?",
+  "deletePhotoExplain": "La foto viene rimossa da questa tessera.\nIl codice resta com'è.",
+  "deletePhoto": "Elimina foto",
+  "noFrontPhoto": "Nessuna foto del fronte",
+  "noBackPhoto": "Nessuna foto del retro",
+  "swipeToBack": "Scorri per vedere il retro",
+  "swipeToFront": "Scorri per tornare al fronte",
+  "swipeToBackZoom": "Scorri per vedere il retro · pizzica per ingrandire\nTocca la foto per chiudere",
+  "swipeToFrontZoom": "Scorri per tornare al fronte · pizzica per ingrandire\nTocca la foto per chiudere",
+  "noCodeFound": "Nessun codice trovato",
+  "noCodeFoundDetail": "Scegli una foto in cui il codice si veda bene.",
+  "photoReadFailed": "Non sono riuscito a leggere la foto",
+  "tryAnotherImage": "Prova con un'altra immagine.",
+  "typeGeneric": "Tessera generica",
+  "typeLibrary": "Biblioteca",
+  "typeGym": "Palestra",
+  "categoryLoyalty": "Tessera fedeltà",
+  "categoryOther": "Tessera",
+  "formatUnknown": "Formato non riconosciuto",
+  "formatUnknownDetail": "Prova a inquadrare di nuovo il codice.",
+  "thisType": "questa tipologia",
+  "codeNotOfType": "Questo codice non sembra di {name}",
+  "@codeNotOfType": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "codeNotOfTypeDetail": "Controlla la tipologia o usa Tessera generica.\nLetto: {read} · atteso: {expected}",
+  "@codeNotOfTypeDetail": {
+    "placeholders": {
+      "read": {
+        "type": "String"
+      },
+      "expected": {
+        "type": "String"
+      }
+    }
+  },
+  "scanFrame": "Inquadra il codice della tessera",
+  "scanAuto": "Si legge da solo: non serve toccare nulla.",
+  "torch": "Torcia",
+  "enterCodeManually": "Inserisci il codice a mano",
+  "cameraNeeded": "Serve la fotocamera",
+  "cameraUnavailable": "La fotocamera non è disponibile",
+  "cameraNeededDetail": "Per leggere il codice di una tessera FacileCards usa la fotocamera. Le immagini restano sul telefono.",
+  "cameraUnavailableDetail": "Puoi leggere il codice da una foto della galleria o scriverlo a mano.",
+  "openSettings": "Apri impostazioni",
+  "readFromGalleryPhoto": "Leggi da una foto della galleria",
+  "scanTitle": "Scansiona il codice",
+  "newSection": "Nuova sezione",
+  "renameSection": "Rinomina sezione",
+  "sectionNameTaken": "Scrivi un nome che non sia già usato da un'altra sezione.",
+  "deleteQuestion": "Eliminare «{name}»?",
+  "@deleteQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sectionEmpty": "La sezione è vuota.",
+  "notDeletable": "{count} · non eliminabile",
+  "@notDeletable": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "emptySection": "Vuota",
+  "rename": "Rinomina",
+  "deleteSection": "Elimina sezione",
+  "sectionContains": "La sezione contiene {count}. Cosa ne facciamo?",
+  "@sectionContains": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "moveCardsToOtherSection": "Sposta le tessere in un'altra sezione",
+  "sectionIs": "Sezione: {name}",
+  "@sectionIs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "changeSection": "Cambia sezione",
+  "deleteCardsToo": "Elimina anche le tessere",
+  "staysInTrash": "Restano {days} giorni nel cestino.",
+  "@staysInTrash": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "resultIn": "Risultato: {count} in {section}",
+  "@resultIn": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "section": {
+        "type": "String"
+      }
+    }
+  },
+  "resultInTrash": "Risultato: {count} nel cestino",
+  "@resultInTrash": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "sectionNameHint": "Es. Famiglia",
+  "dataTitle": "Dati",
+  "archive": "Archivio",
+  "exportAll": "Esporta tutto",
+  "exportAllSubtitle": "Salva una copia di tutte le tessere",
+  "importFromFile": "Importa da file",
+  "importFromFileSubtitle": "Una copia completa, una sezione o una tessera",
+  "deletedCards": "Tessere eliminate",
+  "trash": "Cestino",
+  "trashSubtitle": "{count} · eliminate dopo {days} giorni",
+  "@trashSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "noBackupYet": "Non hai ancora fatto una copia.",
+  "lastCopyToday": "Ultima copia: oggi.",
+  "lastCopyYesterday": "Ultima copia: ieri.",
+  "lastCopyDaysAgo": "Ultima copia: {days} giorni fa.",
+  "@lastCopyDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyOnThisPhone": "Le tue tessere esistono solo su questo telefono.\n{when}",
+  "@onlyOnThisPhone": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "noRoomLimit": "Non c'è posto: hai raggiunto il limite di {limit} tessere.",
+  "@noRoomLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteForeverQuestion": "Eliminare «{name}» per sempre?",
+  "@deleteForeverQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotRecover": "Non si potrà più recuperare.",
+  "trashExplain": "Le tessere eliminate restano qui {days} giorni. Tocca una tessera per recuperarla.",
+  "@trashExplain": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashEmpty": "Il cestino è vuoto.",
+  "wasIn": "{when} · era in {section}",
+  "@wasIn": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      },
+      "section": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteForeverTooltip": "Elimina per sempre",
+  "restoreInto": "Recupera «{name}» in…",
+  "@restoreInto": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "afterRestore": "Dopo il recupero: {count} di {limit} tessere",
+  "@afterRestore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "restore": "Recupera",
+  "sectionWillBeRecreated": "Sezione eliminata: verrà ricreata",
+  "transferNotFacileCards": "Non è un file di FacileCards.",
+  "transferNotFacileCardsOrDamaged": "Non è un file di FacileCards, o è rovinato.",
+  "transferBadVersion": "Versione del file non valida.",
+  "transferNewerVersion": "Il file è stato creato da una versione più recente di FacileCards: aggiorna l'app.",
+  "transferBadHeader": "Intestazione del file non valida.",
+  "transferTooBig": "Il file è troppo grande.",
+  "transferIncomplete": "Il file è incompleto.",
+  "transferContentDamaged": "Il contenuto del file è rovinato.",
+  "transferDataDamaged": "I dati del file sono rovinati.",
+  "transferBadData": "Dati del file non validi.",
+  "transferTooManyCards": "Il file contiene troppe tessere.",
+  "transferBadSection": "Sezione non valida.",
+  "transferRepeatedSection": "Sezione ripetuta nel file.",
+  "transferBadCard": "Tessera non valida.",
+  "transferRepeatedCard": "Tessera ripetuta nel file.",
+  "transferCardWithoutSection": "Una tessera cita una sezione che non c'è.",
+  "transferBadPhoto": "Foto non valida.",
+  "transferPhotoTooBig": "Una foto è troppo grande.",
+  "transferBadId": "Identificativo non valido nel file.",
+  "transferBadValue": "Dato non valido nel file.",
+  "transferMissingValue": "Dato mancante nel file.",
+  "transferValueTooLong": "Dato troppo lungo nel file.",
+  "transferBadDate": "Data non valida nel file.",
+  "transferProtectedDamaged": "Il file protetto è rovinato.",
+  "transferSectionNameTaken": "Scegli un nome che non sia già usato da un'altra sezione.",
+  "transferLimitExceeded": "Con questa importazione saresti a {count} tessere: il limite è {limit}.",
+  "@transferLimitExceeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordTooShort": "Almeno {min} caratteri.",
+  "@passwordTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordsDiffer": "Le due password non sono uguali.",
+  "aboutSize": "circa {size}",
+  "@aboutSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "shareSection": "Condividi sezione",
+  "shareCard": "Condividi tessera",
+  "shareMessageCard": "Ti invio la tessera «{name}».\nPer aprirla serve FacileCards:\n{url}",
+  "@shareMessageCard": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "shareMessageSection": "Ti invio le tessere della sezione «{name}».\nPer aprirle serve FacileCards:\n{url}",
+  "@shareMessageSection": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "copySaved": "Copia salvata.",
+  "copySaveFailed": "Non sono riuscito a salvare la copia. Riprova.",
+  "saveCopyTitle": "Salva la copia delle tessere",
+  "backupShareText": "Copia di tutte le mie tessere di FacileCards. Si apre con l'app FacileCards, da \"Importa da file\".",
+  "copyPrepareFailed": "Non sono riuscito a preparare la copia. Riprova.",
+  "stepOf": "Passo {step} di {total}",
+  "@stepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "allYourCards": "Tutte le tue tessere",
+  "sectionCount": "{count, plural, =1{1 sezione} other{{count} sezioni}}",
+  "@sectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "aboutToBackup": "Stai per creare una copia di tutte le tue tessere",
+  "aboutToShareCard": "Stai per consegnare questa tessera ad altre persone",
+  "aboutToShareCards": "Stai per consegnare queste tessere ad altre persone",
+  "backupPoint1": "Il file contiene tutto",
+  "backupPoint1Detail": "Codici, intestatari, note e foto.",
+  "backupPoint2": "Chi lo apre può usare le tessere",
+  "validAtCheckout": "Alla cassa valgono come le tue.",
+  "backupPoint3": "Conservalo in un posto sicuro",
+  "backupPoint3Detail": "Un archivio personale, non una chat.",
+  "backupPoint4": "Puoi proteggerlo con una password",
+  "backupPoint4Detail": "Al prossimo passaggio, se vuoi.",
+  "sharePoint1Card": "Chi riceve il file può usare la tessera",
+  "sharePoint1Cards": "Chi riceve il file può usare le tessere",
+  "sharePoint2Card": "Vede tutto ciò che contiene",
+  "sharePoint2Cards": "Vede tutto ciò che contengono",
+  "sharePoint2Detail": "Codici, intestatario, note e foto.",
+  "sharePoint3": "Può inoltrarlo a chiunque",
+  "sharePoint3Detail": "FacileCards non può impedirlo.",
+  "sharePoint4": "Non puoi ritirarlo",
+  "sharePoint4Detail": "Una volta inviato, il file non è più tuo.",
+  "largeFileWarning": "Il file è grande ({size}), soprattutto per le foto: alcune app potrebbero non riuscire a inviarlo.",
+  "@largeFileWarning": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "understoodBackup": "Ho capito: sto esportando {cards} in un unico file.",
+  "@understoodBackup": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      }
+    }
+  },
+  "understoodCard": "Ho capito: sto condividendo la tessera «{name}» con le persone a cui invierò il file.",
+  "@understoodCard": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "understoodSection": "Ho capito: sto condividendo {cards} della sezione «{name}» con le persone a cui invierò il file.",
+  "@understoodSection": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageWithFile": "Messaggio che accompagna il file",
+  "passwordForgetWarning": "Se la dimentichi non potrai riaprire il file.\nNessuno può recuperarla, nemmeno noi.",
+  "sharePanelHint": "Si aprirà il pannello di condivisione del telefono: scegli tu l'app e il destinatario.",
+  "hide": "Nascondi",
+  "show": "Mostra",
+  "protectWithPassword": "Proteggi con password",
+  "passwordOptional": "Facoltativa.",
+  "passwordOptionalShare": "Facoltativa: chi apre il file dovrà inserirla.",
+  "password": "Password",
+  "repeatPassword": "Ripeti la password",
+  "passwordsOk": "Password uguali · almeno {min} caratteri",
+  "@passwordsOk": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordRule": "Almeno {min} caratteri, scritta due volte.",
+  "@passwordRule": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "continueButton": "Continua",
+  "saveOnPhone": "Salva sul telefono",
+  "shareEllipsis": "Condividi…",
+  "back": "Indietro",
+  "cannotImport": "Non si può importare",
+  "fileReadFailedMaybeBig": "Non sono riuscito a leggere il file. Potrebbe essere troppo grande.",
+  "fileReadFailed": "Non sono riuscito a leggere il file.",
+  "fileContentUnexpected": "Il file è rovinato: il contenuto non è quello atteso.",
+  "replaceAllInFile": "Le tue tessere attuali sono tutte nel file: restano, con i dati del file.",
+  "trashedAll": "{count, plural, =1{La tua tessera attuale finirà nel cestino e vi resterà per {days} giorni.} other{Le tue {count} tessere attuali finiranno nel cestino e vi resteranno per {days} giorni.}}",
+  "@trashedAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "trashedSome": "{count, plural, =1{1 tessera attuale finirà nel cestino e vi resterà per {days} giorni.} other{{count} tessere attuali finiranno nel cestino e vi resteranno per {days} giorni.}}",
+  "@trashedSome": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "othersStay": "{count, plural, =1{L'altra è anche nel file e resta.} other{Le altre {count} sono anche nel file e restano.}}",
+  "@othersStay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "replaceAllQuestion": "Sostituire tutte le tessere?",
+  "aboutToReplace": "Stai per sostituire {cards} con {incoming}.",
+  "@aboutToReplace": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      },
+      "incoming": {
+        "type": "int"
+      }
+    }
+  },
+  "trashNotCounted": "Le tessere del cestino non contano per il limite.",
+  "replaceXWithY": "Sostituisci {current} con {incoming}",
+  "@replaceXWithY": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "incoming": {
+        "type": "int"
+      }
+    }
+  },
+  "importedCount": "{count, plural, =1{Importata 1 tessera.} other{Importate {count} tessere.}}",
+  "@importedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importFailedNothingChanged": "Importazione non riuscita: le tue tessere non sono cambiate.",
+  "wouldBeOverLimit": "Con questa scelta saresti a {count} tessere",
+  "@wouldBeOverLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "freeLimitDetail": "Il limite della versione gratuita è {limit}.\nCon Pro non hai limiti.",
+  "@freeLimitDetail": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "allAlreadyPresent": "Tutte le tessere del file sono già presenti",
+  "nothingToAdd": "Non c'è niente da aggiungere.",
+  "addsNew": "{count, plural, =1{Aggiunge 1 tessera nuova} other{Aggiunge {count} tessere nuove}}",
+  "@addsNew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alreadyPresent": "{count, plural, =1{1 già presente} other{{count} già presenti}}",
+  "@alreadyPresent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "afterImport": "Dopo l'importazione: {count} di {limit} tessere",
+  "@afterImport": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "replacesXWithY": "Sostituisce {cards} con {incoming}",
+  "@replacesXWithY": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      },
+      "incoming": {
+        "type": "int"
+      }
+    }
+  },
+  "importAll": "Importa tutto",
+  "archiveOfApp": "Archivio di FacileCards",
+  "archiveOf": "Archivio di {owner}",
+  "@archiveOf": {
+    "placeholders": {
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "createdOn": "Creato il {date}",
+  "@createdOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "howToImport": "Come importarle",
+  "mergeWithExisting": "Unisci alle tessere esistenti",
+  "mergeWithExistingDetail": "Aggiunge solo quelle che mancano. Consigliato.",
+  "replaceAll": "Sostituisci tutto",
+  "replaceAllDetail": "Le tessere attuali vanno nel cestino per {days} giorni.",
+  "@replaceAllDetail": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "androidBackupNote": "Se hai già ripristinato i dati con il backup di Android, le tessere già presenti non vengono duplicate.",
+  "discoverPro": "Scopri Pro · 2,00 €",
+  "importButton": "Importa",
+  "importCards": "Importa {cards}",
+  "@importCards": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordProtectedFile": "File protetto da password",
+  "enterFilePassword": "Inserisci la password scelta da chi ha creato il file.",
+  "wrongPassword": "Password errata. Controlla e riprova.",
+  "fileNotModified": "Il file non è stato modificato. Puoi riprovare.",
+  "opening": "Apertura…",
+  "openFile": "Apri il file",
+  "sectionUpdated": "Sezione aggiornata.",
+  "cardAlreadyInSection": "Questa tessera c'è già nella sezione scelta",
+  "allAlreadyInSection": "Tutte le tessere ci sono già nella sezione scelta",
+  "updatedCount": "{count, plural, =1{1 tessera aggiornata} other{{count} tessere aggiornate}}",
+  "@updatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noLongerInFile": "{count} non più nel file: nel cestino per {days} giorni",
+  "@noLongerInFile": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "skippedCount": "{count, plural, =1{1 già presente, non si aggiunge} other{{count} già presenti, non si aggiungono}}",
+  "@skippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importCardTitle": "Importa tessera",
+  "importSectionTitle": "Importa sezione",
+  "cardReceivedOn": "Tessera ricevuta il {date}",
+  "@cardReceivedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "cardsCreatedOn": "{cards} · creato il {date}",
+  "@cardsCreatedOn": {
+    "placeholders": {
+      "cards": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyReceivedOn": "Già ricevuta il {date}",
+  "@alreadyReceivedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "whichSection": "In quale sezione",
+  "whereToPut": "Dove metterle",
+  "newSectionDetail": "Con un nome non ancora usato",
+  "nameNotUsedYet": "Nome (non ancora usato)",
+  "nameAlreadyUsed": "Questo nome è già usato da un'altra sezione.",
+  "mergeIntoSection": "Unisci a una sezione esistente",
+  "mergeIntoSectionDetail": "Aggiunge solo le tessere nuove",
+  "replaceSection": "Sostituisci «{name}»",
+  "@replaceSection": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replaceSectionDetail": "Rimpiazza la copia ricevuta prima",
+  "importedCardYours": "La tessera importata diventa tua: puoi modificarla, spostarla o eliminarla.",
+  "importedCardsYours": "Le tessere importate diventano tue: puoi modificarle, spostarle o eliminarle.",
+  "importTheCard": "Importa la tessera"
+}

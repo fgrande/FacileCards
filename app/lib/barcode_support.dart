@@ -1,6 +1,8 @@
 import 'package:barcode_widget/barcode_widget.dart' as bw;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import 'l10n/l10n.dart';
+
 /// Un codice letto: valore e formato.
 class ScannedCode {
   const ScannedCode(this.value, this.format);
@@ -39,16 +41,15 @@ ScanCheck? checkScanned(
 }) {
   if (value == null || value.isEmpty) return null;
   if (format == BarcodeFormat.unknown) {
-    return const ScanCheck.rejected(
-        'Formato non riconosciuto', 'Prova a inquadrare di nuovo il codice.');
+    return ScanCheck.rejected(tr.formatUnknown, tr.formatUnknownDetail);
   }
   if (!formatAccepted(expectedFormat, format)) {
-    final name = typeName ?? 'questa tipologia';
     return ScanCheck.rejected(
-      'Questo codice non sembra di $name',
-      'Controlla la tipologia o usa Tessera Generica.\n'
-          'Letto: ${formatLabel(format)} · atteso: '
-          '${formatLabel(formatFromText(expectedFormat!))}',
+      tr.codeNotOfType(typeName ?? tr.thisType),
+      tr.codeNotOfTypeDetail(
+        formatLabel(format),
+        formatLabel(formatFromText(expectedFormat!)),
+      ),
     );
   }
   return ScanCheck.accepted(ScannedCode(value, format));

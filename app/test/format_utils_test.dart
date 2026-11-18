@@ -1,7 +1,9 @@
 import 'package:facilecards/format_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
+  setUpAll(initializeDateFormatting);
   final now = DateTime(2026, 11, 16, 22, 30);
 
   test('quando è stata usata', () {

@@ -10,6 +10,7 @@ import '../gallery_scan.dart';
 import '../format_utils.dart';
 import '../photos.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 import '../ui.dart';
 import 'photo_picker.dart';
 import 'scan_screen.dart';
@@ -158,8 +159,8 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
 
   Future<void> _pickPhoto(String side) async {
     final title = side == PhotoSide.front
-        ? 'Foto del fronte'
-        : 'Foto del retro';
+        ? context.t.photoFront
+        : context.t.photoBack;
     if (_hasPhoto(side)) {
       final remove = await showModalBottomSheet<bool>(
         context: context,
@@ -170,12 +171,12 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_camera_outlined),
-                title: const Text('Sostituisci'),
+                title: Text(context.t.replace),
                 onTap: () => Navigator.of(context).pop(false),
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline),
-                title: const Text('Togli la foto'),
+                title: Text(context.t.removePhoto),
                 onTap: () => Navigator.of(context).pop(true),
               ),
               const SizedBox(height: 8),
@@ -257,7 +258,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.type.name,
+                  typeName(widget.type),
                   style: TextStyle(
                     color: c.infoText,
                     fontSize: 16.5,
@@ -266,8 +267,10 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                 ),
                 Text(
                   format == null
-                      ? 'Qualunque formato di codice'
-                      : 'Formato del codice: ${formatLabel(formatFromText(format))}',
+                      ? context.t.anyCodeFormat
+                      : context.t.codeFormatIs(
+                          formatLabel(formatFromText(format)),
+                        ),
                   style: TextStyle(
                     color: c.infoText.withValues(alpha: 0.8),
                     fontSize: 12.5,
@@ -299,7 +302,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: onClear != null
               ? IconButton(
-                  tooltip: 'Togli',
+                  tooltip: context.t.remove,
                   icon: const Icon(Icons.close, size: 20),
                   onPressed: onClear,
                 )
@@ -333,7 +336,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     final chosen = await showDialog<db.Section>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Sezione'),
+        title: Text(context.t.section),
         children: [
           for (final s in _sections)
             SimpleDialogOption(
@@ -388,15 +391,15 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     final name = _name.text.trim();
     final code = _code.text.trim();
     final section = _section;
-    if (name.isEmpty) return _message('Scrivi il nome della tessera.');
-    if (code.isEmpty) return _message('Inserisci o scansiona il codice.');
+    if (name.isEmpty) return _message(context.t.enterCardName);
+    if (code.isEmpty) return _message(context.t.enterCode);
     if (_frontRequired && !_hasPhoto(PhotoSide.front)) {
-      return _message('Per la tessera generica serve la foto del fronte.');
+      return _message(context.t.genericNeedsFront);
     }
     if (section == null) return;
     if (!_editing && _count >= db.AppDatabase.freeCardLimit) {
       return _message(
-        'Hai raggiunto il limite di ${db.AppDatabase.freeCardLimit} tessere.',
+        context.t.limitReached(db.AppDatabase.freeCardLimit),
       );
     }
     // Il formato si salva sempre sulla singola tessera. Scritto a mano e senza
@@ -455,7 +458,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     final c = AppColors.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_editing ? 'Modifica tessera' : 'Nuova tessera'),
+        title: Text(_editing ? context.t.editCard : context.t.newCard),
       ),
       // "Salva" fisso in basso: resta visibile anche sui telefoni piccoli.
       bottomNavigationBar: SafeArea(
@@ -463,7 +466,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: FilledButton(
             onPressed: _saving ? null : _save,
-            child: Text(_saving ? 'Salvataggio…' : 'Salva'),
+            child: Text(_saving ? context.t.saving : context.t.save),
           ),
         ),
       ),
@@ -475,13 +478,13 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Nome'),
+            decoration: InputDecoration(labelText: context.t.name),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _code,
             focusNode: _codeFocus,
-            decoration: const InputDecoration(labelText: 'Codice'),
+            decoration: InputDecoration(labelText: context.t.code),
             onChanged: (_) => _scannedFormat = null,
           ),
           const SizedBox(height: 12),
@@ -491,7 +494,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                 child: FilledButton.icon(
                   onPressed: _scan,
                   icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('Scansiona'),
+                  label: Text(context.t.scan),
                 ),
               ),
               const SizedBox(width: 12),
@@ -499,7 +502,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                 child: OutlinedButton.icon(
                   onPressed: _fromGallery,
                   icon: const Icon(Icons.photo_library_outlined),
-                  label: const Text('Da galleria'),
+                  label: Text(context.t.fromGallery),
                 ),
               ),
             ],
@@ -509,7 +512,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             children: [
               Expanded(
                 child: _pickerBox(
-                  label: 'Sezione',
+                  label: context.t.section,
                   value: _section?.name ?? '',
                   onTap: _pickSection,
                 ),
@@ -517,8 +520,8 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _pickerBox(
-                  label: 'Scadenza',
-                  value: date == null ? 'Nessuna' : shortDate(date),
+                  label: context.t.expiry,
+                  value: date == null ? context.t.none : shortDate(date),
                   muted: date == null,
                   onTap: _pickDate,
                   onClear: date == null
@@ -531,7 +534,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           const SizedBox(height: 10),
           TextField(
             controller: _holder,
-            decoration: const InputDecoration(labelText: 'Intestatario'),
+            decoration: InputDecoration(labelText: context.t.holder),
           ),
           const SizedBox(height: 10),
           TextField(
@@ -539,16 +542,16 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             // Una riga sola; si allarga fino a tre mentre si scrive.
             minLines: 1,
             maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: 'Note',
-              hintText: 'Facoltative',
+            decoration: InputDecoration(
+              labelText: context.t.notes,
+              hintText: context.t.notesHint,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             _frontRequired
-                ? 'FOTO (IL FRONTE È OBBLIGATORIO)'
-                : 'FOTO (FACOLTATIVE)',
+                ? context.t.photosFrontRequired
+                : context.t.photosOptional,
             style: TextStyle(
               color: c.muted,
               fontSize: 12.5,
@@ -577,7 +580,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Aggiungi alle preferite',
+                    context.t.addToFavorites,
                     style: TextStyle(color: c.text, fontSize: 15),
                   ),
                 ],

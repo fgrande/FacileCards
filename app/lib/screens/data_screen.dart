@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'export_screen.dart';
@@ -46,22 +47,21 @@ class _DataScreenState extends State<DataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String count(int n) => n == 1 ? '1 tessera' : '$n tessere';
     const padding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
     return Scaffold(
-      appBar: AppBar(title: const Text('Dati')),
+      appBar: AppBar(title: Text(context.t.dataTitle)),
       body: ListView(
         padding: const EdgeInsets.only(top: 4, bottom: 24),
         children: [
-          const GroupHeader('Archivio'),
+          GroupHeader(context.t.archive),
           TileGroup(
             indent: 74,
             children: [
               ListTile(
                 contentPadding: padding,
                 leading: const IconTile(Icons.upload_outlined),
-                title: const Text('Esporta tutto'),
-                subtitle: const Text('Salva una copia di tutte le tessere'),
+                title: Text(context.t.exportAll),
+                subtitle: Text(context.t.exportAllSubtitle),
                 trailing: const Chevron(),
                 onTap: () async {
                   await Navigator.of(context).push(
@@ -75,10 +75,8 @@ class _DataScreenState extends State<DataScreen> {
               ListTile(
                 contentPadding: padding,
                 leading: const IconTile(Icons.download_outlined),
-                title: const Text('Importa da file'),
-                subtitle: const Text(
-                  'Una copia completa, una sezione o una tessera',
-                ),
+                title: Text(context.t.importFromFile),
+                subtitle: Text(context.t.importFromFileSubtitle),
                 trailing: const Chevron(),
                 onTap: () async {
                   if (await startImportFromFile(context, widget.database)) {
@@ -89,16 +87,19 @@ class _DataScreenState extends State<DataScreen> {
             ],
           ),
           if (_cards > 0) _backupReminder(),
-          const GroupHeader('Tessere eliminate'),
+          GroupHeader(context.t.deletedCards),
           TileGroup(
             indent: 74,
             children: [
               ListTile(
                 contentPadding: padding,
                 leading: const IconTile(Icons.delete_outline),
-                title: const Text('Cestino'),
+                title: Text(context.t.trash),
                 subtitle: Text(
-                  '${count(_trash)} · eliminate dopo ${db.AppDatabase.trashDays} giorni',
+                  context.t.trashSubtitle(
+                    context.t.cardCount(_trash),
+                    db.AppDatabase.trashDays,
+                  ),
                 ),
                 trailing: const Chevron(),
                 onTap: () async {
@@ -124,14 +125,14 @@ class _DataScreenState extends State<DataScreen> {
     final last = _lastBackup;
     String when;
     if (last == null) {
-      when = 'Non hai ancora fatto una copia.';
+      when = context.t.noBackupYet;
     } else {
       final days = DateTime.now().difference(last).inDays;
       when = days == 0
-          ? 'Ultima copia: oggi.'
+          ? context.t.lastCopyToday
           : days == 1
-          ? 'Ultima copia: ieri.'
-          : 'Ultima copia: $days giorni fa.';
+          ? context.t.lastCopyYesterday
+          : context.t.lastCopyDaysAgo(days);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -142,7 +143,7 @@ class _DataScreenState extends State<DataScreen> {
           borderRadius: BorderRadius.circular(14),
         ),
         child: Text(
-          'Le tue tessere esistono solo su questo telefono.\n$when',
+          context.t.onlyOnThisPhone(when),
           style: TextStyle(color: c.warn, fontSize: 13.5, height: 1.5),
         ),
       ),

@@ -1,4 +1,4 @@
-import 'package:facilecards/screens/setup_screen.dart';
+import 'package:facilecards/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

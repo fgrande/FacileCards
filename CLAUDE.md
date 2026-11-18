@@ -4,8 +4,8 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 
 ## Regole di lavoro
 
-- **Lingua.** Documenti, commenti e testi dell'interfaccia in italiano. Nell'app l'interfaccia sarà in italiano, inglese e francese (spagnolo e tedesco predisposti): per ora i testi sono scritti in italiano direttamente nel codice, la traduzione si fa dopo.
-- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 114). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
+- **Lingua.** Documenti e commenti in italiano. L'interfaccia dell'app è in italiano, inglese e francese (spagnolo e tedesco predisposti): i testi stanno in `app/lib/l10n/app_<lingua>.arb` (l'italiano è il riferimento), mai scritti nel codice. Nelle schermate `context.t.chiave`, nel codice senza context `tr.chiave`. Ogni testo nuovo va scritto nelle tre lingue (la prova `l10n_test.dart` controlla che non manchi niente); dopo un cambio ai file `.arb` lanciare `flutter gen-l10n`.
+- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 115). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
 - **Velocità prima di tutto.** La tessera deve essere sullo schermo entro 2 secondi da un avvio a freddo, anche senza rete. Niente schermate o controlli di rete prima di mostrare la tessera.
 - **Dopo ogni modifica al codice** lanciare, da `app/`: `flutter analyze` e `flutter test`, e correggere finché passano. Se Flutter non è disponibile (per esempio in una sessione su un server), dirlo chiaramente: il codice non è stato provato.
 - **Script `frun.sh`** (nella radice): analisi, prove e avvio dell'app in un colpo solo; si ferma al primo errore. Le opzioni passano a `flutter run`.
@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 2 (prima migrazione fatta il 18 nov, con copia di sicurezza e prova): anche se l'app non è ancora rilasciata, ogni cambio di schema si fa con un passo di migrazione, perché il telefono di Fabio ha dati veri.
 
-**Prossimo passo:** scegliere con Fabio il passo seguente tra i "Da fare" (condivisione completata).
+**Prossimo passo:** scegliere con Fabio il passo seguente tra i "Da fare".
 
 ### Fatto
 
@@ -60,11 +60,11 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-18: condivisione, tappa 2 (ricezione da dentro l'app): "Importa da file" al posto di "Importa tutto", riconosce copia completa, sezione o tessera; schema versione 2 (identificativi d'origine, data di ricezione) con migrazione, copia di sicurezza `.v1.bak` prima di migrare (decisione 88) e schemi salvati in `test/fixtures/`; importazione di sezione come la videata 11 (nuova sezione col nome libero proposto, unisci senza doppioni, sostituisci la copia ricevuta prima secondo la decisione 80) e di tessera singola nella sezione scelta (107). Se la sezione era già ricevuta, la scelta proposta è "Sostituisci" (decisione 113, disegno 11 aggiornato). Provato sul telefono.
 - 2026-11-18: menu ⋮ dell'elenco diviso in "Sezioni" e "Dati" (decisione 114, videate 12 e 12b): Dati raccoglie Esporta tutto, Importa da file, promemoria "Ultima copia" e Cestino; pulsante di condivisione su ogni riga delle Sezioni, come nel disegno. Icona di condivisione di Android (tre pallini) nell'app e in tutti i disegni. Provato sul telefono.
 - 2026-11-18: condivisione, tappa 3: "Apri con FacileCards". Toccando un file `.facilecards` in un'altra app compare FacileCards; il file si copia nello spazio privato (codice nativo nostro, tetto di 300 MB) e si apre dopo che l'elenco è comparso, con le stesse schermate di "Importa da file"; una sola FacileCards aperta (`singleTask`), con l'app già aperta il file arriva a quella; file non nostro → messaggio chiaro. Provato sull'emulatore dall'app File (app chiusa, app aperta, file falso) e sul telefono.
+- 2026-11-18: traduzioni (analisi 5.8, decisione 35): tutti i testi dell'interfaccia (357) spostati in `lib/l10n/app_it.arb`, con inglese e francese; sistema standard di Flutter (`gen-l10n`). La lingua scelta nella configurazione o nelle impostazioni si applica subito, anche alle schermate aperte; prima della configurazione vale quella del telefono (o l'inglese). Date nella lingua scelta (inglese con giorno e mese all'europea), plurali corretti (in francese "0 carte"), messaggi d'errore dei file tradotti quando si mostrano (codici in `TransferProblem`), nomi delle tipologie generiche tradotti (i negozi no), link a sito e informativa nella lingua dell'app, avvertenza sui marchi nelle tre lingue (decisione 99), messaggio che accompagna i file nella lingua di chi invia. Provato sull'emulatore e sul telefono in inglese e francese.
 
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
-- La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
 - "Condividi verso FacileCards" (FacileCards nel pannello Condividi delle altre app): solo se da qualche app il file non si apre con "Apri con".
@@ -72,7 +72,8 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.
 - Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto.
 - Backup automatico di Android (database e foto; acquisto escluso).
-- Traduzioni inglese e francese (spagnolo e tedesco predisposti).
+- Far rileggere i testi inglesi e francesi a chi li parla bene (li ho scritti io); confermare i nomi della sezione di partenza "General" e "Général" (decisione 84).
+- Spagnolo e tedesco: aggiungere `app_es.arb` e `app_de.arb` e le voci in `supportedLanguages` (dopo il lancio, sezione 7).
 - Dimensione: l'APK universale in `--release` pesa circa 80 MB (tutte le architetture e il modello di lettura dei codici incluso); verificare quanto si scarica davvero dall'App Bundle di Google Play.
 - Migrazioni del database: a ogni nuova versione dello schema, un passo in `onUpgrade`, lo schema salvato in `test/fixtures/schema_vN.sql` e la prova in `test/migration_test.dart` (punto B8).
 - Sistemare l'avviso `itf` deprecato in `lib/barcode_support.dart` (usare `itf14`).
