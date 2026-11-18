@@ -5,7 +5,7 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 ## Regole di lavoro
 
 - **Lingua.** Documenti, commenti e testi dell'interfaccia in italiano. Nell'app l'interfaccia sarà in italiano, inglese e francese (spagnolo e tedesco predisposti): per ora i testi sono scritti in italiano direttamente nel codice, la traduzione si fa dopo.
-- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 113). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
+- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 114). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
 - **Velocità prima di tutto.** La tessera deve essere sullo schermo entro 2 secondi da un avvio a freddo, anche senza rete. Niente schermate o controlli di rete prima di mostrare la tessera.
 - **Dopo ogni modifica al codice** lanciare, da `app/`: `flutter analyze` e `flutter test`, e correggere finché passano. Se Flutter non è disponibile (per esempio in una sessione su un server), dirlo chiaramente: il codice non è stato provato.
 - **Script `frun.sh`** (nella radice): analisi, prove e avvio dell'app in un colpo solo; si ferma al primo errore. Le opzioni passano a `flutter run`.
@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 2 (prima migrazione fatta il 18 nov, con copia di sicurezza e prova): anche se l'app non è ancora rilasciata, ogni cambio di schema si fa con un passo di migrazione, perché il telefono di Fabio ha dati veri.
 
-**Prossimo passo:** le due modifiche in coda (icona di condivisione Android, menu "Sezioni" / "Dati"); poi condivisione, tappa 3: "Apri con FacileCards" da WhatsApp, Gmail, Drive.
+**Prossimo passo:** condivisione, tappa 3: "Apri con FacileCards" da WhatsApp, Gmail, Drive.
 
 ### Fatto
 
@@ -58,6 +58,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-18: password facoltativa sui file (decisione 103, videate 33–35): in "Esporta tutto" interruttore, password ripetuta (almeno 8 caratteri) e avvertenza; contenuto cifrato con AES-256-GCM, chiave da PBKDF2-HMAC-SHA256 (200.000 ripetizioni, valore nell'intestazione); all'importazione richiesta della password, errata ritentabile senza limiti. Interruttore spento più visibile in tutta l'app. Provato sul telefono.
 - 2026-11-18: condivisione, tappa 1 (invio): "Condividi" nel menu della sezione (36) e nella scheda della tessera (5); due passi come nelle videate 9 e 10, con anteprima del messaggio (link a Google Play) e del file, password facoltativa, avviso sopra i 20 MB; nel file niente dati personali (preferita, date d'uso, proprietario). Provato sul telefono.
 - 2026-11-18: condivisione, tappa 2 (ricezione da dentro l'app): "Importa da file" al posto di "Importa tutto", riconosce copia completa, sezione o tessera; schema versione 2 (identificativi d'origine, data di ricezione) con migrazione, copia di sicurezza `.v1.bak` prima di migrare (decisione 88) e schemi salvati in `test/fixtures/`; importazione di sezione come la videata 11 (nuova sezione col nome libero proposto, unisci senza doppioni, sostituisci la copia ricevuta prima secondo la decisione 80) e di tessera singola nella sezione scelta (107). Se la sezione era già ricevuta, la scelta proposta è "Sostituisci" (decisione 113, disegno 11 aggiornato). Provato sul telefono.
+- 2026-11-18: menu ⋮ dell'elenco diviso in "Sezioni" e "Dati" (decisione 114, videate 12 e 12b): Dati raccoglie Esporta tutto, Importa da file, promemoria "Ultima copia" e Cestino; pulsante di condivisione su ogni riga delle Sezioni, come nel disegno. Icona di condivisione di Android (tre pallini) nell'app e in tutti i disegni. Provato sul telefono.
 
 ### Da fare: app
 
@@ -66,8 +67,6 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
 - "Apri con FacileCards": apertura dei file da altre app (WhatsApp, Gmail, Drive), da provare con le app vere (analisi 5.2).
-- Icona di condivisione: usare quella di Android a tre pallini collegati (`Icons.share`) al posto del quadrato con la freccia, che è lo stile di iPhone (richiesta di Fabio, 18 nov).
-- Menu ⋮ dell'elenco: dividere "Sezioni e cestino" in due voci, "Sezioni" (gestione delle sezioni) e "Dati" (Esporta tutto, Importa da file, Cestino, promemoria "Ultima copia") (richiesta di Fabio, 18 nov). Cambia la videata 12: da registrare come decisione e aggiornare i disegni.
 - File di una sola sezione o tessera: oggi "Importa tutto" li rifiuta con un messaggio; si apriranno con la condivisione (9–11, 107).
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.

@@ -147,3 +147,10 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 
 - Su richiesta di Fabio, quando una sezione è già stata ricevuta la videata 11 propone "Sostituisci" invece di "Nuova sezione" (decisione 113): chi riceve di nuovo la stessa sezione di solito vuole l'aggiornamento. Aggiornati i disegni 11 (chiaro e scuro); "Nuova sezione" ha ora una riga di spiegazione come le altre scelte.
 - Fabio ha provato la migrazione e la ricezione di sezioni e tessere sul telefono: funziona.
+
+## 18 novembre 2026: menu "Sezioni" e "Dati", icona di condivisione
+
+- Su richiesta di Fabio il menu ⋮ dell'elenco ha ora "Sezioni" e "Dati" al posto di "Sezioni e cestino" (decisione 114): le sezioni da una parte, copia, importazione e cestino dall'altra, che sono cose diverse. Nuova videata 12b (Dati), la 12 alleggerita.
+- L'icona di condivisione è quella di Android (tre pallini collegati) invece del quadrato con la freccia, che è lo stile di iPhone; cambiata anche in tutti i disegni (05, 06, 12, 18, 19, 28, 36–38, 44, chiari e scuri).
+- Il disegno 12 aveva già un pulsante di condivisione su ogni riga di sezione, che nell'app mancava (c'era solo nel menu): aggiunto.
+- Fabio ha provato il nuovo menu e l'icona di condivisione sul telefono: funziona.

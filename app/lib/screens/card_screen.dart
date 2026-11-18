@@ -336,14 +336,16 @@ class _CardScreenState extends State<CardScreen> {
             ),
           IconButton(
             tooltip: 'Condividi',
-            icon: const Icon(Icons.ios_share),
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => ExportScreen(
-                database: widget.database,
-                target: ExportTarget.card(_card.id),
-                name: _card.name,
+            icon: const Icon(Icons.share),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ExportScreen(
+                  database: widget.database,
+                  target: ExportTarget.card(_card.id),
+                  name: _card.name,
+                ),
               ),
-            )),
+            ),
           ),
           IconButton(
             tooltip: 'Elimina',

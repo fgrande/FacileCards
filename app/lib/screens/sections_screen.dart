@@ -5,10 +5,9 @@ import '../theme.dart';
 import '../ui.dart';
 import '../transfer/export.dart' show ExportTarget;
 import 'export_screen.dart';
-import 'import_screen.dart';
-import 'trash_screen.dart';
 
-/// Videate 12, 36, 37, 38: le sezioni e l'accesso al cestino.
+/// Videate 12, 36, 37, 38: le sezioni (copia, importazione e cestino stanno
+/// in "Dati", decisione 114).
 class SectionsScreen extends StatefulWidget {
   const SectionsScreen({super.key, required this.database});
 
@@ -21,8 +20,6 @@ class SectionsScreen extends StatefulWidget {
 class _SectionsScreenState extends State<SectionsScreen> {
   List<db.Section> _sections = const [];
   Map<String, int> _counts = const {};
-  int _trash = 0;
-  DateTime? _lastBackup;
 
   @override
   void initState() {
@@ -38,16 +35,10 @@ class _SectionsScreenState extends State<SectionsScreen> {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     final counts = await d.sectionCounts();
-    final trash = await d.trashCount();
-    final last = DateTime.tryParse(
-      await d.setting(db.SettingKeys.lastBackupAt) ?? '',
-    );
     if (!mounted) return;
     setState(() {
       _sections = sections;
       _counts = counts;
-      _trash = trash;
-      _lastBackup = last;
     });
   }
 
@@ -160,127 +151,47 @@ class _SectionsScreenState extends State<SectionsScreen> {
                               ? 'Vuota'
                               : count(_counts[s.id]!)),
                   ),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (v) => switch (v) {
-                      'share' => _share(s),
-                      'rename' => _rename(s),
-                      _ => _delete(s),
-                    },
-                    itemBuilder: (_) => [
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       if ((_counts[s.id] ?? 0) > 0)
-                        const PopupMenuItem(
-                          value: 'share',
-                          child: Text('Condividi'),
+                        IconButton(
+                          tooltip: 'Condividi',
+                          icon: Icon(
+                            Icons.share,
+                            color: AppColors.of(context).primary,
+                          ),
+                          onPressed: () => _share(s),
                         ),
-                      const PopupMenuItem(
-                        value: 'rename',
-                        child: Text('Rinomina'),
+                      PopupMenuButton<String>(
+                        onSelected: (v) => switch (v) {
+                          'share' => _share(s),
+                          'rename' => _rename(s),
+                          _ => _delete(s),
+                        },
+                        itemBuilder: (_) => [
+                          if ((_counts[s.id] ?? 0) > 0)
+                            const PopupMenuItem(
+                              value: 'share',
+                              child: Text('Condividi'),
+                            ),
+                          const PopupMenuItem(
+                            value: 'rename',
+                            child: Text('Rinomina'),
+                          ),
+                          if (!s.isDefault)
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Elimina sezione'),
+                            ),
+                        ],
                       ),
-                      if (!s.isDefault)
-                        const PopupMenuItem(
-                          value: 'delete',
-                          child: Text('Elimina sezione'),
-                        ),
                     ],
                   ),
                 ),
             ],
           ),
-          const GroupHeader('Archivio'),
-          TileGroup(
-            indent: 74,
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                leading: const IconTile(Icons.upload_outlined),
-                title: const Text('Esporta tutto'),
-                subtitle: const Text('Salva una copia di tutte le tessere'),
-                trailing: const Chevron(),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ExportScreen(database: widget.database),
-                    ),
-                  );
-                  _load();
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                leading: const IconTile(Icons.download_outlined),
-                title: const Text('Importa da file'),
-                subtitle: const Text(
-                  'Una copia completa, una sezione o una tessera',
-                ),
-                trailing: const Chevron(),
-                onTap: () async {
-                  if (await startImportFromFile(context, widget.database)) {
-                    _load();
-                  }
-                },
-              ),
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                leading: const IconTile(Icons.delete_outline),
-                title: const Text('Cestino'),
-                subtitle: Text(
-                  '${count(_trash)} · eliminate dopo ${db.AppDatabase.trashDays} giorni',
-                ),
-                trailing: const Chevron(),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => TrashScreen(database: widget.database),
-                    ),
-                  );
-                  _load();
-                },
-              ),
-            ],
-          ),
-          if (_counts.values.fold(0, (a, b) => a + b) > 0) _backupReminder(),
         ],
-      ),
-    );
-  }
-
-  /// Promemoria discreto della copia (analisi, 5.5): senza cloud le tessere
-  /// esistono solo su questo telefono.
-  Widget _backupReminder() {
-    final c = AppColors.of(context);
-    final last = _lastBackup;
-    String when;
-    if (last == null) {
-      when = 'Non hai ancora fatto una copia.';
-    } else {
-      final days = DateTime.now().difference(last).inDays;
-      when = days == 0
-          ? 'Ultima copia: oggi.'
-          : days == 1
-          ? 'Ultima copia: ieri.'
-          : 'Ultima copia: $days giorni fa.';
-    }
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: c.warnBg,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(
-          'Le tue tessere esistono solo su questo telefono.\n$when',
-          style: TextStyle(color: c.warn, fontSize: 13.5, height: 1.5),
-        ),
       ),
     );
   }

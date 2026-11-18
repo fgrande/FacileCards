@@ -5,6 +5,7 @@ import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
 import 'card_screen.dart';
+import 'data_screen.dart';
 import 'expiry_panel.dart';
 import 'new_card_type_screen.dart';
 import 'search_field.dart';
@@ -255,6 +256,14 @@ class _CardListScreenState extends State<CardListScreen> {
     _loadRefs();
   }
 
+  /// Decisione 114: copia, importazione e cestino.
+  Future<void> _openData() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => DataScreen(database: widget.database)),
+    );
+    _loadRefs();
+  }
+
   void _setView(_ViewMode v) {
     setState(() {
       _view = v;
@@ -384,13 +393,12 @@ class _CardListScreenState extends State<CardListScreen> {
                 icon: const Icon(Icons.more_vert),
                 onSelected: (v) => switch (v) {
                   'sections' => _openSections(),
+                  'data' => _openData(),
                   _ => _openSettings(),
                 },
                 itemBuilder: (_) => const [
-                  PopupMenuItem(
-                    value: 'sections',
-                    child: Text('Sezioni e cestino'),
-                  ),
+                  PopupMenuItem(value: 'sections', child: Text('Sezioni')),
+                  PopupMenuItem(value: 'data', child: Text('Dati')),
                   PopupMenuItem(value: 'settings', child: Text('Impostazioni')),
                 ],
               ),
