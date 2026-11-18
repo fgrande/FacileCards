@@ -35,9 +35,9 @@ String sizeValue(int bytes) {
     final n = mb < 10
         ? NumberFormat('0.0', dateLocale).format(mb)
         : '${mb.round()}';
-    return '$n MB';
+    return tr.unitMB(n);
   }
-  return '${(bytes / 1024).ceil().clamp(1, 1023)} KB';
+  return tr.unitKB('${(bytes / 1024).ceil().clamp(1, 1023)}');
 }
 
 /// "circa 12 MB", "circa 300 KB".

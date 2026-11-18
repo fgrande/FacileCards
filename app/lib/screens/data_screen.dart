@@ -1,8 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../backup_size.dart';
 import '../data/database.dart' as db;
 import '../l10n/l10n.dart';
 import '../theme.dart';
+import '../transfer/export.dart' show sizeValue;
 import '../ui.dart';
 import 'export_screen.dart';
 import 'import_screen.dart';
@@ -23,6 +25,7 @@ class _DataScreenState extends State<DataScreen> {
   int _cards = 0;
   int _trash = 0;
   DateTime? _lastBackup;
+  int _backupBytes = 0;
 
   @override
   void initState() {
@@ -37,8 +40,10 @@ class _DataScreenState extends State<DataScreen> {
     final last = DateTime.tryParse(
       await d.setting(db.SettingKeys.lastBackupAt) ?? '',
     );
+    final bytes = await backupSizeBytes();
     if (!mounted) return;
     setState(() {
+      _backupBytes = bytes;
       _cards = cards;
       _trash = trash;
       _lastBackup = last;
@@ -87,6 +92,7 @@ class _DataScreenState extends State<DataScreen> {
             ],
           ),
           if (_cards > 0) _backupReminder(),
+          if (_backupBytes > androidBackupWarnBytes) _backupTooBig(),
           GroupHeader(context.t.deletedCards),
           TileGroup(
             indent: 74,
@@ -114,6 +120,26 @@ class _DataScreenState extends State<DataScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  /// Avviso: oltre 25 MB Android non salva l'app nel suo backup
+  /// (decisione 93).
+  Widget _backupTooBig() {
+    final c = AppColors.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: c.dangerBg,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Text(
+          context.t.androidBackupTooBig(sizeValue(_backupBytes)),
+          style: TextStyle(color: c.danger, fontSize: 13.5, height: 1.5),
+        ),
       ),
     );
   }

@@ -1346,4 +1346,19 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get importTheCard => 'Importa la tessera';
+
+  @override
+  String androidBackupTooBig(String size) {
+    return 'Le foto occupano $size: il backup automatico di Android salva al massimo 25 MB e potrebbe non salvare più le tue tessere. Usa «Esporta tutto».';
+  }
+
+  @override
+  String unitMB(String n) {
+    return '$n MB';
+  }
+
+  @override
+  String unitKB(String n) {
+    return '$n KB';
+  }
 }

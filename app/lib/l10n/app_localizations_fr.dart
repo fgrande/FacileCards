@@ -1357,4 +1357,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get importTheCard => 'Importer la carte';
+
+  @override
+  String androidBackupTooBig(String size) {
+    return 'Les photos occupent $size : la sauvegarde automatique d\'Android enregistre au maximum 25 Mo et pourrait ne plus enregistrer vos cartes. Utilisez « Tout exporter ».';
+  }
+
+  @override
+  String unitMB(String n) {
+    return '$n Mo';
+  }
+
+  @override
+  String unitKB(String n) {
+    return '$n Ko';
+  }
 }

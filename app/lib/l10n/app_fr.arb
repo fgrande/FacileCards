@@ -356,5 +356,8 @@
   "replaceSectionDetail": "Remplace la copie reçue auparavant",
   "importedCardYours": "La carte importée devient la vôtre : vous pouvez la modifier, la déplacer ou la supprimer.",
   "importedCardsYours": "Les cartes importées deviennent les vôtres : vous pouvez les modifier, les déplacer ou les supprimer.",
-  "importTheCard": "Importer la carte"
+  "importTheCard": "Importer la carte",
+  "androidBackupTooBig": "Les photos occupent {size} : la sauvegarde automatique d'Android enregistre au maximum 25 Mo et pourrait ne plus enregistrer vos cartes. Utilisez « Tout exporter ».",
+  "unitMB": "{n} Mo",
+  "unitKB": "{n} Ko"
 }

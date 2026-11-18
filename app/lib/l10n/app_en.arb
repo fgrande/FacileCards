@@ -356,5 +356,8 @@
   "replaceSectionDetail": "Replaces the copy received earlier",
   "importedCardYours": "The imported card becomes yours: you can edit, move or delete it.",
   "importedCardsYours": "The imported cards become yours: you can edit, move or delete them.",
-  "importTheCard": "Import the card"
+  "importTheCard": "Import the card",
+  "androidBackupTooBig": "Your photos take up {size}: Android's automatic backup saves at most 25 MB and may no longer save your cards. Use “Export all”.",
+  "unitMB": "{n} MB",
+  "unitKB": "{n} KB"
 }

@@ -171,3 +171,10 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Inglese britannico e date all'europea (decisione 115). Trovato e corretto sull'emulatore: in francese lo zero prende il singolare, e il testo "1 carte" compariva anche con zero tessere.
 - Le traduzioni le ho scritte io: da far rileggere prima della pubblicazione.
 - Fabio ha provato le traduzioni sul telefono: funziona.
+
+## 18 novembre 2026: backup automatico di Android
+
+- Come previsto dalla decisione 93, il backup di Android salva database e foto; le regole sono scritte a elenco chiuso, così cache e copie di sicurezza `.bak` delle migrazioni restano fuori e non entra niente per sbaglio. In futuro ne resterà fuori anche lo stato dell'acquisto Pro.
+- Limite di Android: 25 MB per app, e oltre quel limite l'app non viene salvata per niente. Con 50 tessere e due foto da 500 KB al massimo si potrebbe arrivare a 50 MB, ma di solito le foto sono poche: invece di complicare il backup, la schermata Dati avvisa oltre 20 MB e invita a "Esporta tutto".
+- Provato sull'emulatore con il trasporto locale (`bmgr`): backup, disinstallazione, reinstallazione, tessere tornate. Nota per le prove: un'app fermata con "Forza interruzione" non viene salvata finché non la si riapre.
+- Fabio ha provato il backup di Android sul telefono: funziona.

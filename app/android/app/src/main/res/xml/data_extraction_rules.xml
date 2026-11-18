@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup automatico (cloud) e passaggio a un telefono nuovo, da Android 12
+     (decisione 93). Stesse regole di backup_rules.xml. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="root" path="app_flutter/facilecards.sqlite" />
+        <include domain="root" path="app_flutter/facilecards.sqlite-wal" />
+        <include domain="root" path="app_flutter/facilecards.sqlite-journal" />
+        <include domain="file" path="photos/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="app_flutter/facilecards.sqlite" />
+        <include domain="root" path="app_flutter/facilecards.sqlite-wal" />
+        <include domain="root" path="app_flutter/facilecards.sqlite-journal" />
+        <include domain="file" path="photos/" />
+    </device-transfer>
+</data-extraction-rules>

@@ -2241,6 +2241,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Importa la tessera'**
   String get importTheCard;
+
+  /// No description provided for @androidBackupTooBig.
+  ///
+  /// In it, this message translates to:
+  /// **'Le foto occupano {size}: il backup automatico di Android salva al massimo 25 MB e potrebbe non salvare più le tue tessere. Usa «Esporta tutto».'**
+  String androidBackupTooBig(String size);
+
+  /// No description provided for @unitMB.
+  ///
+  /// In it, this message translates to:
+  /// **'{n} MB'**
+  String unitMB(String n);
+
+  /// No description provided for @unitKB.
+  ///
+  /// In it, this message translates to:
+  /// **'{n} KB'**
+  String unitKB(String n);
 }
 
 class _AppLocalizationsDelegate
