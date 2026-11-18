@@ -16,9 +16,11 @@ Future<void> main() async {
     await database.setting(SettingKeys.theme),
   );
   runApp(FacileCardsApp(database: database, setupDone: setupDone));
-  // Dopo la prima schermata, senza fretta: via i file delle foto che il
-  // database non conosce più (tessere cancellate, cestino svuotato).
+  // Dopo la prima schermata, senza fretta: si svuota il cestino delle tessere
+  // più vecchie di 30 giorni, poi via i file delle foto che il database non
+  // conosce più (tessere cancellate, cestino svuotato).
   WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await database.purgeExpiredTrash(DateTime.now());
     final store = await PhotoStore.instance;
     await store.removeOrphans(database);
   });

@@ -49,3 +49,17 @@ String categoryLabel(CardType? t) => switch (t?.category) {
       'palestra' => 'Palestra',
       _ => 'Tessera',
     };
+
+/// Impronta del catalogo: cambia se cambia qualunque campo di qualunque
+/// tipologia. Serve a riallineare il database solo quando serve.
+String catalogSignature(List<CardTypesCompanion> types) {
+  final text = types.map((t) => t.toColumns(false).entries
+      .map((e) => '${e.key}=${(e.value as Variable).value}')
+      .join(';')).join('|');
+  // FNV-1a a 32 bit: basta per accorgersi di una modifica.
+  var hash = 0x811c9dc5;
+  for (final unit in text.codeUnits) {
+    hash = ((hash ^ unit) * 0x01000193) & 0xffffffff;
+  }
+  return '${types.length}-${hash.toRadixString(16)}';
+}

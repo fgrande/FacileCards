@@ -36,6 +36,7 @@ abstract final class SettingKeys {
   static const theme = 'theme'; // 'system' | 'light' | 'dark'
   static const listView = 'listView'; // 'all' | 'bySection'
   static const listSort = 'listSort'; // 'lastUsed' | 'name'
+  static const catalogSignature = 'catalogSignature'; // impronta del catalogo
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta
@@ -133,17 +134,27 @@ class AppDatabase extends _$AppDatabase {
             isGeneric: const Value(true),
           ));
         },
-        // Il catalogo delle tipologie si riallinea a ogni avvio (vedi catalog.dart).
-        beforeOpen: (details) async {
-          await batch((b) {
-            b.insertAllOnConflictUpdate(cardTypes, catalogTypes());
-          });
-          await purgeExpiredTrash(DateTime.now());
-        },
+        // Il catalogo delle tipologie si riallinea solo quando cambia (cioè
+        // con una nuova versione dell'app): a ogni avvio si confronta solo la
+        // sua impronta. Il cestino si svuota dopo la prima schermata (main.dart).
+        beforeOpen: (details) => syncCatalog(),
         // Le migrazioni future vanno qui, un passo per versione
         // (vedi analisi, punto B8: copia del database prima di migrare).
         onUpgrade: (m, from, to) async {},
       );
+
+  /// Riallinea le tipologie al catalogo dell'app se l'impronta salvata è
+  /// diversa. Restituisce true se ha scritto.
+  Future<bool> syncCatalog() async {
+    final types = catalogTypes();
+    final signature = catalogSignature(types);
+    if (await setting(SettingKeys.catalogSignature) == signature) return false;
+    await transaction(() async {
+      await batch((b) => b.insertAllOnConflictUpdate(cardTypes, types));
+      await setSetting(SettingKeys.catalogSignature, signature);
+    });
+    return true;
+  }
 
   /// Limite della versione gratuita (la versione Pro non ha limite).
   static const freeCardLimit = 50;

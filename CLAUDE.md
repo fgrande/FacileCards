@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 1, non ancora rilasciato: si può ancora cambiare lo schema senza migrazioni.
 
-**Prossimo passo:** icona dell'app e avvio più rapido (con misura in `--release`); poi la schermata di avvio.
+**Prossimo passo:** file `.facilecards` (formato con versione, foto incluse) con "Esporta tutto" e "Importa tutto" (videate 29–35): è la copia di sicurezza dei dati e la base della condivisione.
 
 ### Fatto
 
@@ -52,6 +52,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-17: tema grafico come nei disegni, chiaro e scuro (segue il telefono): tavolozza, campi, pulsanti a pillola, righe su fondo bianco; rifatte elenco (2, 3), scheda (5), nuova tessera (7, 8, con "Salva" fisso in basso), scadenze (4), configurazione (1), sezioni (12), cestino (13, recupero in un foglio dal basso), visualizzatore foto. Colori del catalogo allineati ai disegni. Provato sul telefono.
 - 2026-11-17: impostazioni (14) e informazioni (21): nome, lingua, tema (come il telefono / chiaro / scuro, cambia subito), avviso scadenze e giorni; riquadro della versione gratuita; informativa, sito e versione dell'app aperti con codice nativo nostro (`openUrl`, `appVersion` in `MainActivity.kt`). Vista e ordinamento dell'elenco ricordati. Provato sul telefono.
 - 2026-11-18: modifica della tessera: matita nella scheda (5), stessa pagina della nuova tessera già compilata (titolo "Modifica tessera"), tipologia fissa; foto sostituite o tolte applicate solo con "Salva"; la scheda si aggiorna subito. Scadenza nel modulo in formato corto (31/12/2027). Provato sul telefono.
+- 2026-11-18: icona dell'app dal logo: icona adattiva vettoriale (tessera con pollice su fondo blu) e PNG per Android 7; all'apertura ora compare la nostra icona invece del logo di Flutter. Avvio più rapido: catalogo riallineato solo quando cambia la sua impronta, cestino svuotato dopo la prima schermata. Misure in `--release` sull'emulatore: avvio a freddo circa 0,6 s, il nostro codice meno di 0,1 s (differenza prima/dopo dentro le oscillazioni). Schermata di avvio con immagine: lasciata perdere (Fabio). Provato sul telefono.
 
 ### Da fare: app
 
@@ -68,9 +69,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto.
 - Backup automatico di Android (database e foto; acquisto escluso).
 - Traduzioni inglese e francese (spagnolo e tedesco predisposti).
-- Icona dell'app dal logo in `docs/logo/` (anche icona adattiva), con strumenti usati solo per generare le immagini (niente plugin nell'app).
-- Schermata di avvio (idea di Fabio, 17 nov): un'immagine da generare con tante tessere sparse e mischiate, leggermente sfocate, come viste dall'alto su un ripiano (il ripiano non si vede); versione chiara e scura. Da verificare: da Android 12 il sistema mostra solo un'icona centrata, quindi l'immagine a tutto schermo va valutata (anche rispetto alla regola dei 2 secondi).
-- Avvio più rapido: riallineare il catalogo solo quando cambia (non a ogni avvio) e svuotare il cestino dopo la prima schermata; misurare l'avvio a freddo in versione definitiva (`--release`) prima e dopo. Nota: la lentezza vista sul telefono è soprattutto della versione di prova (debug).
+- Dimensione: l'APK universale in `--release` pesa circa 80 MB (tutte le architetture e il modello di lettura dei codici incluso); verificare quanto si scarica davvero dall'App Bundle di Google Play.
 - Migrazioni del database e prove su database di esempio per ogni versione rilasciata (punto B8).
 - Sistemare l'avviso `itf` deprecato in `lib/barcode_support.dart` (usare `itf14`).
 

@@ -96,3 +96,9 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Nel modulo la scadenza si mostra in formato corto (31/12/2027): quella estesa veniva tagliata.
 - Rimossa da `CLAUDE.md` una voce del "Da fare" sulle impostazioni rimasta per errore.
 - Fabio ha provato la modifica della tessera sul telefono: funziona.
+- **Icona dell'app**: disegnata come grafica vettoriale di Android a partire da `docs/logo/facilecards-icon.svg` (icona adattiva: tessera con il pollice su fondo blu, dentro la zona sicura, così il telefono può ritagliarla a cerchio o a goccia), più i PNG per Android 7 ricavati dallo stesso SVG con Chrome senza finestra. Nessuno strumento aggiunto al progetto. All'apertura Android mostra ora la nostra icona invece del logo di Flutter.
+- **Schermata di avvio con le tessere sparse**: lasciata perdere su indicazione di Fabio.
+- **Avvio più rapido**: il catalogo delle tipologie si riscrive solo se cambia la sua impronta (salvata nelle impostazioni), e il cestino si svuota dopo la prima schermata insieme alla pulizia delle foto. Misurato in versione definitiva sull'emulatore, 8 avvii a freddo prima e dopo: avvio completo circa 0,6 s (mediana 616 ms prima, 643 dopo), il nostro codice dall'avvio alla prima schermata circa 80 ms (82 prima, 76 dopo). La differenza sta dentro le oscillazioni: quei lavori pesavano poco, ma restano utili su telefoni lenti e con il cestino pieno. La lentezza vista da Fabio era della versione di prova.
+- Il testo dell'elenco vuoto diceva ancora "Premi Aggiungi": ora "Tocca +".
+- Notato: l'APK universale in versione definitiva pesa circa 80 MB; da verificare la dimensione reale scaricata da Google Play.
+- Fabio ha provato icona e avvio sul telefono: funzionano.

@@ -25,7 +25,11 @@ void main() {
       await db.setSetting(SettingKeys.theme, 'dark');
       await db.setSetting(SettingKeys.theme, 'light');
       expect(await db.setting(SettingKeys.theme), 'light');
-      expect((await db.select(db.settings).get()).length, 1);
+      expect(
+          (await db.select(db.settings).get())
+              .where((r) => r.key == SettingKeys.theme)
+              .length,
+          1);
     });
 
     test('cambiare l\'avviso dalle impostazioni vale per le scadenze', () async {

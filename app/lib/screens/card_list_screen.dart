@@ -181,7 +181,7 @@ class _CardListScreenState extends State<CardListScreen> {
         Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            'Nessuna tessera. Premi "Aggiungi" e scegli il negozio.',
+            'Nessuna tessera. Tocca + e scegli il negozio.',
             textAlign: TextAlign.center,
           ),
         ),
