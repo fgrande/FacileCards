@@ -154,3 +154,10 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - L'icona di condivisione è quella di Android (tre pallini collegati) invece del quadrato con la freccia, che è lo stile di iPhone; cambiata anche in tutti i disegni (05, 06, 12, 18, 19, 28, 36–38, 44, chiari e scuri).
 - Il disegno 12 aveva già un pulsante di condivisione su ogni riga di sezione, che nell'app mancava (c'era solo nel menu): aggiunto.
 - Fabio ha provato il nuovo menu e l'icona di condivisione sul telefono: funziona.
+
+## 18 novembre 2026: condivisione, tappa 3 ("Apri con FacileCards")
+
+- FacileCards si dichiara ad Android come app che apre i file. Nessuna app conosce l'estensione `.facilecards`, quindi WhatsApp, Gmail e Drive la passano come file generico o zip: si accettano quei tipi, e un file che non è nostro riceve il messaggio "Non è un file di FacileCards". Effetto voluto: FacileCards compare anche tra le app proposte per altri file sconosciuti, come fanno le app simili.
+- Il codice nativo copia subito il file (il permesso di leggerlo dura poco) e lo tiene finché Flutter non lo chiede; Flutter lo chiede dopo che l'elenco è comparso, così l'avvio resta rapido, e dopo la configurazione iniziale se è il primo avvio. Avvio dell'attività cambiato in `singleTask`: con l'app già aperta il file arriva a quella, invece di aprirne una seconda dentro l'app di provenienza.
+- "Condividi verso FacileCards" (pannello Condividi delle altre app) lasciato fuori: si aggiunge solo se le prove con le app vere lo richiedono.
+- Fabio ha provato "Apri con FacileCards" sul telefono: funziona.

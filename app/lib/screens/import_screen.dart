@@ -91,6 +91,32 @@ Future<bool> startImportFromFile(
   return openArchiveFile(context, database, path);
 }
 
+/// "Apri con FacileCards" (tappa 3): se un'altra app ha passato un file, lo
+/// apre come "Importa da file". Restituisce true se si è importato qualcosa.
+Future<bool> openIncomingFile(
+  BuildContext context,
+  db.AppDatabase database,
+) async {
+  final ({String? path, String? error})? incoming;
+  try {
+    incoming = await takeIncomingFile();
+  } catch (_) {
+    return false;
+  }
+  if (incoming == null || !context.mounted) return false;
+  final path = incoming.path;
+  if (path == null) {
+    _fail(
+      context,
+      incoming.error == 'too_big'
+          ? 'Il file è troppo grande.'
+          : 'Non sono riuscito a leggere il file.',
+    );
+    return false;
+  }
+  return openArchiveFile(context, database, path);
+}
+
 /// Apre un file `.facilecards` già copiato in [path] (che poi si cancella):
 /// lo legge, chiede la password se serve (videate 34, 35) e apre la
 /// schermata giusta per il tipo di file: copia completa (29–31), sezione

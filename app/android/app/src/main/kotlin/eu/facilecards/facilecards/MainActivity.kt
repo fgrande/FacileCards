@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.Settings
 import androidx.core.content.FileProvider
@@ -19,12 +20,121 @@ class MainActivity : FlutterActivity() {
     // "Importa tutto" in corso: dove copiare il file scelto e risposta.
     private var pendingOpen: Pair<File, MethodChannel.Result>? = null
 
+    // "Apri con FacileCards" (tappa 3): file ricevuto da un'altra app, copiato
+    // nella cache e tenuto qui finché Flutter non lo chiede ("takeIncomingFile").
+    private var channel: MethodChannel? = null
+    private var incomingToken = 0
+    private var incomingCopying = false
+    private var incomingPath: String? = null
+    private var incomingError: String? = null
+    private var waitingTake: MethodChannel.Result? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Solo al primo avvio dell'attività, non quando Android la ricrea.
+        if (savedInstanceState == null) {
+            File(cacheDir, "incoming").deleteRecursively()
+            receive(intent)
+        }
+    }
+
+    // App già aperta (launchMode singleTask): il file arriva qui.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (receive(intent)) channel?.invokeMethod("incomingFile", null)
+    }
+
+    /// Copia il file di un'intenzione VIEW; il permesso di lettura dura poco.
+    private fun receive(intent: Intent?): Boolean {
+        if (intent?.action != Intent.ACTION_VIEW) return false
+        val uri = intent.data ?: return false
+        val token = ++incomingToken
+        incomingCopying = true
+        incomingPath = null
+        incomingError = null
+        val dir = File(cacheDir, "incoming").apply { mkdirs() }
+        val target = File(dir, "ricevuto-${System.currentTimeMillis()}.facilecards")
+        Thread {
+            val error = try {
+                copyLimited(uri, target)
+                null
+            } catch (e: TooBigException) {
+                "too_big"
+            } catch (e: Exception) {
+                "read_failed"
+            }
+            runOnUiThread {
+                if (token != incomingToken) {
+                    target.delete()
+                    return@runOnUiThread
+                }
+                incomingCopying = false
+                if (error == null) incomingPath = target.path else incomingError = error
+                waitingTake?.let {
+                    waitingTake = null
+                    deliverIncoming(it)
+                }
+            }
+        }.start()
+        return true
+    }
+
+    private fun deliverIncoming(result: MethodChannel.Result) {
+        val path = incomingPath
+        val error = incomingError
+        incomingPath = null
+        incomingError = null
+        result.success(
+            when {
+                path != null -> mapOf("path" to path)
+                error != null -> mapOf("error" to error)
+                else -> null
+            },
+        )
+    }
+
+    /// Copia [uri] in [target] con un tetto alla dimensione (il file viene da fuori).
+    private fun copyLimited(uri: Uri, target: File) {
+        try {
+            contentResolver.openInputStream(uri)!!.use { input ->
+                target.outputStream().use { out ->
+                    val buffer = ByteArray(64 * 1024)
+                    var total = 0L
+                    while (true) {
+                        val n = input.read(buffer)
+                        if (n < 0) break
+                        total += n
+                        if (total > MAX_OPEN_BYTES) throw TooBigException()
+                        out.write(buffer, 0, n)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            target.delete()
+            throw e
+        }
+    }
+
+    private class TooBigException : Exception()
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // Piccole funzioni di sistema senza plugin (vedi lib/system_settings.dart).
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "facilecards/system")
-            .setMethodCallHandler { call, result ->
+        val ch = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "facilecards/system")
+        channel = ch
+        ch.setMethodCallHandler { call, result ->
                 when (call.method) {
+                    // File ricevuto con "Apri con FacileCards": {path} o {error},
+                    // null se non c'è; se la copia è in corso si risponde alla fine.
+                    "takeIncomingFile" -> {
+                        if (incomingCopying) {
+                            waitingTake?.success(null)
+                            waitingTake = result
+                        } else {
+                            deliverIncoming(result)
+                        }
+                    }
                     // Pagina dell'app nelle impostazioni di Android (videata 24,
                     // permesso della fotocamera negato).
                     "openAppSettings" -> {
@@ -153,22 +263,9 @@ class MainActivity : FlutterActivity() {
         Thread {
             // Il file viene da fuori: si copia con un tetto alla dimensione.
             val ok = try {
-                contentResolver.openInputStream(uri)!!.use { input ->
-                    target.outputStream().use { out ->
-                        val buffer = ByteArray(64 * 1024)
-                        var total = 0L
-                        while (true) {
-                            val n = input.read(buffer)
-                            if (n < 0) break
-                            total += n
-                            if (total > MAX_OPEN_BYTES) throw IllegalStateException("too big")
-                            out.write(buffer, 0, n)
-                        }
-                    }
-                }
+                copyLimited(uri, target)
                 true
             } catch (e: Exception) {
-                target.delete()
                 false
             }
             runOnUiThread {

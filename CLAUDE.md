@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 2 (prima migrazione fatta il 18 nov, con copia di sicurezza e prova): anche se l'app non è ancora rilasciata, ogni cambio di schema si fa con un passo di migrazione, perché il telefono di Fabio ha dati veri.
 
-**Prossimo passo:** condivisione, tappa 3: "Apri con FacileCards" da WhatsApp, Gmail, Drive.
+**Prossimo passo:** scegliere con Fabio il passo seguente tra i "Da fare" (condivisione completata).
 
 ### Fatto
 
@@ -59,6 +59,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - 2026-11-18: condivisione, tappa 1 (invio): "Condividi" nel menu della sezione (36) e nella scheda della tessera (5); due passi come nelle videate 9 e 10, con anteprima del messaggio (link a Google Play) e del file, password facoltativa, avviso sopra i 20 MB; nel file niente dati personali (preferita, date d'uso, proprietario). Provato sul telefono.
 - 2026-11-18: condivisione, tappa 2 (ricezione da dentro l'app): "Importa da file" al posto di "Importa tutto", riconosce copia completa, sezione o tessera; schema versione 2 (identificativi d'origine, data di ricezione) con migrazione, copia di sicurezza `.v1.bak` prima di migrare (decisione 88) e schemi salvati in `test/fixtures/`; importazione di sezione come la videata 11 (nuova sezione col nome libero proposto, unisci senza doppioni, sostituisci la copia ricevuta prima secondo la decisione 80) e di tessera singola nella sezione scelta (107). Se la sezione era già ricevuta, la scelta proposta è "Sostituisci" (decisione 113, disegno 11 aggiornato). Provato sul telefono.
 - 2026-11-18: menu ⋮ dell'elenco diviso in "Sezioni" e "Dati" (decisione 114, videate 12 e 12b): Dati raccoglie Esporta tutto, Importa da file, promemoria "Ultima copia" e Cestino; pulsante di condivisione su ogni riga delle Sezioni, come nel disegno. Icona di condivisione di Android (tre pallini) nell'app e in tutti i disegni. Provato sul telefono.
+- 2026-11-18: condivisione, tappa 3: "Apri con FacileCards". Toccando un file `.facilecards` in un'altra app compare FacileCards; il file si copia nello spazio privato (codice nativo nostro, tetto di 300 MB) e si apre dopo che l'elenco è comparso, con le stesse schermate di "Importa da file"; una sola FacileCards aperta (`singleTask`), con l'app già aperta il file arriva a quella; file non nostro → messaggio chiaro. Provato sull'emulatore dall'app File (app chiusa, app aperta, file falso) e sul telefono.
 
 ### Da fare: app
 
@@ -66,8 +67,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - La lingua scelta si salva ma l'interfaccia resta in italiano finché non si fanno le traduzioni.
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - Eliminazione trascinando la riga (17).
-- "Apri con FacileCards": apertura dei file da altre app (WhatsApp, Gmail, Drive), da provare con le app vere (analisi 5.2).
-- File di una sola sezione o tessera: oggi "Importa tutto" li rifiuta con un messaggio; si apriranno con la condivisione (9–11, 107).
+- "Condividi verso FacileCards" (FacileCards nel pannello Condividi delle altre app): solo se da qualche app il file non si apre con "Apri con".
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.
 - Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto.

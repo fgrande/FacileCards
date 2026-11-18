@@ -36,3 +36,18 @@ Future<bool> openDocument({required String path, String? initialUri}) async =>
     await _channel.invokeMethod<bool>(
         'openDocument', {'path': path, 'initialUri': initialUri}) ??
     false;
+
+/// "Apri con FacileCards": il file ricevuto da un'altra app, già copiato in
+/// uno spazio privato. `path` se c'è, `error` ('too_big' o 'read_failed') se
+/// non si è potuto copiare, null se non è arrivato niente.
+Future<({String? path, String? error})?> takeIncomingFile() async {
+  final r = await _channel.invokeMapMethod<String, String>('takeIncomingFile');
+  if (r == null) return null;
+  return (path: r['path'], error: r['error']);
+}
+
+/// [onArrived] si chiama quando arriva un file con l'app già aperta.
+void listenIncomingFiles(void Function() onArrived) =>
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'incomingFile') onArrived();
+    });

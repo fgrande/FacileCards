@@ -4,9 +4,11 @@ import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
+import '../system_settings.dart';
 import 'card_screen.dart';
 import 'data_screen.dart';
 import 'expiry_panel.dart';
+import 'import_screen.dart';
 import 'new_card_type_screen.dart';
 import 'search_field.dart';
 import 'sections_screen.dart';
@@ -43,6 +45,22 @@ class _CardListScreenState extends State<CardListScreen> {
   void initState() {
     super.initState();
     _loadRefs();
+    // "Apri con FacileCards": il file si apre dopo che l'elenco è comparso,
+    // così l'avvio resta rapido; con l'app già aperta arriva un avviso.
+    listenIncomingFiles(_openIncoming);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openIncoming());
+  }
+
+  bool _incomingBusy = false;
+
+  Future<void> _openIncoming() async {
+    if (_incomingBusy || !mounted) return;
+    _incomingBusy = true;
+    try {
+      if (await openIncomingFile(context, widget.database)) _loadRefs();
+    } finally {
+      _incomingBusy = false;
+    }
   }
 
   Future<void> _loadRefs() async {
