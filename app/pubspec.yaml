@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^2.4.0
   archive: ^4.7.1
   cryptography: ^2.9.0
+  sqlite3: ^3.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

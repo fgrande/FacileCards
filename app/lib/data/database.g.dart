@@ -55,8 +55,37 @@ class $SectionsTable extends Sections with TableInfo<$SectionsTable, Section> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _originIdMeta = const VerificationMeta(
+    'originId',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, name, isDefault, hidden];
+  late final GeneratedColumn<String> originId = GeneratedColumn<String>(
+    'origin_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _receivedAtMeta = const VerificationMeta(
+    'receivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> receivedAt = GeneratedColumn<DateTime>(
+    'received_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    isDefault,
+    hidden,
+    originId,
+    receivedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -92,6 +121,18 @@ class $SectionsTable extends Sections with TableInfo<$SectionsTable, Section> {
         hidden.isAcceptableOrUnknown(data['hidden']!, _hiddenMeta),
       );
     }
+    if (data.containsKey('origin_id')) {
+      context.handle(
+        _originIdMeta,
+        originId.isAcceptableOrUnknown(data['origin_id']!, _originIdMeta),
+      );
+    }
+    if (data.containsKey('received_at')) {
+      context.handle(
+        _receivedAtMeta,
+        receivedAt.isAcceptableOrUnknown(data['received_at']!, _receivedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -117,6 +158,14 @@ class $SectionsTable extends Sections with TableInfo<$SectionsTable, Section> {
         DriftSqlType.bool,
         data['${effectivePrefix}hidden'],
       )!,
+      originId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_id'],
+      ),
+      receivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}received_at'],
+      ),
     );
   }
 
@@ -131,11 +180,18 @@ class Section extends DataClass implements Insertable<Section> {
   final String name;
   final bool isDefault;
   final bool hidden;
+
+  /// Sezione ricevuta da un altro telefono: identificativo che aveva là
+  /// (decisione 79) e quando è arrivata. Null per le sezioni create qui.
+  final String? originId;
+  final DateTime? receivedAt;
   const Section({
     required this.id,
     required this.name,
     required this.isDefault,
     required this.hidden,
+    this.originId,
+    this.receivedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -144,6 +200,12 @@ class Section extends DataClass implements Insertable<Section> {
     map['name'] = Variable<String>(name);
     map['is_default'] = Variable<bool>(isDefault);
     map['hidden'] = Variable<bool>(hidden);
+    if (!nullToAbsent || originId != null) {
+      map['origin_id'] = Variable<String>(originId);
+    }
+    if (!nullToAbsent || receivedAt != null) {
+      map['received_at'] = Variable<DateTime>(receivedAt);
+    }
     return map;
   }
 
@@ -153,6 +215,12 @@ class Section extends DataClass implements Insertable<Section> {
       name: Value(name),
       isDefault: Value(isDefault),
       hidden: Value(hidden),
+      originId: originId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originId),
+      receivedAt: receivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receivedAt),
     );
   }
 
@@ -166,6 +234,8 @@ class Section extends DataClass implements Insertable<Section> {
       name: serializer.fromJson<String>(json['name']),
       isDefault: serializer.fromJson<bool>(json['isDefault']),
       hidden: serializer.fromJson<bool>(json['hidden']),
+      originId: serializer.fromJson<String?>(json['originId']),
+      receivedAt: serializer.fromJson<DateTime?>(json['receivedAt']),
     );
   }
   @override
@@ -176,22 +246,36 @@ class Section extends DataClass implements Insertable<Section> {
       'name': serializer.toJson<String>(name),
       'isDefault': serializer.toJson<bool>(isDefault),
       'hidden': serializer.toJson<bool>(hidden),
+      'originId': serializer.toJson<String?>(originId),
+      'receivedAt': serializer.toJson<DateTime?>(receivedAt),
     };
   }
 
-  Section copyWith({String? id, String? name, bool? isDefault, bool? hidden}) =>
-      Section(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        isDefault: isDefault ?? this.isDefault,
-        hidden: hidden ?? this.hidden,
-      );
+  Section copyWith({
+    String? id,
+    String? name,
+    bool? isDefault,
+    bool? hidden,
+    Value<String?> originId = const Value.absent(),
+    Value<DateTime?> receivedAt = const Value.absent(),
+  }) => Section(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    isDefault: isDefault ?? this.isDefault,
+    hidden: hidden ?? this.hidden,
+    originId: originId.present ? originId.value : this.originId,
+    receivedAt: receivedAt.present ? receivedAt.value : this.receivedAt,
+  );
   Section copyWithCompanion(SectionsCompanion data) {
     return Section(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       isDefault: data.isDefault.present ? data.isDefault.value : this.isDefault,
       hidden: data.hidden.present ? data.hidden.value : this.hidden,
+      originId: data.originId.present ? data.originId.value : this.originId,
+      receivedAt: data.receivedAt.present
+          ? data.receivedAt.value
+          : this.receivedAt,
     );
   }
 
@@ -201,13 +285,16 @@ class Section extends DataClass implements Insertable<Section> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('isDefault: $isDefault, ')
-          ..write('hidden: $hidden')
+          ..write('hidden: $hidden, ')
+          ..write('originId: $originId, ')
+          ..write('receivedAt: $receivedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, isDefault, hidden);
+  int get hashCode =>
+      Object.hash(id, name, isDefault, hidden, originId, receivedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -215,7 +302,9 @@ class Section extends DataClass implements Insertable<Section> {
           other.id == this.id &&
           other.name == this.name &&
           other.isDefault == this.isDefault &&
-          other.hidden == this.hidden);
+          other.hidden == this.hidden &&
+          other.originId == this.originId &&
+          other.receivedAt == this.receivedAt);
 }
 
 class SectionsCompanion extends UpdateCompanion<Section> {
@@ -223,12 +312,16 @@ class SectionsCompanion extends UpdateCompanion<Section> {
   final Value<String> name;
   final Value<bool> isDefault;
   final Value<bool> hidden;
+  final Value<String?> originId;
+  final Value<DateTime?> receivedAt;
   final Value<int> rowid;
   const SectionsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.isDefault = const Value.absent(),
     this.hidden = const Value.absent(),
+    this.originId = const Value.absent(),
+    this.receivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SectionsCompanion.insert({
@@ -236,6 +329,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
     required String name,
     this.isDefault = const Value.absent(),
     this.hidden = const Value.absent(),
+    this.originId = const Value.absent(),
+    this.receivedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Section> custom({
@@ -243,6 +338,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
     Expression<String>? name,
     Expression<bool>? isDefault,
     Expression<bool>? hidden,
+    Expression<String>? originId,
+    Expression<DateTime>? receivedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -250,6 +347,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
       if (name != null) 'name': name,
       if (isDefault != null) 'is_default': isDefault,
       if (hidden != null) 'hidden': hidden,
+      if (originId != null) 'origin_id': originId,
+      if (receivedAt != null) 'received_at': receivedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -259,6 +358,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
     Value<String>? name,
     Value<bool>? isDefault,
     Value<bool>? hidden,
+    Value<String?>? originId,
+    Value<DateTime?>? receivedAt,
     Value<int>? rowid,
   }) {
     return SectionsCompanion(
@@ -266,6 +367,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
       name: name ?? this.name,
       isDefault: isDefault ?? this.isDefault,
       hidden: hidden ?? this.hidden,
+      originId: originId ?? this.originId,
+      receivedAt: receivedAt ?? this.receivedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -285,6 +388,12 @@ class SectionsCompanion extends UpdateCompanion<Section> {
     if (hidden.present) {
       map['hidden'] = Variable<bool>(hidden.value);
     }
+    if (originId.present) {
+      map['origin_id'] = Variable<String>(originId.value);
+    }
+    if (receivedAt.present) {
+      map['received_at'] = Variable<DateTime>(receivedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -298,6 +407,8 @@ class SectionsCompanion extends UpdateCompanion<Section> {
           ..write('name: $name, ')
           ..write('isDefault: $isDefault, ')
           ..write('hidden: $hidden, ')
+          ..write('originId: $originId, ')
+          ..write('receivedAt: $receivedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1173,6 +1284,17 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _originIdMeta = const VerificationMeta(
+    'originId',
+  );
+  @override
+  late final GeneratedColumn<String> originId = GeneratedColumn<String>(
+    'origin_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1188,6 +1310,7 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
     lastUsedAt,
     favorite,
     deletedAt,
+    originId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1289,6 +1412,12 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
+    if (data.containsKey('origin_id')) {
+      context.handle(
+        _originIdMeta,
+        originId.isAcceptableOrUnknown(data['origin_id']!, _originIdMeta),
+      );
+    }
     return context;
   }
 
@@ -1350,6 +1479,10 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}deleted_at'],
       ),
+      originId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_id'],
+      ),
     );
   }
 
@@ -1373,6 +1506,10 @@ class Card extends DataClass implements Insertable<Card> {
   final DateTime? lastUsedAt;
   final bool favorite;
   final DateTime? deletedAt;
+
+  /// Tessera ricevuta: identificativo che aveva sul telefono di chi l'ha
+  /// mandata, per riconoscerla in una copia successiva (decisione 80).
+  final String? originId;
   const Card({
     required this.id,
     required this.typeId,
@@ -1387,6 +1524,7 @@ class Card extends DataClass implements Insertable<Card> {
     this.lastUsedAt,
     required this.favorite,
     this.deletedAt,
+    this.originId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1413,6 +1551,9 @@ class Card extends DataClass implements Insertable<Card> {
     map['favorite'] = Variable<bool>(favorite);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || originId != null) {
+      map['origin_id'] = Variable<String>(originId);
     }
     return map;
   }
@@ -1442,6 +1583,9 @@ class Card extends DataClass implements Insertable<Card> {
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
+      originId: originId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originId),
     );
   }
 
@@ -1464,6 +1608,7 @@ class Card extends DataClass implements Insertable<Card> {
       lastUsedAt: serializer.fromJson<DateTime?>(json['lastUsedAt']),
       favorite: serializer.fromJson<bool>(json['favorite']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      originId: serializer.fromJson<String?>(json['originId']),
     );
   }
   @override
@@ -1483,6 +1628,7 @@ class Card extends DataClass implements Insertable<Card> {
       'lastUsedAt': serializer.toJson<DateTime?>(lastUsedAt),
       'favorite': serializer.toJson<bool>(favorite),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'originId': serializer.toJson<String?>(originId),
     };
   }
 
@@ -1500,6 +1646,7 @@ class Card extends DataClass implements Insertable<Card> {
     Value<DateTime?> lastUsedAt = const Value.absent(),
     bool? favorite,
     Value<DateTime?> deletedAt = const Value.absent(),
+    Value<String?> originId = const Value.absent(),
   }) => Card(
     id: id ?? this.id,
     typeId: typeId ?? this.typeId,
@@ -1514,6 +1661,7 @@ class Card extends DataClass implements Insertable<Card> {
     lastUsedAt: lastUsedAt.present ? lastUsedAt.value : this.lastUsedAt,
     favorite: favorite ?? this.favorite,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    originId: originId.present ? originId.value : this.originId,
   );
   Card copyWithCompanion(CardsCompanion data) {
     return Card(
@@ -1534,6 +1682,7 @@ class Card extends DataClass implements Insertable<Card> {
           : this.lastUsedAt,
       favorite: data.favorite.present ? data.favorite.value : this.favorite,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      originId: data.originId.present ? data.originId.value : this.originId,
     );
   }
 
@@ -1552,7 +1701,8 @@ class Card extends DataClass implements Insertable<Card> {
           ..write('createdAt: $createdAt, ')
           ..write('lastUsedAt: $lastUsedAt, ')
           ..write('favorite: $favorite, ')
-          ..write('deletedAt: $deletedAt')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('originId: $originId')
           ..write(')'))
         .toString();
   }
@@ -1572,6 +1722,7 @@ class Card extends DataClass implements Insertable<Card> {
     lastUsedAt,
     favorite,
     deletedAt,
+    originId,
   );
   @override
   bool operator ==(Object other) =>
@@ -1589,7 +1740,8 @@ class Card extends DataClass implements Insertable<Card> {
           other.createdAt == this.createdAt &&
           other.lastUsedAt == this.lastUsedAt &&
           other.favorite == this.favorite &&
-          other.deletedAt == this.deletedAt);
+          other.deletedAt == this.deletedAt &&
+          other.originId == this.originId);
 }
 
 class CardsCompanion extends UpdateCompanion<Card> {
@@ -1606,6 +1758,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
   final Value<DateTime?> lastUsedAt;
   final Value<bool> favorite;
   final Value<DateTime?> deletedAt;
+  final Value<String?> originId;
   final Value<int> rowid;
   const CardsCompanion({
     this.id = const Value.absent(),
@@ -1621,6 +1774,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
     this.lastUsedAt = const Value.absent(),
     this.favorite = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.originId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CardsCompanion.insert({
@@ -1637,6 +1791,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
     this.lastUsedAt = const Value.absent(),
     this.favorite = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.originId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : typeId = Value(typeId),
        name = Value(name),
@@ -1657,6 +1812,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
     Expression<DateTime>? lastUsedAt,
     Expression<bool>? favorite,
     Expression<DateTime>? deletedAt,
+    Expression<String>? originId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1673,6 +1829,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
       if (lastUsedAt != null) 'last_used_at': lastUsedAt,
       if (favorite != null) 'favorite': favorite,
       if (deletedAt != null) 'deleted_at': deletedAt,
+      if (originId != null) 'origin_id': originId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1691,6 +1848,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
     Value<DateTime?>? lastUsedAt,
     Value<bool>? favorite,
     Value<DateTime?>? deletedAt,
+    Value<String?>? originId,
     Value<int>? rowid,
   }) {
     return CardsCompanion(
@@ -1707,6 +1865,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
       lastUsedAt: lastUsedAt ?? this.lastUsedAt,
       favorite: favorite ?? this.favorite,
       deletedAt: deletedAt ?? this.deletedAt,
+      originId: originId ?? this.originId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1753,6 +1912,9 @@ class CardsCompanion extends UpdateCompanion<Card> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
+    if (originId.present) {
+      map['origin_id'] = Variable<String>(originId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1775,6 +1937,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
           ..write('lastUsedAt: $lastUsedAt, ')
           ..write('favorite: $favorite, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('originId: $originId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2277,6 +2440,8 @@ typedef $$SectionsTableCreateCompanionBuilder = SectionsCompanion Function({
   required String name,
   Value<bool> isDefault,
   Value<bool> hidden,
+  Value<String?> originId,
+  Value<DateTime?> receivedAt,
   Value<int> rowid,
 });
 typedef $$SectionsTableUpdateCompanionBuilder = SectionsCompanion Function({
@@ -2284,6 +2449,8 @@ typedef $$SectionsTableUpdateCompanionBuilder = SectionsCompanion Function({
   Value<String> name,
   Value<bool> isDefault,
   Value<bool> hidden,
+  Value<String?> originId,
+  Value<DateTime?> receivedAt,
   Value<int> rowid,
 });
 
@@ -2337,6 +2504,16 @@ class $$SectionsTableFilterComposer
 
   ColumnFilters<bool> get hidden => $composableBuilder(
     column: $table.hidden,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originId => $composableBuilder(
+    column: $table.originId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2394,6 +2571,16 @@ class $$SectionsTableOrderingComposer
     column: $table.hidden,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get originId => $composableBuilder(
+    column: $table.originId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SectionsTableAnnotationComposer
@@ -2416,6 +2603,14 @@ class $$SectionsTableAnnotationComposer
 
   GeneratedColumn<bool> get hidden =>
       $composableBuilder(column: $table.hidden, builder: (column) => column);
+
+  GeneratedColumn<String> get originId =>
+      $composableBuilder(column: $table.originId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => column,
+  );
 
   Expression<T> cardsRefs<T extends Object>(
     Expression<T> Function($$CardsTableAnnotationComposer a) f,
@@ -2475,12 +2670,16 @@ class $$SectionsTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
                 Value<bool> hidden = const Value.absent(),
+                Value<String?> originId = const Value.absent(),
+                Value<DateTime?> receivedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SectionsCompanion(
                 id: id,
                 name: name,
                 isDefault: isDefault,
                 hidden: hidden,
+                originId: originId,
+                receivedAt: receivedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2489,12 +2688,16 @@ class $$SectionsTableTableManager
                 required String name,
                 Value<bool> isDefault = const Value.absent(),
                 Value<bool> hidden = const Value.absent(),
+                Value<String?> originId = const Value.absent(),
+                Value<DateTime?> receivedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SectionsCompanion.insert(
                 id: id,
                 name: name,
                 isDefault: isDefault,
                 hidden: hidden,
+                originId: originId,
+                receivedAt: receivedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -3000,6 +3203,7 @@ typedef $$CardsTableCreateCompanionBuilder = CardsCompanion Function({
   Value<DateTime?> lastUsedAt,
   Value<bool> favorite,
   Value<DateTime?> deletedAt,
+  Value<String?> originId,
   Value<int> rowid,
 });
 typedef $$CardsTableUpdateCompanionBuilder = CardsCompanion Function({
@@ -3016,6 +3220,7 @@ typedef $$CardsTableUpdateCompanionBuilder = CardsCompanion Function({
   Value<DateTime?> lastUsedAt,
   Value<bool> favorite,
   Value<DateTime?> deletedAt,
+  Value<String?> originId,
   Value<int> rowid,
 });
 
@@ -3136,6 +3341,11 @@ class $$CardsTableFilterComposer extends Composer<_$AppDatabase, $CardsTable> {
 
   ColumnFilters<DateTime> get deletedAt => $composableBuilder(
     column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originId => $composableBuilder(
+    column: $table.originId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3275,6 +3485,11 @@ class $$CardsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get originId => $composableBuilder(
+    column: $table.originId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CardTypesTableOrderingComposer get typeId {
     final $$CardTypesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3367,6 +3582,9 @@ class $$CardsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get originId =>
+      $composableBuilder(column: $table.originId, builder: (column) => column);
 
   $$CardTypesTableAnnotationComposer get typeId {
     final $$CardTypesTableAnnotationComposer composer = $composerBuilder(
@@ -3485,6 +3703,7 @@ class $$CardsTableTableManager
                 Value<DateTime?> lastUsedAt = const Value.absent(),
                 Value<bool> favorite = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String?> originId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CardsCompanion(
                 id: id,
@@ -3500,6 +3719,7 @@ class $$CardsTableTableManager
                 lastUsedAt: lastUsedAt,
                 favorite: favorite,
                 deletedAt: deletedAt,
+                originId: originId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3517,6 +3737,7 @@ class $$CardsTableTableManager
                 Value<DateTime?> lastUsedAt = const Value.absent(),
                 Value<bool> favorite = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String?> originId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CardsCompanion.insert(
                 id: id,
@@ -3532,6 +3753,7 @@ class $$CardsTableTableManager
                 lastUsedAt: lastUsedAt,
                 favorite: favorite,
                 deletedAt: deletedAt,
+                originId: originId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -15,6 +15,7 @@ import '../transfer/archive_format.dart';
 import '../transfer/crypto.dart';
 import '../transfer/import.dart';
 import '../ui.dart';
+import 'shared_import_screen.dart';
 
 /// Legge e controlla il file scelto; gira in un isolate (il file può essere
 /// grande). Funzione a sé: una funzione interna si porterebbe dietro lo stato
@@ -43,29 +44,30 @@ Future<ArchiveContent> _decryptArchive(
   ({Uint8List data, Map<String, Object?> params, String password}) a,
 ) async => decodeContent(await decryptContent(a.data, a.params, a.password));
 
-/// "Importa tutto" da Sezioni → Archivio: scelta del file, lettura, poi la
-/// schermata del riepilogo. Restituisce true se si è importato qualcosa.
-Future<bool> startImportAll(
+void _fail(BuildContext context, String text) {
+  if (!context.mounted) return;
+  showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Non si può importare'),
+      content: Text(text),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Chiudi'),
+        ),
+      ],
+    ),
+  );
+}
+
+/// "Importa da file" (Sezioni → Archivio): scelta del file con il selettore
+/// di Android, poi [openArchiveFile]. Restituisce true se si è importato
+/// qualcosa.
+Future<bool> startImportFromFile(
   BuildContext context,
   db.AppDatabase database,
 ) async {
-  void fail(String text) {
-    if (!context.mounted) return;
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Non si può importare'),
-        content: Text(text),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Chiudi'),
-          ),
-        ],
-      ),
-    );
-  }
-
   final dir = Directory('${(await getTemporaryDirectory()).path}/import');
   if (await dir.exists()) await dir.delete(recursive: true);
   await dir.create(recursive: true);
@@ -77,29 +79,41 @@ Future<bool> startImportAll(
       return false; // annullato
     }
   } catch (_) {
-    fail('Non sono riuscito a leggere il file. Potrebbe essere troppo grande.');
+    if (context.mounted) {
+      _fail(
+        context,
+        'Non sono riuscito a leggere il file. Potrebbe essere troppo grande.',
+      );
+    }
     return false;
   }
+  if (!context.mounted) return false;
+  return openArchiveFile(context, database, path);
+}
 
+/// Apre un file `.facilecards` già copiato in [path] (che poi si cancella):
+/// lo legge, chiede la password se serve (videate 34, 35) e apre la
+/// schermata giusta per il tipo di file: copia completa (29–31), sezione
+/// (11) o tessera (decisione 107).
+Future<bool> openArchiveFile(
+  BuildContext context,
+  db.AppDatabase database,
+  String path,
+) async {
   // Lettura e controlli in un isolate: il file può essere grande.
   final _ReadFile read;
   try {
     read = await compute(_readArchiveFile, path);
   } on TransferException catch (e) {
-    fail(e.message);
+    if (context.mounted) _fail(context, e.message);
     return false;
   } catch (_) {
-    fail('Non è un file di FacileCards, o è rovinato.');
+    if (context.mounted) {
+      _fail(context, 'Non è un file di FacileCards, o è rovinato.');
+    }
     return false;
   } finally {
     await File(path).delete().catchError((_) => File(path));
-  }
-  if (read.header.kind != ArchiveKind.all) {
-    fail(
-      'Questo file contiene una sola sezione o una sola tessera, non una '
-      'copia completa: si apre in un altro modo, che arriverà presto.',
-    );
-    return false;
   }
   var content = read.content;
   if (!context.mounted) return false;
@@ -116,10 +130,26 @@ Future<bool> startImportAll(
   }
   final ready = content;
   if (ready == null) return false;
+  final kind = read.header.kind;
+  // Un file di sezione ha una sola sezione; uno di tessera una sola tessera.
+  if ((kind == ArchiveKind.section && ready.sections.length != 1) ||
+      (kind == ArchiveKind.card && ready.cards.length != 1)) {
+    _fail(context, 'Il file è rovinato: il contenuto non è quello atteso.');
+    return false;
+  }
   final done = await Navigator.of(context).push<bool>(
     MaterialPageRoute(
-      builder: (_) =>
-          ImportScreen(database: database, header: read.header, content: ready),
+      builder: (_) => kind == ArchiveKind.all
+          ? ImportScreen(
+              database: database,
+              header: read.header,
+              content: ready,
+            )
+          : SharedImportScreen(
+              database: database,
+              header: read.header,
+              content: ready,
+            ),
     ),
   );
   return done == true;
@@ -588,7 +618,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Importa tutto')),
+      appBar: AppBar(title: const Text('Importa da file')),
       body: Column(
         children: [
           if (_busy) const LinearProgressIndicator(),

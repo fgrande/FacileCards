@@ -1,0 +1,8 @@
+-- Schema del database FacileCards, versione 2 (18 nov 2026).
+-- Serve alle prove di migrazione (decisione 88, punto B8): non modificare.
+CREATE TABLE "card_images" ("card_id" TEXT NOT NULL REFERENCES cards (id), "side" TEXT NOT NULL, "file_name" TEXT NOT NULL, PRIMARY KEY ("card_id", "side"));
+CREATE TABLE "card_types" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "logo" TEXT NULL, "color" INTEGER NULL, "code_format" TEXT NULL, "category" TEXT NOT NULL DEFAULT 'altro', "country" TEXT NULL, "is_generic" INTEGER NOT NULL DEFAULT 0 CHECK ("is_generic" IN (0, 1)), "retired" INTEGER NOT NULL DEFAULT 0 CHECK ("retired" IN (0, 1)), "retired_on" INTEGER NULL, "replaced_by" TEXT NULL, "replacement_needs_new_code" INTEGER NOT NULL DEFAULT 0 CHECK ("replacement_needs_new_code" IN (0, 1)), PRIMARY KEY ("id"));
+CREATE TABLE "cards" ("id" TEXT NOT NULL, "type_id" TEXT NOT NULL REFERENCES card_types (id), "name" TEXT NOT NULL, "code" TEXT NOT NULL, "code_format" TEXT NOT NULL, "notes" TEXT NULL, "holder" TEXT NULL, "expires_on" INTEGER NULL, "section_id" TEXT NOT NULL REFERENCES sections (id), "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)), "last_used_at" INTEGER NULL, "favorite" INTEGER NOT NULL DEFAULT 0 CHECK ("favorite" IN (0, 1)), "deleted_at" INTEGER NULL, "origin_id" TEXT NULL, PRIMARY KEY ("id"));
+CREATE TABLE "sections" ("id" TEXT NOT NULL, "name" TEXT NOT NULL, "is_default" INTEGER NOT NULL DEFAULT 0 CHECK ("is_default" IN (0, 1)), "hidden" INTEGER NOT NULL DEFAULT 0 CHECK ("hidden" IN (0, 1)), "origin_id" TEXT NULL, "received_at" INTEGER NULL, PRIMARY KEY ("id"));
+CREATE TABLE "settings" ("key" TEXT NOT NULL, "value" TEXT NOT NULL, PRIMARY KEY ("key"));
+PRAGMA user_version = 2;

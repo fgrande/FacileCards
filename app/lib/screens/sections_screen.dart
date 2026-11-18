@@ -69,14 +69,14 @@ class _SectionsScreenState extends State<SectionsScreen> {
 
   /// Videate 9 e 10: condivisione della sezione.
   Future<void> _share(db.Section s) => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => ExportScreen(
-            database: widget.database,
-            target: ExportTarget.section(s.id),
-            name: s.name,
-          ),
-        ),
-      );
+    MaterialPageRoute(
+      builder: (_) => ExportScreen(
+        database: widget.database,
+        target: ExportTarget.section(s.id),
+        name: s.name,
+      ),
+    ),
+  );
 
   Future<void> _rename(db.Section s) async {
     final name = await showDialog<String>(
@@ -214,11 +214,15 @@ class _SectionsScreenState extends State<SectionsScreen> {
                   vertical: 4,
                 ),
                 leading: const IconTile(Icons.download_outlined),
-                title: const Text('Importa tutto'),
-                subtitle: const Text('Unisci, oppure sostituisci tutto'),
+                title: const Text('Importa da file'),
+                subtitle: const Text(
+                  'Una copia completa, una sezione o una tessera',
+                ),
                 trailing: const Chevron(),
                 onTap: () async {
-                  if (await startImportAll(context, widget.database)) _load();
+                  if (await startImportFromFile(context, widget.database)) {
+                    _load();
+                  }
                 },
               ),
               ListTile(

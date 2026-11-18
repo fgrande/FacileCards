@@ -136,3 +136,14 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Nel file condiviso viaggiano codici, intestatario, note, scadenza e foto (decisione 67), ma non preferita, date di inserimento e di uso, né il nome del proprietario: sono personali. Prove su cosa contiene il file di una sezione e di una tessera.
 - Messe in coda due richieste di Fabio, d'accordo anche Claude: icona di condivisione Android a tre pallini al posto di quella stile iPhone; menu ⋮ con due voci separate, "Sezioni" e "Dati" (copie, importazione, cestino), al posto di "Sezioni e cestino".
 - Fabio ha provato l'invio di sezione e tessera sul telefono: funziona.
+
+## 18 novembre 2026: condivisione, tappa 2 (ricezione)
+
+- **Prima migrazione del database** (versione 1 → 2): sezioni con `originId` e `receivedAt`, tessere con `originId`, per riconoscere una sezione già ricevuta (decisione 79) e sostituirne la copia (decisione 80). Anche se l'app non è rilasciata, il telefono di Fabio ha dati veri: quindi una vera migrazione, con la copia di sicurezza prevista dalla decisione 88 (`facilecards.sqlite.v1.bak`, fatta con `VACUUM INTO` all'apertura, prima di drift) e la prova su un database versione 1. Gli schemi delle versioni stanno in `test/fixtures/` (B8). Provata anche sull'emulatore, che aveva un database versione 1: tessere intatte, copia creata.
+- **"Importa da file"** al posto di "Importa tutto" (scelta di Fabio): riconosce copia completa, sezione o tessera e apre la schermata giusta; la parte che apre il file è separata dalla scelta, così servirà anche ai file arrivati da altre app (tappa 3).
+- **Importa sezione** (videata 11): "Nuova sezione" con il nome originale o, se già usato, "Famiglia 2"; "Unisci a una sezione esistente" (salta le tessere con stessa tipologia e stesso codice, o già ricevute); "Sostituisci «…»" solo se la sezione era già stata ricevuta, con "Già ricevuta il…". La sostituzione segue la decisione 80: le tessere della copia precedente assenti nel file vanno nel cestino, quelle aggiunte da chi riceve restano, quelle presenti prima e dopo si aggiornano conservando preferita e ultimo uso. Le tessere ricevute prendono un identificativo nuovo e ricordano quello d'origine.
+- **Importa tessera** (decisione 107): si sceglie la sezione, proposta la Generale. Limite mostrato prima, come per la copia completa.
+- Prove sulla ricezione (nuova sezione, nome già usato, unione senza doppioni, sostituzione, tessera singola, limite).
+
+- Su richiesta di Fabio, quando una sezione è già stata ricevuta la videata 11 propone "Sostituisci" invece di "Nuova sezione" (decisione 113): chi riceve di nuovo la stessa sezione di solito vuole l'aggiornamento. Aggiornati i disegni 11 (chiaro e scuro); "Nuova sezione" ha ora una riga di spiegazione come le altre scelte.
+- Fabio ha provato la migrazione e la ricezione di sezioni e tessere sul telefono: funziona.

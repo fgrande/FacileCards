@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import 'migration_backup.dart';
+
 import 'catalog.dart';
 
 part 'database.g.dart';
@@ -50,6 +52,11 @@ class Sections extends Table {
   BoolColumn get isDefault => boolean().withDefault(const Constant(false))();
   BoolColumn get hidden => boolean().withDefault(const Constant(false))();
 
+  /// Sezione ricevuta da un altro telefono: identificativo che aveva là
+  /// (decisione 79) e quando è arrivata. Null per le sezioni create qui.
+  TextColumn get originId => text().nullable()(); // dalla versione 2
+  DateTimeColumn get receivedAt => dateTime().nullable()(); // dalla versione 2
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -89,6 +96,10 @@ class Cards extends Table {
   BoolColumn get favorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()(); // cestino
 
+  /// Tessera ricevuta: identificativo che aveva sul telefono di chi l'ha
+  /// mandata, per riconoscerla in una copia successiva (decisione 80).
+  TextColumn get originId => text().nullable()(); // dalla versione 2
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -114,13 +125,21 @@ class Settings extends Table {
 
 @DriftDatabase(tables: [Sections, CardTypes, Cards, CardImages, Settings])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(driftDatabase(name: 'facilecards'));
+  AppDatabase()
+      : super(driftDatabase(
+          name: 'facilecards',
+          native: const DriftNativeOptions(setup: backupBeforeMigration),
+        ));
 
   /// Per i test (database in memoria).
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => currentSchemaVersion;
+
+  /// Versione dello schema. A ogni cambio: un passo in [migration], lo
+  /// schema salvato in `test/fixtures/` e una prova (decisione 88).
+  static const currentSchemaVersion = 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -140,9 +159,17 @@ class AppDatabase extends _$AppDatabase {
         // con una nuova versione dell'app): a ogni avvio si confronta solo la
         // sua impronta. Il cestino si svuota dopo la prima schermata (main.dart).
         beforeOpen: (details) => syncCatalog(),
-        // Le migrazioni future vanno qui, un passo per versione
-        // (vedi analisi, punto B8: copia del database prima di migrare).
-        onUpgrade: (m, from, to) async {},
+        // Un passo per versione, in ordine. Prima di migrare il database si
+        // copia accanto all'originale (vedi [backupBeforeMigration]).
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            // Versione 2 (18 nov 2026): identificativi d'origine per la
+            // condivisione.
+            await m.addColumn(sections, sections.originId);
+            await m.addColumn(sections, sections.receivedAt);
+            await m.addColumn(cards, cards.originId);
+          }
+        },
       );
 
   /// Riallinea le tipologie al catalogo dell'app se l'impronta salvata è

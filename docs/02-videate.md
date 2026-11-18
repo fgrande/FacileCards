@@ -35,7 +35,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 8 | [Nuova tessera: dati](videate/08-nuova-tessera-dati.svg) | Nome, codice con "Scansiona" e "Da galleria", sezione, scadenza, intestatario, note, foto, preferita | 5, 37, 62, 71, 110 |
 | 9 | [Condividi: avviso](videate/09-condividi-avviso.svg) | Primo passaggio della doppia conferma: cosa comporta la condivisione | 68 |
 | 10 | [Condividi: conferma](videate/10-condividi-conferma.svg) | Secondo passaggio: casella "Ho capito", messaggio che accompagna il file, password facoltativa | 64, 68, 103 |
-| 11 | [Importa sezione](videate/11-importa-sezione.svg) | Anteprima del file, tre destinazioni, esito sul limite di 50 | 16, 17, 18 |
+| 11 | [Importa sezione](videate/11-importa-sezione.svg) | Anteprima del file, tre destinazioni (se già ricevuta, proposta "Sostituisci"), esito sul limite di 50 | 16, 17, 18, 79, 80, 113 |
 | 12 | [Sezioni](videate/12-sezioni.svg) | Sezioni con condivisione, esporta/importa tutto, cestino, promemoria di backup | 19, 26 |
 | 13 | [Cestino: recupero](videate/13-cestino-recupero.svg) | Scelta della sezione di destinazione, sezione eliminata che viene ricreata, esito sul limite | 20, 27, 28 |
 | 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale, tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa | 36, 65, 74 |
