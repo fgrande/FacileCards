@@ -16,6 +16,8 @@ import java.io.File
 class MainActivity : FlutterActivity() {
     // "Salva in…" in corso: file da copiare e risposta da dare a Flutter.
     private var pendingSave: Pair<File, MethodChannel.Result>? = null
+    // "Importa tutto" in corso: dove copiare il file scelto e risposta.
+    private var pendingOpen: Pair<File, MethodChannel.Result>? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -71,6 +73,26 @@ class MainActivity : FlutterActivity() {
                             result.success(null)
                         }
                     }
+                    // "Importa tutto": selettore di Android per scegliere un file;
+                    // il file si copia in [path] e si restituisce true (false se
+                    // si annulla).
+                    "openDocument" -> {
+                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                            .addCategory(Intent.CATEGORY_OPENABLE)
+                            .setType("*/*")
+                        val initialOpen = call.argument<String>("initialUri")
+                        if (initialOpen != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialOpen))
+                        }
+                        pendingOpen?.second?.success(false)
+                        pendingOpen = Pair(File(call.argument<String>("path")!!), result)
+                        try {
+                            startActivityForResult(intent, OPEN_REQUEST)
+                        } catch (e: ActivityNotFoundException) {
+                            pendingOpen = null
+                            result.success(false)
+                        }
+                    }
                     // "Condividi…": pannello di condivisione di Android con il file.
                     "shareFile" -> {
                         val file = File(call.argument<String>("path")!!)
@@ -91,6 +113,10 @@ class MainActivity : FlutterActivity() {
     @Deprecated("Basta per un solo selettore; l'API nuova richiede una ComponentActivity")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == OPEN_REQUEST) {
+            onOpenResult(resultCode, data)
+            return
+        }
         if (requestCode != SAVE_REQUEST) return
         val (file, result) = pendingSave ?: return
         pendingSave = null
@@ -116,7 +142,46 @@ class MainActivity : FlutterActivity() {
         }.start()
     }
 
+    private fun onOpenResult(resultCode: Int, data: Intent?) {
+        val (target, result) = pendingOpen ?: return
+        pendingOpen = null
+        val uri = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) {
+            result.success(false)
+            return
+        }
+        Thread {
+            // Il file viene da fuori: si copia con un tetto alla dimensione.
+            val ok = try {
+                contentResolver.openInputStream(uri)!!.use { input ->
+                    target.outputStream().use { out ->
+                        val buffer = ByteArray(64 * 1024)
+                        var total = 0L
+                        while (true) {
+                            val n = input.read(buffer)
+                            if (n < 0) break
+                            total += n
+                            if (total > MAX_OPEN_BYTES) throw IllegalStateException("too big")
+                            out.write(buffer, 0, n)
+                        }
+                    }
+                }
+                true
+            } catch (e: Exception) {
+                target.delete()
+                false
+            }
+            runOnUiThread {
+                if (ok) result.success(true)
+                else result.error("read_failed", "Impossibile leggere il file", null)
+            }
+        }.start()
+    }
+
     companion object {
         private const val SAVE_REQUEST = 4201
+        private const val OPEN_REQUEST = 4202
+        // Come maxArchiveBytes in lib/transfer/archive_format.dart.
+        private const val MAX_OPEN_BYTES = 300L * 1024 * 1024
     }
 }

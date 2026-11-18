@@ -3,8 +3,9 @@
 // (decisione 20).
 
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart' show compute;
 
 import '../data/database.dart';
 import '../photos.dart';
@@ -99,8 +100,13 @@ Future<Uint8List> buildBackupFile(AppDatabase db, PhotoStore store,
   final content = await collectBackup(db, store);
   final header =
       ArchiveHeader(kind: ArchiveKind.all, createdAt: now ?? DateTime.now());
-  return Isolate.run(() => encodeArchive(header, encodeContent(content)));
+  return compute(_encodeBackup, (header: header, content: content));
 }
+
+/// Funzione a sé, perché all'isolate passino solo i dati (vedi
+/// `_readArchiveFile` in import_screen.dart).
+Uint8List _encodeBackup(({ArchiveHeader header, ArchiveContent content}) a) =>
+    encodeArchive(a.header, encodeContent(a.content));
 
 /// Scrive il file in una cartella temporanea e restituisce il percorso.
 Future<String> writeTempFile(Directory dir, String name, Uint8List bytes) async {

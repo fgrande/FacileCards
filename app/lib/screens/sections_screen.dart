@@ -4,6 +4,7 @@ import '../data/database.dart' as db;
 import '../theme.dart';
 import '../ui.dart';
 import 'export_screen.dart';
+import 'import_screen.dart';
 import 'trash_screen.dart';
 
 /// Videate 12, 36, 37, 38: le sezioni e l'accesso al cestino.
@@ -38,7 +39,8 @@ class _SectionsScreenState extends State<SectionsScreen> {
     final counts = await d.sectionCounts();
     final trash = await d.trashCount();
     final last = DateTime.tryParse(
-        await d.setting(db.SettingKeys.lastBackupAt) ?? '');
+      await d.setting(db.SettingKeys.lastBackupAt) ?? '',
+    );
     if (!mounted) return;
     setState(() {
       _sections = sections;
@@ -58,7 +60,9 @@ class _SectionsScreenState extends State<SectionsScreen> {
     );
     if (name == null) return;
     final ok = await widget.database.createSection(name);
-    if (!ok) _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+    if (!ok) {
+      _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+    }
     _load();
   }
 
@@ -69,7 +73,9 @@ class _SectionsScreenState extends State<SectionsScreen> {
     );
     if (name == null) return;
     final ok = await widget.database.renameSection(s.id, name);
-    if (!ok) _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+    if (!ok) {
+      _message('Scrivi un nome che non sia già usato da un\'altra sezione.');
+    }
     _load();
   }
 
@@ -135,16 +141,20 @@ class _SectionsScreenState extends State<SectionsScreen> {
                   contentPadding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
                   leading: const IconTile(Icons.folder_outlined, accent: true),
                   title: Text(s.name),
-                  subtitle: Text(s.isDefault
-                      ? '${count(_counts[s.id] ?? 0)} · non eliminabile'
-                      : ((_counts[s.id] ?? 0) == 0
-                          ? 'Vuota'
-                          : count(_counts[s.id]!))),
+                  subtitle: Text(
+                    s.isDefault
+                        ? '${count(_counts[s.id] ?? 0)} · non eliminabile'
+                        : ((_counts[s.id] ?? 0) == 0
+                              ? 'Vuota'
+                              : count(_counts[s.id]!)),
+                  ),
                   trailing: PopupMenuButton<String>(
                     onSelected: (v) => v == 'rename' ? _rename(s) : _delete(s),
                     itemBuilder: (_) => [
                       const PopupMenuItem(
-                          value: 'rename', child: Text('Rinomina')),
+                        value: 'rename',
+                        child: Text('Rinomina'),
+                      ),
                       if (!s.isDefault)
                         const PopupMenuItem(
                           value: 'delete',
@@ -160,25 +170,46 @@ class _SectionsScreenState extends State<SectionsScreen> {
             indent: 74,
             children: [
               ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 leading: const IconTile(Icons.upload_outlined),
                 title: const Text('Esporta tutto'),
                 subtitle: const Text('Salva una copia di tutte le tessere'),
                 trailing: const Chevron(),
                 onTap: () async {
-                  await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ExportScreen(database: widget.database),
-                  ));
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ExportScreen(database: widget.database),
+                    ),
+                  );
                   _load();
                 },
               ),
               ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                leading: const IconTile(Icons.download_outlined),
+                title: const Text('Importa tutto'),
+                subtitle: const Text('Unisci, oppure sostituisci tutto'),
+                trailing: const Chevron(),
+                onTap: () async {
+                  if (await startImportAll(context, widget.database)) _load();
+                },
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 leading: const IconTile(Icons.delete_outline),
                 title: const Text('Cestino'),
                 subtitle: Text(
-                    '${count(_trash)} · eliminate dopo ${db.AppDatabase.trashDays} giorni'),
+                  '${count(_trash)} · eliminate dopo ${db.AppDatabase.trashDays} giorni',
+                ),
                 trailing: const Chevron(),
                 onTap: () async {
                   await Navigator.of(context).push(
@@ -210,8 +241,8 @@ class _SectionsScreenState extends State<SectionsScreen> {
       when = days == 0
           ? 'Ultima copia: oggi.'
           : days == 1
-              ? 'Ultima copia: ieri.'
-              : 'Ultima copia: $days giorni fa.';
+          ? 'Ultima copia: ieri.'
+          : 'Ultima copia: $days giorni fa.';
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -290,7 +321,9 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
           Text('La sezione contiene $tessere. Cosa ne facciamo?'),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(_move ? Icons.radio_button_checked : Icons.radio_button_off),
+            leading: Icon(
+              _move ? Icons.radio_button_checked : Icons.radio_button_off,
+            ),
             title: const Text('Sposta le tessere in un\'altra sezione'),
             subtitle: _move ? Text('Sezione: ${_target.name}') : null,
             onTap: () => setState(() => _move = true),
@@ -305,7 +338,9 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
             ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(!_move ? Icons.radio_button_checked : Icons.radio_button_off),
+            leading: Icon(
+              !_move ? Icons.radio_button_checked : Icons.radio_button_off,
+            ),
             title: const Text('Elimina anche le tessere'),
             subtitle: const Text('Restano 30 giorni nel cestino.'),
             onTap: () => setState(() => _move = false),
@@ -326,7 +361,8 @@ class _DeleteSectionDialogState extends State<_DeleteSectionDialog> {
         ),
         FilledButton(
           onPressed: () =>
-              Navigator.of(context).pop(_DeleteChoice(_move ? _target.id : null)),
+              Navigator.of(context)
+                  .pop(_DeleteChoice(_move ? _target.id : null)),
           child: const Text('Elimina sezione'),
         ),
       ],
