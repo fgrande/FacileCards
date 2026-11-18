@@ -37,6 +37,8 @@ abstract final class SettingKeys {
   static const listView = 'listView'; // 'all' | 'bySection'
   static const listSort = 'listSort'; // 'lastUsed' | 'name'
   static const catalogSignature = 'catalogSignature'; // impronta del catalogo
+  static const lastBackupAt = 'lastBackupAt'; // ultima "Esporta tutto"
+  static const lastBackupUri = 'lastBackupUri'; // dove si è salvato (dec. 112)
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta

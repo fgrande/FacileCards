@@ -102,3 +102,11 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Il testo dell'elenco vuoto diceva ancora "Premi Aggiungi": ora "Tocca +".
 - Notato: l'APK universale in versione definitiva pesa circa 80 MB; da verificare la dimensione reale scaricata da Google Play.
 - Fabio ha provato icona e avvio sul telefono: funzionano.
+
+## 18 novembre 2026: Esporta tutto (tappa 1 di 3)
+
+- Piano in tre tappe, approvato da Fabio: 1) formato del file ed esportazione senza password; 2) importazione con unione e sostituzione; 3) password. Fabio ha aggiunto che "Salva sul telefono" deve ricordare dove si è salvato l'ultima volta: decisione 112 (selettore "Salva in…" di Android, riaperto nell'ultima cartella; nome `FacileCards-AAAA-MM-GG.facilecards`).
+- **Formato `.facilecards`, versione 1** (`lib/transfer/archive_format.dart`): zip con `header.json` sempre in chiaro (formato, versione, tipo "all/section/card", data, se cifrato) e il contenuto (`content.zip`, o `content.bin` quando sarà cifrato) con `data.json` e le foto in `photos/`. Il backup completo porta anche preferita, data di inserimento e di ultimo uso; il cestino è escluso. La lettura tratta il file come non fidato: identificativi, testi, date, percorsi delle foto e numeri controllati, con limiti di dimensione; un file di una versione più recente chiede di aggiornare l'app. Libreria `archive` (Dart puro).
+- **Esporta tutto** (`lib/screens/export_screen.dart`): da Sezioni → Archivio; passo 1 con il riepilogo (tessere, sezioni, peso stimato) e i quattro avvisi, passo 2 con "Ho capito" (si azzera tornando indietro), poi "Salva sul telefono" o "Condividi…". Salvataggio e condivisione con codice nativo nostro in `MainActivity.kt` (selettore `ACTION_CREATE_DOCUMENT` con l'ultima posizione, `FileProvider` per la condivisione): nessun plugin. Provato sull'emulatore: file salvato con il nome giusto, contenuto corretto, al secondo salvataggio il selettore riparte dalla cartella scelta, la condivisione propone Drive e Gmail.
+- Nelle Sezioni il promemoria discreto previsto dall'analisi (5.5): "Le tue tessere esistono solo su questo telefono. Ultima copia: N giorni fa." Anche una condivisione conta come copia fatta, perché l'app non può sapere se l'altra app salverà davvero.
+- Fabio ha provato "Esporta tutto" sul telefono: funziona.

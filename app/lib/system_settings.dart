@@ -15,3 +15,16 @@ Future<bool> openUrl(String url) async =>
 /// Versione dell'app ("1.0.0"), letta da Android.
 Future<String> appVersion() async =>
     await _channel.invokeMethod<String>('appVersion') ?? '';
+
+/// "Salva in…" di Android (decisione 112): copia il file [path] dove sceglie
+/// l'utente, partendo da [initialUri] se c'è. Restituisce l'indirizzo del
+/// documento creato, o null se si annulla.
+Future<String?> saveDocument(
+        {required String path, required String name, String? initialUri}) =>
+    _channel.invokeMethod<String>('saveDocument',
+        {'path': path, 'name': name, 'initialUri': initialUri});
+
+/// Pannello di condivisione di Android con il file [path].
+Future<void> shareFile(
+        {required String path, required String title, required String text}) =>
+    _channel.invokeMethod('shareFile', {'path': path, 'title': title, 'text': text});

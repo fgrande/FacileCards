@@ -45,6 +45,7 @@ dependencies:
   image: ^4.13.1
   path: ^1.9.1
   flutter_svg: ^2.4.0
+  archive: ^4.7.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
