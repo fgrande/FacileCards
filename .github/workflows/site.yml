@@ -1,0 +1,29 @@
+name: Sito
+
+# Pubblica site/ sull'hosting statico di Porkbun (decisione 117) quando cambia
+# il sito, lo script di invio o questa pipeline; si può anche lanciare a mano
+# dalla scheda Actions. Il lavoro sta tutto in tools/deploy_site.py.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'tools/deploy_site.py'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+# Un invio alla volta: se ne parte un altro, quello in corso finisce prima.
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Invio a Porkbun
+        run: python3 tools/deploy_site.py site facilecards.eu
+        env:
+          PB_API_KEY: ${{ secrets.PB_API_KEY }}
+          PB_SECRET_KEY: ${{ secrets.PB_SECRET_KEY }}

@@ -9,9 +9,10 @@ Questo repository è privato e contiene tutto il progetto.
 | Cartella | Contenuto | Cosa produce |
 |---|---|---|
 | `app/` | L'app, scritta in Flutter e Dart (codice in `lib/`, prove automatiche in `test/`, parte Android in `android/`) | L'app Android: file `.apk` per provarla, `.aab` per Google Play. Il codice generato dal database (`lib/data/database.g.dart`) è nel repository |
-| `site/` | Il sito di presentazione e l'informativa sulla privacy, in italiano, inglese e francese: pagine HTML statiche, più `app-ads.txt` per AdMob | Niente da compilare: i file si pubblicano così come sono. Per ora il sito non è pubblicato |
+| `site/` | Il sito di presentazione e l'informativa sulla privacy, in italiano, inglese e francese: pagine HTML statiche, più `app-ads.txt` per AdMob | Niente da compilare: a ogni modifica su `main` la pipeline lo pubblica su https://facilecards.eu (hosting di Porkbun) |
 | `docs/` | La documentazione di progetto: perché (`00-perche.md`), analisi e decisioni (`01-analisi-iniziale.md`), indice delle videate (`02-videate.md`) | Niente. Contiene anche `videate/` (45 schermate disegnate in SVG, in `scuro/` quelle del tema scuro) e `logo/` |
-| `.github/workflows/` | La pipeline di GitHub | A ogni modifica di `app/` lancia l'analisi e le prove automatiche; non produce file |
+| `.github/workflows/` | Le pipeline di GitHub | `ci.yml`: a ogni modifica di `app/` lancia l'analisi e le prove automatiche. `site.yml`: a ogni modifica di `site/` pubblica il sito |
+| `tools/` | Script di supporto alle pipeline | `deploy_site.py` invia `site/` a Porkbun; con `--dry-run` mostra solo cosa partirebbe |
 | `HISTORY.md` | La cronologia di cosa è stato deciso e fatto, e perché | Niente |
 | `CLAUDE.md` | Le istruzioni per chi lavora al progetto con Claude e l'elenco di ciò che resta da fare | Niente |
 

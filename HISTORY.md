@@ -193,3 +193,8 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 
 - Fabio ha scelto l'hosting statico di Porkbun, dove registra `facilecards.eu` (decisione 117): dominio e sito nello stesso posto, repository sempre privato. Una pipeline invierà `site/` a ogni modifica; il modo d'invio si verifica quando l'hosting è attivo. Messo nei "Da fare".
 - Richiesta di tipologie mancanti: scartato l'invio di mail in background (servirebbe un server o credenziali dentro l'app, sarebbe raccolta di dati e aprirebbe allo spam); si userà la mail precompilata della decisione 36, aggiungendola anche nella schermata Nuova tessera quando la ricerca non trova il negozio. Messo nei "Da fare".
+
+## 19 novembre 2026: pipeline del sito
+
+- Su richiesta di Fabio, la pubblicazione del sito sta in uno script del progetto (`tools/deploy_site.py`) e la pipeline (`site.yml`, separata da quella dell'app) si limita a lanciarlo: la logica si prova anche in locale (`--dry-run`) senza toccare le pipeline. Usa l'API di hosting di Porkbun con le chiavi nei segreti del repository; solo libreria standard di Python, niente da installare.
+- Il sito online è una copia esatta di `site/` (domanda di Fabio: un file rinominato lascerebbe online quello vecchio): dopo un invio riuscito lo script elenca i file sul server e cancella quelli che nella cartella non ci sono più, cartelle comprese. Non cancella nulla se l'invio è fallito o se un file è stato scartato, se la cartella è vuota, né i nomi nascosti (`.well-known`, usato per i certificati HTTPS). L'API restituisce solo i nomi: quelli con un'estensione web sono file, gli altri si esplorano come cartelle.

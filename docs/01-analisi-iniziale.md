@@ -473,9 +473,9 @@ La sospensione dell'account AdMob per "attività non valida" è difficile da far
 
 ### 8.7 Sito del progetto
 
-**Indirizzo.** `https://facilecards.eu` (dominio registrato il 16 nov 2026; decisione 108). Il sito non è ancora pubblicato: vive nella cartella `site/` del repository unico e privato (decisione 109).
+**Indirizzo.** `https://facilecards.eu` (dominio registrato il 16 nov 2026; decisione 108). Il sito vive nella cartella `site/` del repository unico e privato (decisione 109) e si pubblica su Porkbun (decisione 117).
 
-**Quando si pubblica.** L'informativa sulla privacy deve essere raggiungibile da un indirizzo pubblico prima dell'invio a Google Play, e `app-ads.txt` deve stare nella radice del dominio. In quel momento si sceglie il servizio di hosting: GitHub Pages da un repository privato richiede un piano a pagamento, quindi vanno valutate le alternative gratuite che leggono la cartella `site/` (da verificare le condizioni attuali). I record DNS del dominio dipendono dal servizio scelto; per ora non si collega nulla.
+**Come si pubblica.** Hosting statico di Porkbun, dove è registrato il dominio (decisione 117). La pipeline `.github/workflows/site.yml` lancia `tools/deploy_site.py`, che invia la cartella `site/` con l'API di Porkbun a ogni sua modifica su `main` (chiavi nei segreti `PB_API_KEY` e `PB_SECRET_KEY` del repository). L'informativa deve essere online prima dell'invio a Google Play, e `app-ads.txt` deve stare nella radice del dominio.
 
 **Struttura.** Pagine HTML statiche, nessuna compilazione:
 
@@ -489,8 +489,7 @@ site/
 │   └── fr.html         francese
 ├── app-ads.txt         riga fornita da AdMob (nella radice)
 ├── assets/             stile, icona
-├── CNAME               facilecards.eu (serve solo a GitHub Pages)
-└── .nojekyll           disattiva l'elaborazione di GitHub Pages
+└── README.md           appunti, non pubblicato
 ```
 
 **Contenuto dell'informativa.** È breve perché l'app non raccoglie nulla: tessere, codici e foto restano sul dispositivo e non vengono trasmessi allo sviluppatore; la fotocamera serve solo a scansionare i codici e fotografare le tessere; gli annunci sono forniti da Google AdMob, che tratta identificatori del dispositivo secondo il consenso espresso; l'acquisto passa da Google Play; nome e contatto del titolare.
