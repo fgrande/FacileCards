@@ -184,3 +184,12 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Come nel disegno 17: la riga trascinata a sinistra scopre il pulsante "Elimina", che porta alla stessa scelta della scheda (cestino o eliminazione definitiva, decisione 75). Avevo proposto un'eliminazione immediata con "Annulla", ma il disegno e la decisione chiedono la scelta: si è seguito il disegno.
 - Widget nostro (`swipe_to_delete.dart`), senza plugin: una sola riga aperta alla volta, un tocco sulla riga aperta la richiude invece di aprire la tessera.
 - Fabio ha provato l'eliminazione trascinando sul telefono: funziona.
+
+## 18 novembre 2026: account per Google Play e AdMob
+
+- Fabio userà il suo account Google personale per Play Console e AdMob (decisione 116): l'account dedicato consigliato nell'analisi serviva solo se il progetto dovesse passare ad altri, e in quel caso le app si possono comunque trasferire a un altro account sviluppatore. Ordine: prima Play Console (verifica dell'identità e test chiuso con 12 tester per 14 giorni sono i tempi più lunghi), poi AdMob. Annotato che chi vende nell'UE deve mostrare sulla scheda i propri dati di contatto.
+
+## 19 novembre 2026: dove si pubblica il sito
+
+- Fabio ha scelto l'hosting statico di Porkbun, dove registra `facilecards.eu` (decisione 117): dominio e sito nello stesso posto, repository sempre privato. Una pipeline invierà `site/` a ogni modifica; il modo d'invio si verifica quando l'hosting è attivo. Messo nei "Da fare".
+- Richiesta di tipologie mancanti: scartato l'invio di mail in background (servirebbe un server o credenziali dentro l'app, sarebbe raccolta di dati e aprirebbe allo spam); si userà la mail precompilata della decisione 36, aggiungendola anche nella schermata Nuova tessera quando la ricerca non trova il negozio. Messo nei "Da fare".

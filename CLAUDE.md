@@ -5,7 +5,7 @@ App Android in Flutter per tessere con codice a barre/QR. Tutto locale, senza se
 ## Regole di lavoro
 
 - **Lingua.** Documenti e commenti in italiano. L'interfaccia dell'app è in italiano, inglese e francese (spagnolo e tedesco predisposti): i testi stanno in `app/lib/l10n/app_<lingua>.arb` (l'italiano è il riferimento), mai scritti nel codice. Nelle schermate `context.t.chiave`, nel codice senza context `tr.chiave`. Ogni testo nuovo va scritto nelle tre lingue (la prova `l10n_test.dart` controlla che non manchi niente); dopo un cambio ai file `.arb` lanciare `flutter gen-l10n`.
-- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 115). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
+- **Le decisioni stanno in `docs/01-analisi-iniziale.md`, sezione 2** (tabella numerata, ora fino alla 117). Non riaprirle senza che lo chieda Fabio. Se ne nasce una nuova, si aggiunge lì col numero successivo. Le schermate sono in `docs/videate/` (SVG; indice in `docs/02-videate.md`): si realizza ciò che è disegnato.
 - **Velocità prima di tutto.** La tessera deve essere sullo schermo entro 2 secondi da un avvio a freddo, anche senza rete. Niente schermate o controlli di rete prima di mostrare la tessera.
 - **Dopo ogni modifica al codice** lanciare, da `app/`: `flutter analyze` e `flutter test`, e correggere finché passano. Se Flutter non è disponibile (per esempio in una sessione su un server), dirlo chiaramente: il codice non è stato provato.
 - **Script `frun.sh`** (nella radice): analisi, prove e avvio dell'app in un colpo solo; si ferma al primo errore. Le opzioni passano a `flutter run`.
@@ -33,7 +33,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 2 (prima migrazione fatta il 18 nov, con copia di sicurezza e prova): anche se l'app non è ancora rilasciata, ogni cambio di schema si fa con un passo di migrazione, perché il telefono di Fabio ha dati veri.
 
-**Prossimo passo:** scegliere con Fabio il passo seguente tra i "Da fare".
+**Prossimo passo:** Fabio crea l'account Google Play Console (poi AdMob) e cerca i 12 tester; intanto, se vuole, formato del codice scritto a mano e avviso `itf`.
 
 ### Fatto
 
@@ -67,6 +67,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 ### Da fare: app
 
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
+- Richiesta di una tipologia mancante (decisione 36), con mail precompilata e senza invii in background (niente server, niente raccolta di dati): oltre alla voce nelle Impostazioni (14), "Non trovi «nome cercato»? Chiedi di aggiungerlo" nella schermata Nuova tessera quando la ricerca non trova nulla; si apre l'app di posta con indirizzo, oggetto e testo già compilati (nome cercato, lingua, versione dell'app), invito ad allegare una foto della tessera per il formato del codice (B1), senza allegarla in automatico. Le voci compaiono solo quando c'è l'indirizzo (`contactEmail` in `lib/links.dart`): serve prima l'email sul dominio (inoltro della posta di Porkbun, per esempio `tessere@facilecards.eu`).
 - Tipologia "Formato Tessera non più valido" (6, decisioni 73 e 83) e catalogo con le tessere vere.
 - "Condividi verso FacileCards" (FacileCards nel pannello Condividi delle altre app): solo se da qualche app il file non si apre con "Apri con".
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.
@@ -83,7 +84,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 
 - Prova in cassa della fase 0: salvare una tessera vera e farla leggere a uno scanner.
 - B1: formati dei codici delle catene del catalogo, da verificare con le tessere vere (finché non si sa, nessun formato obbligatorio).
-- Scegliere dove pubblicare il sito (decisione 109); `app-ads.txt` con la riga di AdMob; far rileggere l'informativa.
-- Indirizzo e-mail sul dominio per il contatto di informativa e Google Play.
+- Pubblicazione del sito sull'hosting statico di Porkbun, dove è registrato `facilecards.eu` (decisione 117): nuova pipeline in `.github/workflows/` che a ogni modifica di `site/` su `main` invia la cartella a Porkbun (modo d'invio da verificare quando l'hosting è attivo: caricamento dei file o collegamento a GitHub; credenziali solo nei segreti del repository). Poi `app-ads.txt` con la riga di AdMob e far rileggere l'informativa.
+- Indirizzo e-mail sul dominio per il contatto di informativa e Google Play e per le richieste di tipologie mancanti (verificare l'inoltro della posta gratuito di Porkbun).
 - Materiali per lo store e dichiarazioni nella Play Console (C1, C2); rileggere l'informativa prima della pubblicazione.
-- Account sviluppatore Google Play e AdMob, test chiusi richiesti per gli account personali (sezione 8 dell'analisi).
+- Account sviluppatore Google Play e AdMob con l'account personale di Fabio (decisione 116; prima Play Console, poi AdMob), test chiusi richiesti per gli account personali: cercare subito 12 tester per 14 giorni (sezione 8 dell'analisi).

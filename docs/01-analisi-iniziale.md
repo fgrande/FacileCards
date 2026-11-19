@@ -135,6 +135,8 @@ Il requisito guida è la **velocità**: dall'apertura dell'app alla tessera a sc
 | 113 | **Sezione già ricevuta: proposto "Sostituisci"** (18 nov 2026, richiesta di Fabio): nella videata 11, se la sezione del file è già stata ricevuta (decisione 79), la scelta proposta è "Sostituisci «nome»" invece di "Nuova sezione", perché chi la riceve di nuovo di solito vuole l'aggiornamento. Le altre due scelte restano disponibili; "Nuova sezione" mostra il campo del nome solo quando è scelta |
 | 114 | **Menu dell'elenco: "Sezioni" e "Dati"** (18 nov 2026, richiesta di Fabio): la voce "Sezioni e cestino" del menu ⋮ si divide in due. "Sezioni" (videata 12) gestisce solo le sezioni: nuova, condividi (pulsante sulla riga e nel menu della sezione), rinomina, elimina. "Dati" (videata 12b) raccoglie Esporta tutto, Importa da file, il promemoria "Ultima copia" e il Cestino. Nei disegni e nell'app l'icona di condivisione è quella di Android (tre pallini collegati), non il quadrato con la freccia |
 | 115 | **Inglese dell'app** (18 nov 2026): inglese britannico ("favourites", "bin" per il cestino), date con giorno e mese all'europea ("31 December 2027"), prezzo scritto "€2.00"; il mercato è europeo. In francese lo zero vuole il singolare ("0 carte") |
+| 116 | **Account Google per Play Console e AdMob** (18 nov 2026, Fabio): si usa l'account personale di Fabio, lo stesso per i due servizi, con verifica in due passaggi. Sostituisce il consiglio di un account dedicato (sezione 8), che serviva solo in caso di passaggio del progetto ad altri |
+| 117 | **Hosting del sito** (19 nov 2026, Fabio; completa la decisione 109): il sito si pubblica sull'hosting statico di Porkbun, dove è registrato il dominio `facilecards.eu`. Una pipeline del repository invia la cartella `site/` a ogni sua modifica; il repository resta privato. Scartate GitHub Pages da un repository pubblico a parte e le alternative gratuite (Cloudflare Pages, Netlify) |
 
 ## 3. Requisiti funzionali
 
@@ -398,7 +400,7 @@ La scorciatoia in Home è nella fase 5 solo per mettere prima l'essenziale: è u
 
 ## 8. Account, annunci e pubblicazione
 
-Servono tre cose, tutte gratuite tranne la registrazione a Google Play: un piccolo sito, un account Google Play Console e un account AdMob. Conviene usare **lo stesso account Google** per Play Console e AdMob, dedicato al progetto e non quello di posta personale: se un giorno il progetto passa a una società o a un'altra persona, si trasferisce l'account senza toccare la vita privata.
+Servono tre cose, tutte gratuite tranne la registrazione a Google Play: un piccolo sito, un account Google Play Console e un account AdMob. Si usa **lo stesso account Google** per Play Console e AdMob: quello personale di Fabio (chiarito il 18 nov 2026, decisione 116). Un account dedicato servirebbe solo se il progetto dovesse passare a qualcun altro; in quel caso le app si trasferiscono comunque a un altro account sviluppatore (vedi 8.2, punto 1).
 
 Le regole di Google cambiano spesso: le pagine ufficiali indicate in fondo fanno fede rispetto a questo riepilogo.
 
@@ -410,7 +412,10 @@ Nota sui nomi: **Google Ads** è il servizio con cui si *comprano* annunci; quel
 
 ### 8.2 Ordine consigliato
 
-1. **Account Google dedicato.** Con numero di telefono italiano e verifica in due passaggi attiva.
+1. **Account Google.** Quello personale, con verifica in due passaggi attiva e un filtro per la posta di Google Play e AdMob (alcuni avvisi hanno una scadenza). Se un giorno servisse cambiare:
+   - *Google Play*: l'account proprietario di norma non si cambia, ma le app si possono trasferire a un altro account sviluppatore (registrato e verificato, con la sua quota), conservando utenti e recensioni; si possono anche invitare altri utenti con permessi limitati.
+   - *AdMob*: l'account non si trasferisce; si aggiungono altri utenti come amministratori, oppure si apre un account nuovo e si aggiornano nell'app gli identificativi degli annunci.
+   - Indipendentemente dall'account, chi vende nell'Unione europea (l'acquisto Pro) deve mostrare sulla scheda dello store nome, indirizzo, email e telefono di contatto.
 2. **Sito del progetto.** Una o due pagine statiche: servono per l'informativa sulla privacy (richiesta da Google Play) e per il file `app-ads.txt` (richiesto da AdMob, vedi punto 6). L'indirizzo va indicato come "sito web dello sviluppatore" nella scheda dello store.
    - *Sito statico gratuito* significa pagine HTML semplici, senza database né programmi lato server, ospitate da un servizio che non fa pagare per questo uso. È stato scelto **GitHub Pages**: il sito risponde a `https://facilecards.eu` (dettagli in 8.7).
    - `app-ads.txt` deve stare nella **radice** del sito: `https://facilecards.eu/app-ads.txt`.
