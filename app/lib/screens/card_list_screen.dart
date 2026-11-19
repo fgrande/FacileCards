@@ -1,11 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../ads.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../format_utils.dart';
 import '../l10n/l10n.dart';
 import '../system_settings.dart';
+import 'ads_intro_screen.dart';
 import 'card_screen.dart';
 import 'data_screen.dart';
 import 'expiry_panel.dart';
@@ -50,7 +52,21 @@ class _CardListScreenState extends State<CardListScreen> {
     // "Apri con FacileCards": il file si apre dopo che l'elenco è comparso,
     // così l'avvio resta rapido; con l'app già aperta arriva un avviso.
     listenIncomingFiles(_openIncoming);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _openIncoming());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _afterFirstFrame());
+  }
+
+  /// Dopo la prima schermata, mai prima (regola dei 2 secondi): la prima
+  /// volta la presentazione degli annunci (videata 40), poi consenso e
+  /// annunci (decisione 105), poi un eventuale file ricevuto.
+  Future<void> _afterFirstFrame() async {
+    final d = widget.database;
+    if (await d.setting(db.SettingKeys.adsIntroShown) != 'true' && mounted) {
+      await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const AdsIntroScreen()));
+      await d.setSetting(db.SettingKeys.adsIntroShown, 'true');
+    }
+    Ads.instance.start();
+    await _openIncoming();
   }
 
   bool _incomingBusy = false;
@@ -475,6 +491,7 @@ class _CardListScreenState extends State<CardListScreen> {
               child: const Icon(Icons.add, size: 34),
             ),
           ),
+          bottomNavigationBar: AdFooter(unitId: AdUnits.list),
         );
       },
     );

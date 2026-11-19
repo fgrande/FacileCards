@@ -980,5 +980,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "adsIntroTitle": "FacileCards è gratuita\ngrazie agli annunci",
+  "adsIntroSubtitle": "Ti chiediamo come vuoi che vengano mostrati.",
+  "adLabel": "Annuncio",
+  "adsIntroNote": "Se non acconsenti, vedrai comunque annunci, ma non personalizzati.\nPotrai cambiare scelta in qualsiasi momento dalle Impostazioni.",
+  "manageAdConsent": "Gestisci consenso annunci",
+  "adConsentNotRequired": "Nel tuo paese non è richiesto un consenso per gli annunci."
 }

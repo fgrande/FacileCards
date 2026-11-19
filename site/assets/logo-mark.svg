@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" width="440" height="300" role="img" aria-label="FacileCards">
+<g transform="translate(24 26) rotate(-8 196.0 123.0) scale(0.98)">
+  <rect width="400" height="251.0204081632653" rx="34" fill="#1F5FD6"/>
+  <rect x="28" y="30" width="120" height="16" rx="8" fill="#FFFFFF" opacity=".55"/>
+  <rect x="28" y="181.0204081632653" width="3" height="42" fill="#FFFFFF" opacity=".55"/><rect x="37" y="181.0204081632653" width="5" height="42" fill="#FFFFFF" opacity=".55"/><rect x="46" y="181.0204081632653" width="3" height="42" fill="#FFFFFF" opacity=".55"/><rect x="55" y="181.0204081632653" width="6" height="42" fill="#FFFFFF" opacity=".55"/><rect x="64" y="181.0204081632653" width="4" height="42" fill="#FFFFFF" opacity=".55"/><rect x="73" y="181.0204081632653" width="3" height="42" fill="#FFFFFF" opacity=".55"/><rect x="82" y="181.0204081632653" width="5" height="42" fill="#FFFFFF" opacity=".55"/><rect x="91" y="181.0204081632653" width="3" height="42" fill="#FFFFFF" opacity=".55"/><rect x="100" y="181.0204081632653" width="6" height="42" fill="#FFFFFF" opacity=".55"/><rect x="109" y="181.0204081632653" width="3" height="42" fill="#FFFFFF" opacity=".55"/><rect x="118" y="181.0204081632653" width="4" height="42" fill="#FFFFFF" opacity=".55"/><rect x="127" y="181.0204081632653" width="5" height="42" fill="#FFFFFF" opacity=".55"/>
+  <g transform="translate(206 33.51020408163265) scale(1.32)"><g fill="#FFFFFF">
+  <rect x="6" y="62" width="26" height="70" rx="7"/>
+  <g transform="rotate(14 66 62)"><rect x="50" y="4" width="32" height="74" rx="16"/></g>
+  <rect x="40" y="56" width="88" height="24" rx="12"/>
+  <rect x="40" y="76" width="94" height="22" rx="11"/>
+  <rect x="40" y="94" width="88" height="22" rx="11"/>
+  <rect x="40" y="112" width="76" height="20" rx="10"/>
+  <rect x="40" y="62" width="60" height="64"/>
+</g>
+<g stroke="#1F5FD6" stroke-width="3.5" stroke-linecap="round">
+  <line x1="92" y1="78" x2="124" y2="78"/>
+  <line x1="92" y1="96" x2="128" y2="96"/>
+  <line x1="92" y1="114" x2="122" y2="114"/>
+</g></g>
+</g>
+</svg>

@@ -1,5 +1,3 @@
-import 'package:flutter_localizations/flutter_localizations.dart'
-    show GlobalWidgetsLocalizations;
 
 
 import 'package:intl/date_symbol_data_local.dart';
@@ -60,10 +58,11 @@ class _FacileCardsAppState extends State<FacileCardsApp> {
         title: 'FacileCards',
         locale: appLocale.value,
         supportedLocales: AppLocalizations.supportedLocales,
+        // Testi nostri, più quelli dei componenti di sistema (Material,
+        // Cupertino, widget) nelle lingue offerte.
         localizationsDelegates: const [
           AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
         ],
         themeMode: appThemeMode.value,
         theme: buildTheme(Brightness.light),

@@ -1372,4 +1372,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String unitKB(String n) {
     return '$n Ko';
   }
+
+  @override
+  String get adsIntroTitle => 'FacileCards est gratuite\ngrâce aux publicités';
+
+  @override
+  String get adsIntroSubtitle =>
+      'Nous vous demandons comment vous souhaitez qu\'elles soient affichées.';
+
+  @override
+  String get adLabel => 'Annonce';
+
+  @override
+  String get adsIntroNote =>
+      'Si vous refusez, vous verrez quand même des publicités, mais non personnalisées.\nVous pourrez modifier votre choix à tout moment dans les réglages.';
+
+  @override
+  String get manageAdConsent => 'Gérer le consentement aux publicités';
+
+  @override
+  String get adConsentNotRequired =>
+      'Le consentement aux publicités n\'est pas requis dans votre pays.';
 }

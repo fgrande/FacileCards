@@ -4,7 +4,7 @@
   --line: #e3e6ec;
   --paper: #ffffff;
   --ground: #f5f6f9;
-  --accent: #1f6f5c;
+  --accent: #1f5fd6;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -13,7 +13,7 @@
     --line: #2c3342;
     --paper: #171b24;
     --ground: #10131a;
-    --accent: #5fc7ae;
+    --accent: #4c87f2;
   }
 }
 * { box-sizing: border-box; }
@@ -32,14 +32,24 @@ main {
 header.site {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
   margin-bottom: 2.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--line);
 }
-.brand { font-weight: 700; font-size: 1.15rem; color: var(--ink); text-decoration: none; }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand img { display: block; }
+.hero { display: block; margin: 0 0 1.25rem; width: 176px; height: auto; }
 nav.lang a { margin-left: .75rem; font-size: .9rem; }
 nav.lang a[aria-current="page"] { color: var(--ink); text-decoration: none; font-weight: 600; }
 h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1rem; text-wrap: balance; }

@@ -359,5 +359,11 @@
   "importTheCard": "Importer la carte",
   "androidBackupTooBig": "Les photos occupent {size} : la sauvegarde automatique d'Android enregistre au maximum 25 Mo et pourrait ne plus enregistrer vos cartes. Utilisez « Tout exporter ».",
   "unitMB": "{n} Mo",
-  "unitKB": "{n} Ko"
+  "unitKB": "{n} Ko",
+  "adsIntroTitle": "FacileCards est gratuite\ngrâce aux publicités",
+  "adsIntroSubtitle": "Nous vous demandons comment vous souhaitez qu'elles soient affichées.",
+  "adLabel": "Annonce",
+  "adsIntroNote": "Si vous refusez, vous verrez quand même des publicités, mais non personnalisées.\nVous pourrez modifier votre choix à tout moment dans les réglages.",
+  "manageAdConsent": "Gérer le consentement aux publicités",
+  "adConsentNotRequired": "Le consentement aux publicités n'est pas requis dans votre pays."
 }

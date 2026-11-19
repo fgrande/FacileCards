@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:material_ui/material_ui.dart';
 
 import '../barcode_support.dart';
+import '../ads.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../format_utils.dart';
@@ -481,6 +482,9 @@ class _CardScreenState extends State<CardScreen> {
           ),
         ],
       ),
+      // Decisione 95: banner al piede, in uno spazio già riservato; il
+      // codice è disegnato per primo e non si sposta.
+      bottomNavigationBar: AdFooter(unitId: AdUnits.card),
     );
   }
 }

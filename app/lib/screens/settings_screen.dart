@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../ads.dart';
 import '../data/database.dart' as db;
 import '../expiry.dart';
 import '../l10n/l10n.dart';
@@ -282,6 +283,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'mailto:$contactEmail?subject=${Uri.encodeComponent(context.t.missingCardSubject)}',
                   ),
                 ),
+              _row(
+                title: context.t.manageAdConsent,
+                onTap: () async {
+                  if (!await Ads.instance.showPrivacyOptions()) {
+                    _message(tr.adConsentNotRequired);
+                  }
+                },
+              ),
               _row(
                 title: context.t.privacyPolicy,
                 onTap: () => _open(privacyUrl),

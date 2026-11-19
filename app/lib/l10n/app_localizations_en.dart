@@ -1361,4 +1361,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String unitKB(String n) {
     return '$n KB';
   }
+
+  @override
+  String get adsIntroTitle => 'FacileCards is free\nthanks to ads';
+
+  @override
+  String get adsIntroSubtitle =>
+      'We\'ll ask you how you\'d like them to be shown.';
+
+  @override
+  String get adLabel => 'Ad';
+
+  @override
+  String get adsIntroNote =>
+      'If you don\'t consent, you\'ll still see ads, but not personalised ones.\nYou can change your choice at any time in Settings.';
+
+  @override
+  String get manageAdConsent => 'Manage ad consent';
+
+  @override
+  String get adConsentNotRequired =>
+      'Ad consent is not required in your country.';
 }

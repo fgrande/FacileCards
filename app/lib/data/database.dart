@@ -41,6 +41,7 @@ abstract final class SettingKeys {
   static const catalogSignature = 'catalogSignature'; // impronta del catalogo
   static const lastBackupAt = 'lastBackupAt'; // ultima "Esporta tutto"
   static const lastBackupUri = 'lastBackupUri'; // dove si è salvato (dec. 112)
+  static const adsIntroShown = 'adsIntroShown'; // videata 40 già vista
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta

@@ -1361,4 +1361,24 @@ class AppLocalizationsIt extends AppLocalizations {
   String unitKB(String n) {
     return '$n KB';
   }
+
+  @override
+  String get adsIntroTitle => 'FacileCards è gratuita\ngrazie agli annunci';
+
+  @override
+  String get adsIntroSubtitle => 'Ti chiediamo come vuoi che vengano mostrati.';
+
+  @override
+  String get adLabel => 'Annuncio';
+
+  @override
+  String get adsIntroNote =>
+      'Se non acconsenti, vedrai comunque annunci, ma non personalizzati.\nPotrai cambiare scelta in qualsiasi momento dalle Impostazioni.';
+
+  @override
+  String get manageAdConsent => 'Gestisci consenso annunci';
+
+  @override
+  String get adConsentNotRequired =>
+      'Nel tuo paese non è richiesto un consenso per gli annunci.';
 }

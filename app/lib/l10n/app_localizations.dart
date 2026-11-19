@@ -2259,6 +2259,42 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{n} KB'**
   String unitKB(String n);
+
+  /// No description provided for @adsIntroTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'FacileCards è gratuita\ngrazie agli annunci'**
+  String get adsIntroTitle;
+
+  /// No description provided for @adsIntroSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ti chiediamo come vuoi che vengano mostrati.'**
+  String get adsIntroSubtitle;
+
+  /// No description provided for @adLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annuncio'**
+  String get adLabel;
+
+  /// No description provided for @adsIntroNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Se non acconsenti, vedrai comunque annunci, ma non personalizzati.\nPotrai cambiare scelta in qualsiasi momento dalle Impostazioni.'**
+  String get adsIntroNote;
+
+  /// No description provided for @manageAdConsent.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestisci consenso annunci'**
+  String get manageAdConsent;
+
+  /// No description provided for @adConsentNotRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Nel tuo paese non è richiesto un consenso per gli annunci.'**
+  String get adConsentNotRequired;
 }
 
 class _AppLocalizationsDelegate

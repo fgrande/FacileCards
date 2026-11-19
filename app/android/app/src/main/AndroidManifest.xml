@@ -57,6 +57,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <!-- AdMob (decisione 95): identificativo dell'app. Nelle versioni di
+             sviluppo i blocchi di annunci sono quelli di prova di Google
+             (lib/ads.dart). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4977111287348568~7708372032" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
