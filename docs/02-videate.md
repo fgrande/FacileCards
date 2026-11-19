@@ -25,11 +25,11 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 
 | # | Videata | Cosa mostra | Decisioni |
 |---|---|---|---|
-| 1 | [Configurazione iniziale](videate/01-configurazione-iniziale.svg) | Le tre domande del primo avvio: nome (facoltativo), lingua, avviso scadenze con giorni | 65 |
+| 1 | [Configurazione iniziale](videate/01-configurazione-iniziale.svg) | Le domande del primo avvio: nome (facoltativo), lingua, app per pagare (facoltativa, proposta Satispay se c'è), avviso scadenze con giorni | 65, 118 |
 | 2 | [Elenco, tutte le tessere](videate/02-elenco-tutte.svg) | Ricerca su tutti i campi, selettore Tutte / Per sezione, ordinamento, preferite in cima, campanella delle scadenze, contatore, annuncio al piede | 10, 53, 58, 70 |
 | 3 | [Elenco per sezione](videate/03-elenco-per-sezione.svg) | Preferite in cima (e ripetute nella loro sezione), poi una intestazione per sezione: Generale per prima, le altre in ordine alfabetico | 10, 58, 85, 86 |
 | 4 | [Scadenze](videate/04-scadenze.svg) | Campanella espansa: tessere scadute e in scadenza | 63, 70 |
-| 5 | [Tessera](videate/05-tessera.svg) | Miniatura della foto del fronte (toccandola si apre il visualizzatore, videate 25–27); codice a barre grande, numero in chiaro, intestatario, scadenza, note; nella barra: preferita, modifica, condividi, cestino; annuncio al piede, staccato dal codice | 13, 62, 75 |
+| 5 | [Tessera](videate/05-tessera.svg) | Miniatura della foto del fronte (toccandola si apre il visualizzatore, videate 25–27); codice a barre grande, numero in chiaro, intestatario, scadenza, note; nella fascia in alto, a destra del nome, il pulsante con icona e nome dell'app per pagare (decisione 118, anche nelle videate 6, 18, 19, 28, 44); nella barra: preferita, modifica, condividi, cestino; annuncio al piede, staccato dal codice | 13, 62, 75, 118 |
 | 6 | [Tessera con formato non più valido](videate/06-tessera-tipologia-ritirata.svg) | Segnale di avviso sull'icona della tessera; toccandolo si apre il riquadro con la spiegazione e la proposta della nuova tipologia. Lo stesso segnale compare nell'elenco (videata 2, PAM) | 39, 45, 73 |
 | 7 | [Nuova tessera: tipologia](videate/07-nuova-tessera-tipologia.svg) | Ricerca nel catalogo; negozi; tipologie di categoria e Tessera Generica | 40, 72 |
 | 8 | [Nuova tessera: dati](videate/08-nuova-tessera-dati.svg) | Nome, codice con "Scansiona" e "Da galleria", sezione, scadenza, intestatario, note, foto, preferita | 5, 37, 62, 71, 110 |
@@ -39,7 +39,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 12 | [Sezioni](videate/12-sezioni.svg) | Sezioni con condivisione e menu; nuova sezione | 104, 114 |
 | 12b | [Dati](videate/12b-dati.svg) | Esporta tutto, Importa da file, promemoria "Ultima copia", cestino | 19, 26, 114 |
 | 13 | [Cestino: recupero](videate/13-cestino-recupero.svg) | Scelta della sezione di destinazione, sezione eliminata che viene ricreata, esito sul limite | 20, 27, 28 |
-| 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale, tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa | 36, 65, 74 |
+| 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale (anche l'app per pagare, anche nella 42), tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa | 36, 65, 74, 118 |
 | 15 | [Limite raggiunto](videate/15-limite-versione-pro.svg) | Proposta della versione Pro a 2 € | 13, 14, 98 |
 | 16 | [Scorciatoie in Home](videate/16-scorciatoie-home.svg) | Schermata iniziale del telefono con icone che aprono direttamente una tessera | 89 |
 | 17 | [Elimina: scorrimento](videate/17-elimina-scorrimento.svg) | Riga dell'elenco trascinata verso sinistra, con il pulsante di eliminazione | 75 |
@@ -71,6 +71,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 43 | [Acquisto in elaborazione](videate/43-acquisto-in-elaborazione.svg) | Pagamento non ancora confermato da Google Play | 106 |
 | 44 | [Tessera, versione Pro](videate/44-tessera-pro.svg) | Senza banner; il codice non viene ingrandito | 106 |
 | 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende | 106 |
+| 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna", le app per pagare presenti sul telefono, poi le altre; ricerca, icone vere delle app | 118 |
 
 ## Tema scuro
 

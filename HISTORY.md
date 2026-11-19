@@ -210,3 +210,9 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - In prova la finestra di Google mostrava solo "Consent" e "Manage options": il pulsante per rifiutare si attiva nel messaggio di AdMob. Messo nei "Da fare" di Fabio.
 - Logo sul sito (richiesta di Fabio, per riconoscerlo come l'app): simbolo nell'intestazione e sopra il titolo delle pagine iniziali, icona del browser dai file di `docs/logo/` (tolti i metadati). Il verde dei link non c'entrava con il logo blu: ora il sito usa il blu dell'app.
 - Fabio ha provato gli annunci sul telefono: funziona.
+
+## 19 novembre 2026: app per pagare dalla tessera (disegni)
+
+- Richiesta di Fabio: in cassa, dopo aver mostrato la tessera, si passa a Satispay o al Wallet per pagare; un pulsante nella scheda evita di uscire e cercare l'app. Decisione 118. Il pulsante sta nella fascia blu in alto, a destra del nome: vicino al codice, sempre visibile, e non sposta niente (il codice resta dov'è, come vuole la decisione 95 per il banner).
+- Disegni aggiornati, chiari e scuri: pulsante nelle videate della scheda (5, 6, 18, 19, 28, 44), campo "App per pagare" nella configurazione (1, che diventa "Poche domande"), riga nelle impostazioni (14, 42), nuova videata 46 per la scelta. Il codice è nei "Da fare".
+- Tecnicamente si fa senza plugin: Android permette di elencare le app avviabili dichiarandolo nel manifest (non serve il permesso "tutte le app", che Google Play limita), di leggerne l'icona e di aprirle. L'elenco resta sul telefono; l'informativa andrà aggiornata quando arriverà il codice.
