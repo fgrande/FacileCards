@@ -34,7 +34,7 @@ Non ripetere qui le decisioni (stanno nell'analisi): qui solo cosa è fatto e co
 
 Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema versione 2 (prima migrazione fatta il 18 nov, con copia di sicurezza e prova): anche se l'app non è ancora rilasciata, ogni cambio di schema si fa con un passo di migrazione, perché il telefono di Fabio ha dati veri.
 
-**Prossimo passo:** Fabio crea l'account Google Play Console (poi AdMob) e cerca i 12 tester; intanto, se vuole, formato del codice scritto a mano e avviso `itf`.
+**Prossimo passo:** Fabio completa AdMob (dispositivo di prova) e comunica gli ID (app, blocchi "Elenco" e "Tessera", editore); poi annunci nell'app. In attesa: verifica dell'account Google Play, 12 tester, rilettura dell'informativa.
 
 ### Fatto
 
@@ -74,7 +74,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 - "Condividi verso FacileCards" (FacileCards nel pannello Condividi delle altre app): solo se da qualche app il file non si apre con "Apri con".
 - Scorciatoie in Home (16, 19, 20): parte nativa Kotlin, nascoste su Android 7.x.
 - Versione Pro: acquisto in-app `facilecards_pro`, controllo con Google Play all'avvio, "Ripristina acquisto" (14, 15, 42–45); sostituire il limite fisso di 50.
-- Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto.
+- Annunci AdMob (solo banner adattivi) e consenso (40, 41), senza caricare annunci prima del controllo dell'acquisto. In AdMob Fabio ha già creato l'app, i due blocchi banner ("Elenco" e "Tessera") e il messaggio di consenso europeo (19 nov). Restano a Fabio: il telefono come dispositivo di prova (ID pubblicità) e, se vuole, la classificazione massima dei contenuti; **ricordargli di comunicare gli ID**: ID app (`ca-app-pub-…~…`), i due ID dei blocchi (quale è "Elenco" e quale "Tessera") e l'ID editore (`pub-…`) per `app-ads.txt`. Poi nell'app: plugin `google_mobile_ads` (controllare l'avviso KGP), consenso dopo la prima schermata e voce nelle Impostazioni, banner dove disegnati, ID di prova nelle versioni di sviluppo e veri solo in quella per lo store.
 - Quando arriverà l'acquisto Pro: lo stato dell'acquisto non deve finire nel backup di Android (regole in `res/xml/backup_rules.xml` e `data_extraction_rules.xml`, decisione 93).
 - Far rileggere i testi inglesi e francesi a chi li parla bene (li ho scritti io); confermare i nomi della sezione di partenza "General" e "Général" (decisione 84).
 - Spagnolo e tedesco: aggiungere `app_es.arb` e `app_de.arb` e le voci in `supportedLanguages` (dopo il lancio, sezione 7).
