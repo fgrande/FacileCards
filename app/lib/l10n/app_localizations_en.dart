@@ -1434,4 +1434,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String payAppGone(String name) {
     return '$name is no longer installed.';
   }
+
+  @override
+  String get cfInvalid => 'Invalid tax code';
+
+  @override
+  String get cfInvalidDetail =>
+      'The code read doesn\'t match its check character: frame it better and try again.';
+
+  @override
+  String get cfInvalidTyped =>
+      'Invalid tax code: check that you typed it correctly (16 characters, the last one is a check letter).';
 }

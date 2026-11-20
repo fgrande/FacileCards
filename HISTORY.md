@@ -250,3 +250,7 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Aggiunto "Codice Fiscale" tra le "Altre tessere" (Fabio): è il codice a barre sul retro della tessera sanitaria, Code 39. Catalogo a 49 tipologie.
 - Sito: messo in evidenza che i dati non escono dal telefono (richiesta di Fabio). Si dice anche, per onestà, che il backup di Android, se attivo, ne salva una copia sull'account Google: lo fa il telefono, non FacileCards, e si può spegnere.
 - Fabio ha provato il catalogo nuovo sul telefono, a campione su due tessere: funziona. Le altre le verifica man mano.
+- Acqua & Sapone rifiutata alla scansione: il codice comincia con 0 e il lettore lo riconosce come UPC-A. Ora UPC-A diventa EAN-13 con lo 0 davanti. Il Codice Fiscale (Code 39) veniva letto sbagliato qualche volta: Code 39, Codabar e ITF non hanno cifra di controllo, quindi si accettano solo dopo due letture uguali di seguito.
+- Su richiesta di Fabio, per il solo Codice Fiscale la scansione controlla il carattere finale di controllo: le letture storte del Code 39 si scartano invece di finire nella tessera.
+- Codice Fiscale controllato anche al "Salva" (Fabio): un codice con il carattere di controllo sbagliato non si salva, nemmeno scritto a mano.
+- Commit di UPC-A→EAN-13, doppia lettura e controllo del Codice Fiscale prima delle prove complete sul telefono, su richiesta di Fabio, che le approfondisce dopo.

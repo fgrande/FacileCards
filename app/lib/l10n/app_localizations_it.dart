@@ -1434,4 +1434,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String payAppGone(String name) {
     return '$name non è più installata.';
   }
+
+  @override
+  String get cfInvalid => 'Codice fiscale non valido';
+
+  @override
+  String get cfInvalidDetail =>
+      'Il codice letto non torna con il carattere di controllo: inquadra meglio e riprova.';
+
+  @override
+  String get cfInvalidTyped =>
+      'Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l\'ultimo è una lettera di controllo).';
 }

@@ -379,5 +379,8 @@
   "payAppMissing": "Votre appli manque ? Demandez de l'ajouter",
   "payAppMissingSubject": "Appli de paiement à ajouter à FacileCards",
   "openPayApp": "Ouvrir {name}",
-  "payAppGone": "{name} n'est plus installée."
+  "payAppGone": "{name} n'est plus installée.",
+  "cfInvalid": "Code fiscal non valide",
+  "cfInvalidDetail": "Le code lu ne correspond pas à son caractère de contrôle : cadrez mieux et réessayez.",
+  "cfInvalidTyped": "Code fiscal non valide : vérifiez qu'il est bien saisi (16 caractères, le dernier est une lettre de contrôle)."
 }

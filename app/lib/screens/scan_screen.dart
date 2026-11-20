@@ -12,9 +12,7 @@ import '../system_settings.dart';
 /// di scrivere il codice a mano.
 class ScanOutcome {
   const ScanOutcome.code(this.code) : manual = false;
-  const ScanOutcome.manual()
-      : code = null,
-        manual = true;
+  const ScanOutcome.manual() : code = null, manual = true;
 
   final ScannedCode? code;
   final bool manual;
@@ -25,11 +23,20 @@ class ScanOutcome {
 /// galleria sta nella videata 8 e, se la fotocamera manca, nella 24.
 /// Il permesso della fotocamera si chiede qui, al primo tocco di "Scansiona".
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({super.key, this.typeName, this.expectedFormat});
+  const ScanScreen({
+    super.key,
+    this.typeName,
+    this.expectedFormat,
+    this.typeId,
+  });
 
   /// Nome della tipologia scelta e formato atteso (se la tipologia lo indica).
   final String? typeName;
   final String? expectedFormat;
+
+  /// Identificativo della tipologia (per i controlli propri di una
+  /// tipologia, come il Codice Fiscale).
+  final String? typeId;
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -39,6 +46,10 @@ class _ScanScreenState extends State<ScanScreen> {
   final _controller = MobileScannerController();
   bool _done = false;
   bool _torch = false;
+
+  /// Ultimo codice letto in un formato da confermare ([needsConfirmation]):
+  /// si accetta quando la lettura successiva dà lo stesso valore.
+  ScannedCode? _pending;
   String? _bannerTitle;
   String? _bannerDetail;
   Timer? _bannerTimer;
@@ -69,15 +80,30 @@ class _ScanScreenState extends State<ScanScreen> {
   /// Controlla il codice letto; se va bene chiude la schermata.
   /// Restituisce false se l'ha rifiutato.
   bool _accept(Barcode b) {
-    final check = checkScanned(b.rawValue, b.format,
-        expectedFormat: widget.expectedFormat, typeName: widget.typeName);
+    final check = checkScanned(
+      b.rawValue,
+      b.format,
+      expectedFormat: widget.expectedFormat,
+      typeName: widget.typeName,
+      typeId: widget.typeId,
+    );
     if (check == null) return false;
     if (!check.isAccepted) {
       _showBanner(check.title!, check.detail!);
       return false;
     }
+    final code = check.code!;
+    if (needsConfirmation(code.format)) {
+      final previous = _pending;
+      _pending = code;
+      if (previous == null ||
+          previous.value != code.value ||
+          previous.format != code.format) {
+        return false;
+      }
+    }
     _done = true;
-    Navigator.of(context).pop(ScanOutcome.code(check.code!));
+    Navigator.of(context).pop(ScanOutcome.code(code));
     return true;
   }
 
@@ -92,14 +118,18 @@ class _ScanScreenState extends State<ScanScreen> {
   /// già nella videata 8 (decisione 110).
   Future<void> _fromGallery() async {
     final check = await readCodeFromGallery(
-        expectedFormat: widget.expectedFormat, typeName: widget.typeName);
+      expectedFormat: widget.expectedFormat,
+      typeName: widget.typeName,
+      typeId: widget.typeId,
+    );
     if (check == null || !mounted) return;
     if (check.isAccepted) {
       _done = true;
       Navigator.of(context).pop(ScanOutcome.code(check.code!));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${check.title}\n${check.detail}')));
+        SnackBar(content: Text('${check.title}\n${check.detail}')),
+      );
     }
   }
 
@@ -114,8 +144,8 @@ class _ScanScreenState extends State<ScanScreen> {
     final label = widget.typeName == null
         ? null
         : (widget.expectedFormat == null
-            ? widget.typeName
-            : '${widget.typeName} · ${formatLabel(formatFromText(widget.expectedFormat!))}');
+              ? widget.typeName
+              : '${widget.typeName} · ${formatLabel(formatFromText(widget.expectedFormat!))}');
     return SafeArea(
       child: Column(
         children: [
@@ -132,12 +162,18 @@ class _ScanScreenState extends State<ScanScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_bannerTitle!,
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w600)),
+                  Text(
+                    _bannerTitle!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   if (_bannerDetail != null)
-                    Text(_bannerDetail!,
-                        style: const TextStyle(color: Colors.white)),
+                    Text(
+                      _bannerDetail!,
+                      style: const TextStyle(color: Colors.white),
+                    ),
                 ],
               ),
             ),
@@ -152,14 +188,19 @@ class _ScanScreenState extends State<ScanScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(context.t.scanFrame,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600)),
+                Text(
+                  context.t.scanFrame,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(context.t.scanAuto,
-                    style: const TextStyle(color: Colors.white70)),
+                Text(
+                  context.t.scanAuto,
+                  style: const TextStyle(color: Colors.white70),
+                ),
                 if (label != null) ...[
                   const SizedBox(height: 4),
                   Text(label, style: const TextStyle(color: Colors.white70)),
@@ -167,7 +208,9 @@ class _ScanScreenState extends State<ScanScreen> {
                 const SizedBox(height: 8),
                 TextButton.icon(
                   onPressed: _toggleTorch,
-                  icon: Icon(_torch ? Icons.flashlight_off : Icons.flashlight_on),
+                  icon: Icon(
+                    _torch ? Icons.flashlight_off : Icons.flashlight_on,
+                  ),
                   label: Text(context.t.torch),
                 ),
                 TextButton(

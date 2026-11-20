@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:material_ui/material_ui.dart';
 
 import '../barcode_support.dart';
+import '../codice_fiscale.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../gallery_scan.dart';
@@ -126,6 +127,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         builder: (_) => ScanScreen(
           typeName: hasFixedName(widget.type) ? widget.type.name : null,
           expectedFormat: widget.type.codeFormat,
+          typeId: widget.type.id,
         ),
       ),
     );
@@ -147,6 +149,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     final check = await readCodeFromGallery(
       expectedFormat: widget.type.codeFormat,
       typeName: hasFixedName(widget.type) ? widget.type.name : null,
+      typeId: widget.type.id,
     );
     if (check == null || !mounted) return;
     if (!check.isAccepted) return _message('${check.title}\n${check.detail}');
@@ -389,18 +392,23 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
 
   Future<void> _save() async {
     final name = _name.text.trim();
-    final code = _code.text.trim();
+    final isCf = widget.type.id == codiceFiscaleTypeId;
+    // Il Code 39 ha solo maiuscole: il codice fiscale si salva così.
+    final code = isCf ? _code.text.trim().toUpperCase() : _code.text.trim();
     final section = _section;
     if (name.isEmpty) return _message(context.t.enterCardName);
     if (code.isEmpty) return _message(context.t.enterCode);
+    // Codice Fiscale: anche scritto a mano deve avere il carattere di
+    // controllo giusto, altrimenti non si salva.
+    if (isCf && !isValidCodiceFiscale(code)) {
+      return _message(context.t.cfInvalidTyped);
+    }
     if (_frontRequired && !_hasPhoto(PhotoSide.front)) {
       return _message(context.t.genericNeedsFront);
     }
     if (section == null) return;
     if (!_editing && _count >= db.AppDatabase.freeCardLimit) {
-      return _message(
-        context.t.limitReached(db.AppDatabase.freeCardLimit),
-      );
+      return _message(context.t.limitReached(db.AppDatabase.freeCardLimit));
     }
     // Il formato si salva sempre sulla singola tessera. Scritto a mano e senza
     // formato indicato dalla tipologia: si usa Code 128, che accetta testo libero.

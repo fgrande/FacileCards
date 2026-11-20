@@ -1,6 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart' as bw;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import 'codice_fiscale.dart';
 import 'l10n/l10n.dart';
 
 /// Un codice letto: valore e formato.
@@ -47,8 +48,16 @@ ScanCheck? checkScanned(
   BarcodeFormat format, {
   String? expectedFormat,
   String? typeName,
+  String? typeId,
 }) {
   if (value == null || value.isEmpty) return null;
+  // Un EAN-13 che comincia con 0 è anche un UPC-A, e il lettore a volte lo
+  // chiama così (12 cifre, senza lo 0): lo si riporta a EAN-13, che è lo
+  // stesso codice a barre (tessera Acqua & Sapone).
+  if (format == BarcodeFormat.upcA && RegExp(r'^\d{12}$').hasMatch(value)) {
+    value = '0$value';
+    format = BarcodeFormat.ean13;
+  }
   if (format == BarcodeFormat.unknown) {
     return ScanCheck.rejected(tr.formatUnknown, tr.formatUnknownDetail);
   }
@@ -61,8 +70,22 @@ ScanCheck? checkScanned(
       ),
     );
   }
+  // Codice Fiscale: il carattere finale di controllo deve tornare, così una
+  // lettura storta del Code 39 si scarta e si continua a leggere.
+  if (typeId == codiceFiscaleTypeId && !isValidCodiceFiscale(value)) {
+    return ScanCheck.rejected(tr.cfInvalid, tr.cfInvalidDetail);
+  }
   return ScanCheck.accepted(ScannedCode(value, format));
 }
+
+/// Tipologia del catalogo il cui codice si controlla con [isValidCodiceFiscale].
+const codiceFiscaleTypeId = 'codice-fiscale';
+
+/// Formati senza cifra di controllo obbligatoria (Code 39, Codabar, ITF):
+/// una lettura storta può dare un codice sbagliato ma valido. Dalla
+/// fotocamera si accettano solo dopo due letture uguali di seguito.
+bool needsConfirmation(BarcodeFormat f) =>
+    f == BarcodeFormat.code39 || f == BarcodeFormat.codabar || isItf(f);
 
 /// Il formato si salva nel database come testo (il nome del formato).
 String formatToText(BarcodeFormat f) => f.name;

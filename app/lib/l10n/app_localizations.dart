@@ -2379,6 +2379,24 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{name} non è più installata.'**
   String payAppGone(String name);
+
+  /// No description provided for @cfInvalid.
+  ///
+  /// In it, this message translates to:
+  /// **'Codice fiscale non valido'**
+  String get cfInvalid;
+
+  /// No description provided for @cfInvalidDetail.
+  ///
+  /// In it, this message translates to:
+  /// **'Il codice letto non torna con il carattere di controllo: inquadra meglio e riprova.'**
+  String get cfInvalidDetail;
+
+  /// No description provided for @cfInvalidTyped.
+  ///
+  /// In it, this message translates to:
+  /// **'Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l\'ultimo è una lettera di controllo).'**
+  String get cfInvalidTyped;
 }
 
 class _AppLocalizationsDelegate

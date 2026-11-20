@@ -379,5 +379,8 @@
   "payAppMissing": "Is your app missing? Ask us to add it",
   "payAppMissingSubject": "Payment app to add to FacileCards",
   "openPayApp": "Open {name}",
-  "payAppGone": "{name} is no longer installed."
+  "payAppGone": "{name} is no longer installed.",
+  "cfInvalid": "Invalid tax code",
+  "cfInvalidDetail": "The code read doesn't match its check character: frame it better and try again.",
+  "cfInvalidTyped": "Invalid tax code: check that you typed it correctly (16 characters, the last one is a check letter)."
 }

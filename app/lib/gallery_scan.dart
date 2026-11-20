@@ -10,15 +10,23 @@ import 'l10n/l10n.dart';
 Future<ScanCheck?> readCodeFromGallery({
   String? expectedFormat,
   String? typeName,
+  String? typeId,
 }) async {
   try {
     final file = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (file == null) return null;
-    final capture = await MobileScannerPlatform.instance.analyzeImage(file.path);
+    final capture = await MobileScannerPlatform.instance.analyzeImage(
+      file.path,
+    );
     ScanCheck? firstRejection;
     for (final b in capture?.barcodes ?? const <Barcode>[]) {
-      final check = checkScanned(b.rawValue, b.format,
-          expectedFormat: expectedFormat, typeName: typeName);
+      final check = checkScanned(
+        b.rawValue,
+        b.format,
+        expectedFormat: expectedFormat,
+        typeName: typeName,
+        typeId: typeId,
+      );
       if (check == null) continue;
       if (check.isAccepted) return check;
       firstRejection ??= check;

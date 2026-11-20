@@ -1021,5 +1021,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "cfInvalid": "Codice fiscale non valido",
+  "cfInvalidDetail": "Il codice letto non torna con il carattere di controllo: inquadra meglio e riprova.",
+  "cfInvalidTyped": "Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l'ultimo è una lettera di controllo)."
 }
