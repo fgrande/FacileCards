@@ -98,7 +98,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupWelcome => 'Welcome to FacileCards';
 
   @override
-  String get setupIntro => 'Three questions and you\'re ready.';
+  String get setupIntro => 'A few questions and you\'re ready.';
 
   @override
   String get setupNameLabel => 'Your name (optional)';
@@ -1382,4 +1382,56 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adConsentNotRequired =>
       'Ad consent is not required in your country.';
+
+  @override
+  String get payApp => 'Payment app';
+
+  @override
+  String get payAppOptional => 'Payment app (optional)';
+
+  @override
+  String get payAppSetupHelp =>
+      'Opens from the card with one tap, to pay at the checkout.';
+
+  @override
+  String payAppSettingsSub(String name) {
+    return '$name · opens from the card';
+  }
+
+  @override
+  String get payAppIntro =>
+      'Opens with one tap from the card, to pay at the checkout without leaving FacileCards.';
+
+  @override
+  String get payAppNone => 'None';
+
+  @override
+  String get payAppNoneSub => 'The button is not shown';
+
+  @override
+  String get payAppsFound => 'Found on your phone';
+
+  @override
+  String get payAppsNoneFound =>
+      'We didn\'t find any payment apps on your phone.';
+
+  @override
+  String get payAppsExplain =>
+      'Listed are known payment apps and those that pay by holding the phone near the card reader.';
+
+  @override
+  String get payAppMissing => 'Is your app missing? Ask us to add it';
+
+  @override
+  String get payAppMissingSubject => 'Payment app to add to FacileCards';
+
+  @override
+  String openPayApp(String name) {
+    return 'Open $name';
+  }
+
+  @override
+  String payAppGone(String name) {
+    return '$name is no longer installed.';
+  }
 }

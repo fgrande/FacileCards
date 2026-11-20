@@ -2,8 +2,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../l10n/l10n.dart';
+import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
+import 'pay_app_screen.dart';
 
 /// Videata 1: configurazione iniziale, solo al primo avvio (decisione 65).
 class SetupScreen extends StatefulWidget {
@@ -26,6 +28,28 @@ class _SetupScreenState extends State<SetupScreen> {
   bool _alerts = true;
   int _days = db.AppDatabase.defaultExpiryDays;
   bool _saving = false;
+
+  /// App per pagare (decisione 118): Satispay proposta se c'è.
+  PayApp? _payApp;
+
+  @override
+  void initState() {
+    super.initState();
+    payAppInfo(satispayPackage).then((app) {
+      if (mounted && app != null) setState(() => _payApp ??= app);
+    });
+  }
+
+  Future<void> _pickPayApp() async {
+    final chosen = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => PayAppScreen(current: _payApp?.package ?? ''),
+      ),
+    );
+    if (chosen == null) return;
+    final app = chosen.isEmpty ? null : await payAppInfo(chosen);
+    if (mounted) setState(() => _payApp = app);
+  }
 
   @override
   void dispose() {
@@ -62,6 +86,10 @@ class _SetupScreenState extends State<SetupScreen> {
       expiryAlerts: _alerts,
       expiryDays: _days,
     );
+    await widget.database.setSetting(
+      db.SettingKeys.payApp,
+      _payApp?.package ?? '',
+    );
     widget.onDone();
   }
 
@@ -81,14 +109,19 @@ class _SetupScreenState extends State<SetupScreen> {
                   const SizedBox(height: 24),
                   const Center(child: AppMark(height: 96)),
                   const SizedBox(height: 16),
-                  Text(context.t.setupWelcome,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    context.t.setupWelcome,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  Text(context.t.setupIntro,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: muted)),
+                  Text(
+                    context.t.setupIntro,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: muted),
+                  ),
                   const SizedBox(height: 32),
                   TextField(
                     controller: _name,
@@ -111,6 +144,39 @@ class _SetupScreenState extends State<SetupScreen> {
                         suffixIcon: const Icon(Icons.expand_more),
                       ),
                       child: Text(languageNames[_language]!),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  InkWell(
+                    onTap: _pickPayApp,
+                    borderRadius: BorderRadius.circular(4),
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: context.t.payAppOptional,
+                        helperText: context.t.payAppSetupHelp,
+                        suffixIcon: const Icon(Icons.expand_more),
+                      ),
+                      child: Row(
+                        children: [
+                          if (_payApp != null) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: Image.memory(
+                                _payApp!.icon,
+                                width: 22,
+                                height: 22,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Expanded(
+                            child: Text(
+                              _payApp?.label ?? context.t.payAppNone,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -138,9 +204,11 @@ class _SetupScreenState extends State<SetupScreen> {
                               ),
                               SizedBox(
                                 width: 32,
-                                child: Text('$_days',
-                                    textAlign: TextAlign.center,
-                                    style: theme.textTheme.titleMedium),
+                                child: Text(
+                                  '$_days',
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.titleMedium,
+                                ),
                               ),
                               IconButton(
                                 onPressed: _alerts && _days < _maxDays
@@ -155,9 +223,11 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Text(context.t.setupLater,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: muted)),
+                  Text(
+                    context.t.setupLater,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: muted),
+                  ),
                 ],
               ),
             ),

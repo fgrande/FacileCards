@@ -78,7 +78,7 @@
   },
   "language": "Lingua",
   "setupWelcome": "Benvenuto in FacileCards",
-  "setupIntro": "Tre domande e sei pronto.",
+  "setupIntro": "Poche domande e sei pronto.",
   "setupNameLabel": "Il tuo nome (facoltativo)",
   "setupNameHelp": "Lo proponiamo come intestatario delle nuove tessere.",
   "setupLanguageHelp": "È quella del telefono. Puoi cambiarla.",
@@ -986,5 +986,40 @@
   "adLabel": "Annuncio",
   "adsIntroNote": "Se non acconsenti, vedrai comunque annunci, ma non personalizzati.\nPotrai cambiare scelta in qualsiasi momento dalle Impostazioni.",
   "manageAdConsent": "Gestisci consenso annunci",
-  "adConsentNotRequired": "Nel tuo paese non è richiesto un consenso per gli annunci."
+  "adConsentNotRequired": "Nel tuo paese non è richiesto un consenso per gli annunci.",
+  "payApp": "App per pagare",
+  "payAppOptional": "App per pagare (facoltativa)",
+  "payAppSetupHelp": "Si apre dalla tessera con un tocco, per pagare alla cassa.",
+  "payAppSettingsSub": "{name} · si apre dalla tessera",
+  "@payAppSettingsSub": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "payAppIntro": "Si apre con un tocco dalla tessera, per pagare alla cassa senza uscire da FacileCards.",
+  "payAppNone": "Nessuna",
+  "payAppNoneSub": "Il pulsante non compare",
+  "payAppsFound": "Trovate sul telefono",
+  "payAppsNoneFound": "Sul telefono non abbiamo trovato app per pagare.",
+  "payAppsExplain": "Sono elencate le app per pagare note e quelle che pagano avvicinando il telefono al POS.",
+  "payAppMissing": "Manca la tua app? Chiedi di aggiungerla",
+  "payAppMissingSubject": "App per pagare da aggiungere a FacileCards",
+  "openPayApp": "Apri {name}",
+  "@openPayApp": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "payAppGone": "{name} non è più installata.",
+  "@payAppGone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

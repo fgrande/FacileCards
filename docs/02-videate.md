@@ -71,7 +71,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 43 | [Acquisto in elaborazione](videate/43-acquisto-in-elaborazione.svg) | Pagamento non ancora confermato da Google Play | 106 |
 | 44 | [Tessera, versione Pro](videate/44-tessera-pro.svg) | Senza banner; il codice non viene ingrandito | 106 |
 | 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende | 106 |
-| 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna", le app per pagare presenti sul telefono, poi le altre; ricerca, icone vere delle app | 118 |
+| 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna" e le app per pagare trovate sul telefono (elenco nostro e app che pagano con NFC), con le icone vere; "Manca la tua app? Chiedi di aggiungerla" | 36, 118 |
 
 ## Tema scuro
 

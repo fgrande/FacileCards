@@ -42,6 +42,7 @@ abstract final class SettingKeys {
   static const lastBackupAt = 'lastBackupAt'; // ultima "Esporta tutto"
   static const lastBackupUri = 'lastBackupUri'; // dove si è salvato (dec. 112)
   static const adsIntroShown = 'adsIntroShown'; // videata 40 già vista
+  static const payApp = 'payApp'; // app per pagare (dec. 118): pacchetto, '' = nessuna
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta

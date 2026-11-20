@@ -216,3 +216,10 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Richiesta di Fabio: in cassa, dopo aver mostrato la tessera, si passa a Satispay o al Wallet per pagare; un pulsante nella scheda evita di uscire e cercare l'app. Decisione 118. Il pulsante sta nella fascia blu in alto, a destra del nome: vicino al codice, sempre visibile, e non sposta niente (il codice resta dov'è, come vuole la decisione 95 per il banner).
 - Disegni aggiornati, chiari e scuri: pulsante nelle videate della scheda (5, 6, 18, 19, 28, 44), campo "App per pagare" nella configurazione (1, che diventa "Poche domande"), riga nelle impostazioni (14, 42), nuova videata 46 per la scelta. Il codice è nei "Da fare".
 - Tecnicamente si fa senza plugin: Android permette di elencare le app avviabili dichiarandolo nel manifest (non serve il permesso "tutte le app", che Google Play limita), di leggerne l'icona e di aprirle. L'elenco resta sul telefono; l'informativa andrà aggiornata quando arriverà il codice.
+
+## 20 novembre 2026: app per pagare, codice
+
+- Fabio ha scelto di proporre solo app per pagare: un elenco nostro di pacchetti noti più le app che pagano con NFC (Android le trova dalla loro dichiarazione di servizio "payment"). Niente elenco di tutte le app: FacileCards dichiara nel manifest solo quei pacchetti e le azioni NFC, quindi non vede il resto del telefono; Google Play non chiede dichiarazioni speciali. Un'app che manca si aggiunge all'elenco con un aggiornamento.
+- Videata 46 semplificata di conseguenza (niente "Altre app" né ricerca, aggiunta la richiesta "Manca la tua app?", visibile quando ci sarà l'email sul dominio).
+- Il pulsante nella scheda arriva dopo il codice (lettura dal telefono in un secondo momento), così la tessera resta immediata. Informativa aggiornata: la verifica delle app installate avviene solo sul telefono.
+- Fabio ha provato l'app per pagare sul telefono con Satispay: funziona.

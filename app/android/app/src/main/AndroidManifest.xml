@@ -75,6 +75,26 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- App per pagare (decisione 118): solo questi pacchetti (gli stessi
+             di PayApps.KNOWN) e le app che pagano con NFC; FacileCards non
+             vede le altre app del telefono. -->
+        <package android:name="com.satispay.customer" />
+        <package android:name="com.google.android.apps.walletnfcrel" />
+        <package android:name="com.samsung.android.spay" />
+        <package android:name="com.paypal.android.p2pmobile" />
+        <package android:name="posteitaliane.posteapp.apppostepay" />
+        <package android:name="com.revolut.revolut" />
+        <package android:name="it.hype.app" />
+        <package android:name="de.number26.android" />
+        <package android:name="com.imaginecurve.curve.prd" />
+        <package android:name="com.latuabancaperandroid" />
+        <package android:name="com.fineco.it" />
+        <intent>
+            <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+        </intent>
+        <intent>
+            <action android:name="android.nfc.cardemulation.action.OFF_HOST_APDU_SERVICE" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

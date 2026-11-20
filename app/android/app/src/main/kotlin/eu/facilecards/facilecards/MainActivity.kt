@@ -204,6 +204,18 @@ class MainActivity : FlutterActivity() {
                         }
                     }
                     // "Condividi…": pannello di condivisione di Android con il file.
+                    // App per pagare (decisione 118, PayApps.kt): elenco, una
+                    // sola app (nome e icona) e apertura.
+                    "payApps" -> Thread {
+                        val apps = PayApps.find(this)
+                        runOnUiThread { result.success(apps) }
+                    }.start()
+                    "payAppInfo" -> result.success(
+                        PayApps.info(this, call.argument<String>("package")!!),
+                    )
+                    "openApp" -> result.success(
+                        PayApps.open(this, call.argument<String>("package")!!),
+                    )
                     "shareFile" -> {
                         val file = File(call.argument<String>("path")!!)
                         val uri = FileProvider.getUriForFile(this, "$packageName.files", file)

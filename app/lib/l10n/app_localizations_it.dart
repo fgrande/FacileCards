@@ -98,7 +98,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get setupWelcome => 'Benvenuto in FacileCards';
 
   @override
-  String get setupIntro => 'Tre domande e sei pronto.';
+  String get setupIntro => 'Poche domande e sei pronto.';
 
   @override
   String get setupNameLabel => 'Il tuo nome (facoltativo)';
@@ -1381,4 +1381,57 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get adConsentNotRequired =>
       'Nel tuo paese non è richiesto un consenso per gli annunci.';
+
+  @override
+  String get payApp => 'App per pagare';
+
+  @override
+  String get payAppOptional => 'App per pagare (facoltativa)';
+
+  @override
+  String get payAppSetupHelp =>
+      'Si apre dalla tessera con un tocco, per pagare alla cassa.';
+
+  @override
+  String payAppSettingsSub(String name) {
+    return '$name · si apre dalla tessera';
+  }
+
+  @override
+  String get payAppIntro =>
+      'Si apre con un tocco dalla tessera, per pagare alla cassa senza uscire da FacileCards.';
+
+  @override
+  String get payAppNone => 'Nessuna';
+
+  @override
+  String get payAppNoneSub => 'Il pulsante non compare';
+
+  @override
+  String get payAppsFound => 'Trovate sul telefono';
+
+  @override
+  String get payAppsNoneFound =>
+      'Sul telefono non abbiamo trovato app per pagare.';
+
+  @override
+  String get payAppsExplain =>
+      'Sono elencate le app per pagare note e quelle che pagano avvicinando il telefono al POS.';
+
+  @override
+  String get payAppMissing => 'Manca la tua app? Chiedi di aggiungerla';
+
+  @override
+  String get payAppMissingSubject =>
+      'App per pagare da aggiungere a FacileCards';
+
+  @override
+  String openPayApp(String name) {
+    return 'Apri $name';
+  }
+
+  @override
+  String payAppGone(String name) {
+    return '$name non è più installata.';
+  }
 }

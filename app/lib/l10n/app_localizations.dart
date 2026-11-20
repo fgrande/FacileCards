@@ -235,7 +235,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupIntro.
   ///
   /// In it, this message translates to:
-  /// **'Tre domande e sei pronto.'**
+  /// **'Poche domande e sei pronto.'**
   String get setupIntro;
 
   /// No description provided for @setupNameLabel.
@@ -2295,6 +2295,90 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Nel tuo paese non è richiesto un consenso per gli annunci.'**
   String get adConsentNotRequired;
+
+  /// No description provided for @payApp.
+  ///
+  /// In it, this message translates to:
+  /// **'App per pagare'**
+  String get payApp;
+
+  /// No description provided for @payAppOptional.
+  ///
+  /// In it, this message translates to:
+  /// **'App per pagare (facoltativa)'**
+  String get payAppOptional;
+
+  /// No description provided for @payAppSetupHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Si apre dalla tessera con un tocco, per pagare alla cassa.'**
+  String get payAppSetupHelp;
+
+  /// No description provided for @payAppSettingsSub.
+  ///
+  /// In it, this message translates to:
+  /// **'{name} · si apre dalla tessera'**
+  String payAppSettingsSub(String name);
+
+  /// No description provided for @payAppIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Si apre con un tocco dalla tessera, per pagare alla cassa senza uscire da FacileCards.'**
+  String get payAppIntro;
+
+  /// No description provided for @payAppNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna'**
+  String get payAppNone;
+
+  /// No description provided for @payAppNoneSub.
+  ///
+  /// In it, this message translates to:
+  /// **'Il pulsante non compare'**
+  String get payAppNoneSub;
+
+  /// No description provided for @payAppsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Trovate sul telefono'**
+  String get payAppsFound;
+
+  /// No description provided for @payAppsNoneFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Sul telefono non abbiamo trovato app per pagare.'**
+  String get payAppsNoneFound;
+
+  /// No description provided for @payAppsExplain.
+  ///
+  /// In it, this message translates to:
+  /// **'Sono elencate le app per pagare note e quelle che pagano avvicinando il telefono al POS.'**
+  String get payAppsExplain;
+
+  /// No description provided for @payAppMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'Manca la tua app? Chiedi di aggiungerla'**
+  String get payAppMissing;
+
+  /// No description provided for @payAppMissingSubject.
+  ///
+  /// In it, this message translates to:
+  /// **'App per pagare da aggiungere a FacileCards'**
+  String get payAppMissingSubject;
+
+  /// No description provided for @openPayApp.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri {name}'**
+  String openPayApp(String name);
+
+  /// No description provided for @payAppGone.
+  ///
+  /// In it, this message translates to:
+  /// **'{name} non è più installata.'**
+  String payAppGone(String name);
 }
 
 class _AppLocalizationsDelegate

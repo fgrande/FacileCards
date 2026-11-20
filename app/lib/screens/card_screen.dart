@@ -10,6 +10,7 @@ import '../data/database.dart' as db;
 import '../format_utils.dart';
 import '../l10n/l10n.dart';
 import '../photos.dart';
+import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import '../transfer/export.dart' show ExportTarget;
@@ -60,6 +61,26 @@ class _CardScreenState extends State<CardScreen> {
     PhotoStore.instance.then((s) {
       if (mounted) setState(() => _store = s);
     });
+    _loadPayApp();
+  }
+
+  /// App per pagare da aprire dalla tessera (decisione 118); compare dopo
+  /// il codice, senza ritardarlo, e solo se è ancora installata.
+  PayApp? _payApp;
+
+  Future<void> _loadPayApp() async {
+    final package = await widget.database.setting(db.SettingKeys.payApp) ?? '';
+    if (package.isEmpty) return;
+    final app = await payAppInfo(package);
+    if (mounted && app != null) setState(() => _payApp = app);
+  }
+
+  Future<void> _openPayApp(PayApp app) async {
+    if (!await openApp(app.package) && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.t.payAppGone(app.label))));
+    }
   }
 
   bool get _frontRequired => widget.type?.isGeneric ?? false;
@@ -396,6 +417,10 @@ class _CardScreenState extends State<CardScreen> {
                         ],
                       ),
                     ),
+                    if (_payApp case final app?) ...[
+                      const SizedBox(width: 10),
+                      _PayAppButton(app: app, onTap: () => _openPayApp(app)),
+                    ],
                   ],
                 ),
               ),
@@ -525,4 +550,52 @@ Future<bool> confirmDeleteCard(
     await database.deleteCardForever(card.id);
   }
   return true;
+}
+
+/// Pulsante bianco nella fascia della tessera con icona e nome dell'app per
+/// pagare (videata 5, decisione 118). Colori fissi: sta sul colore della
+/// tipologia, come le altre scritte bianche della fascia.
+class _PayAppButton extends StatelessWidget {
+  const _PayAppButton({required this.app, required this.onTap});
+
+  final PayApp app;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.white,
+    shape: const StadiumBorder(),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onTap,
+      child: Tooltip(
+        message: context.t.openPayApp(app.label),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 6, 14, 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.memory(app.icon, width: 24, height: 24),
+              ),
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 96),
+                child: Text(
+                  app.label,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF161B26),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

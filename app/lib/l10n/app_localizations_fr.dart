@@ -98,7 +98,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get setupWelcome => 'Bienvenue dans FacileCards';
 
   @override
-  String get setupIntro => 'Trois questions et c\'est parti.';
+  String get setupIntro => 'Quelques questions et c\'est parti.';
 
   @override
   String get setupNameLabel => 'Votre nom (facultatif)';
@@ -1393,4 +1393,57 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get adConsentNotRequired =>
       'Le consentement aux publicités n\'est pas requis dans votre pays.';
+
+  @override
+  String get payApp => 'Appli de paiement';
+
+  @override
+  String get payAppOptional => 'Appli de paiement (facultative)';
+
+  @override
+  String get payAppSetupHelp =>
+      'S\'ouvre depuis la carte d\'un simple toucher, pour payer en caisse.';
+
+  @override
+  String payAppSettingsSub(String name) {
+    return '$name · s\'ouvre depuis la carte';
+  }
+
+  @override
+  String get payAppIntro =>
+      'S\'ouvre d\'un toucher depuis la carte, pour payer en caisse sans quitter FacileCards.';
+
+  @override
+  String get payAppNone => 'Aucune';
+
+  @override
+  String get payAppNoneSub => 'Le bouton n\'apparaît pas';
+
+  @override
+  String get payAppsFound => 'Trouvées sur le téléphone';
+
+  @override
+  String get payAppsNoneFound =>
+      'Nous n\'avons trouvé aucune appli de paiement sur le téléphone.';
+
+  @override
+  String get payAppsExplain =>
+      'Sont listées les applis de paiement connues et celles qui paient en approchant le téléphone du terminal.';
+
+  @override
+  String get payAppMissing => 'Votre appli manque ? Demandez de l\'ajouter';
+
+  @override
+  String get payAppMissingSubject =>
+      'Appli de paiement à ajouter à FacileCards';
+
+  @override
+  String openPayApp(String name) {
+    return 'Ouvrir $name';
+  }
+
+  @override
+  String payAppGone(String name) {
+    return '$name n\'est plus installée.';
+  }
 }

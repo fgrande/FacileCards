@@ -9,6 +9,7 @@ import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'about_screen.dart';
+import 'pay_app_screen.dart';
 
 /// Videata 14: impostazioni. Gli stessi valori della configurazione iniziale,
 /// più tema, versione e collegamenti.
@@ -26,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _language = 'it';
   ExpirySettings _expiry = ExpirySettings.defaults;
   int _count = 0;
+  PayApp? _payApp;
 
   db.AppDatabase get _db => widget.database;
 
@@ -40,8 +42,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final language = await _db.setting(db.SettingKeys.language);
     final expiry = await _db.expirySettings();
     final count = await _db.activeCardCount();
+    final payPackage = await _db.setting(db.SettingKeys.payApp) ?? '';
+    final payApp = payPackage.isEmpty ? null : await payAppInfo(payPackage);
     if (!mounted) return;
     setState(() {
+      _payApp = payApp;
       _name = name ?? '';
       _language = language ?? 'it';
       _expiry = expiry;
@@ -125,6 +130,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setAppLanguage(chosen); // l'app cambia subito
   }
 
+  /// Videata 46 (decisione 118).
+  Future<void> _choosePayApp() async {
+    final chosen = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => PayAppScreen(current: _payApp?.package ?? ''),
+      ),
+    );
+    if (chosen == null) return;
+    await _db.setSetting(db.SettingKeys.payApp, chosen);
+    final app = chosen.isEmpty ? null : await payAppInfo(chosen);
+    if (mounted) setState(() => _payApp = app);
+  }
+
   Future<void> _chooseTheme() async {
     final current = appThemeMode.value;
     final chosen = await _choose(context.t.theme, {
@@ -198,6 +216,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: context.t.theme,
                 subtitle: themeModeLabel(appThemeMode.value),
                 onTap: _chooseTheme,
+              ),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 2,
+                ),
+                title: Text(context.t.payApp),
+                subtitle: Row(
+                  children: [
+                    if (_payApp != null) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.memory(
+                          _payApp!.icon,
+                          width: 16,
+                          height: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                    ],
+                    Expanded(
+                      child: Text(
+                        _payApp == null
+                            ? context.t.payAppNone
+                            : context.t.payAppSettingsSub(_payApp!.label),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: const Chevron(),
+                onTap: _choosePayApp,
               ),
               _row(
                 title: context.t.expiryAlerts,
