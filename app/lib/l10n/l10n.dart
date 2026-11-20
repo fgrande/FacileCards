@@ -15,6 +15,14 @@ export '../data/database.dart' show supportedLanguages;
 /// Nome di ogni lingua, scritto nella lingua stessa.
 const languageNames = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'};
 
+/// Bandiera di ogni lingua (emoji, a colori su Android). Una lingua non è un
+/// paese: per l'inglese si usa il Regno Unito (app pensata per l'Europa).
+const languageFlags = {'it': '🇮🇹', 'en': '🇬🇧', 'fr': '🇫🇷'};
+
+/// Bandiera e nome, per mostrare la lingua scelta ("🇮🇹 Italiano").
+String languageLabel(String code) =>
+    '${languageFlags[code] ?? ''} ${languageNames[code] ?? code}'.trim();
+
 /// Lingua proposta: quella del telefono se è tra quelle offerte, altrimenti
 /// l'inglese.
 String proposedLanguage(String phoneLanguage) =>

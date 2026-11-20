@@ -9,6 +9,7 @@ import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'about_screen.dart';
+import 'language_picker.dart';
 import 'pay_app_screen.dart';
 
 /// Videata 14: impostazioni. Gli stessi valori della configurazione iniziale,
@@ -121,9 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
   Future<void> _chooseLanguage() async {
-    final chosen = await _choose(context.t.language, {
-      for (final l in supportedLanguages) l: languageNames[l]!,
-    }, _language);
+    final chosen = await showLanguagePicker(context, _language);
     if (chosen == null || chosen == _language) return;
     await _db.setSetting(db.SettingKeys.language, chosen);
     setState(() => _language = chosen);
@@ -209,7 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               _row(
                 title: context.t.language,
-                subtitle: languageNames[_language] ?? _language,
+                subtitle: languageLabel(_language),
                 onTap: _chooseLanguage,
               ),
               _row(

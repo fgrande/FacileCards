@@ -50,7 +50,8 @@ header.site {
 }
 .brand img { display: block; }
 .hero { display: block; margin: 0 0 1.25rem; width: 176px; height: auto; }
-nav.lang a { margin-left: .75rem; font-size: .9rem; }
+nav.lang a { margin-left: .75rem; font-size: .9rem; display: inline-flex; align-items: center; gap: .35rem; }
+nav.lang img { display: block; border-radius: 2px; box-shadow: 0 0 0 1px var(--line); }
 nav.lang a[aria-current="page"] { color: var(--ink); text-decoration: none; font-weight: 600; }
 h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1rem; text-wrap: balance; }
 h2 { font-size: 1.2rem; margin: 2.25rem 0 .5rem; }

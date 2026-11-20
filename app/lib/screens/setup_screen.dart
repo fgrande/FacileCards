@@ -5,6 +5,7 @@ import '../l10n/l10n.dart';
 import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
+import 'language_picker.dart';
 import 'pay_app_screen.dart';
 
 /// Videata 1: configurazione iniziale, solo al primo avvio (decisione 65).
@@ -58,19 +59,7 @@ class _SetupScreenState extends State<SetupScreen> {
   }
 
   Future<void> _pickLanguage() async {
-    final chosen = await showDialog<String>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(context.t.language),
-        children: [
-          for (final l in supportedLanguages)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(context).pop(l),
-              child: Text(languageNames[l]!),
-            ),
-        ],
-      ),
-    );
+    final chosen = await showLanguagePicker(context, _language);
     if (chosen != null && mounted) {
       setState(() => _language = chosen);
       // L'interfaccia cambia lingua subito, già in questa schermata.
@@ -143,7 +132,7 @@ class _SetupScreenState extends State<SetupScreen> {
                             : null,
                         suffixIcon: const Icon(Icons.expand_more),
                       ),
-                      child: Text(languageNames[_language]!),
+                      child: Text(languageLabel(_language)),
                     ),
                   ),
                   const SizedBox(height: 16),

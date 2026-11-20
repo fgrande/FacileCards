@@ -61,4 +61,12 @@ void main() {
     setAppLanguage('en');
     expect(e.message, contains('52 cards'));
   });
+
+  test('ogni lingua offerta ha nome e bandiera', () {
+    for (final l in supportedLanguages) {
+      expect(languageNames[l], isNotNull, reason: l);
+      expect(languageFlags[l], isNotNull, reason: l);
+    }
+    expect(languageLabel('it'), '🇮🇹 Italiano');
+  });
 }

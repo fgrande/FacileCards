@@ -72,10 +72,11 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 44 | [Tessera, versione Pro](videate/44-tessera-pro.svg) | Senza banner; il codice non viene ingrandito | 106 |
 | 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende | 106 |
 | 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna" e le app per pagare trovate sul telefono (elenco nostro e app che pagano con NFC), con le icone vere; "Manca la tua app? Chiedi di aggiungerla" | 36, 118 |
+| 47 | [Scelta della lingua](videate/47-scelta-lingua.svg) | Finestra aperta dalla configurazione iniziale (1) e dalle Impostazioni (14): bandiera, nome della lingua nella lingua stessa, spunta su quella attuale; la lingua scelta si mostra con la sua bandiera anche nel campo e nella riga. Per l'inglese la bandiera del Regno Unito | 35 |
 
 ## Tema scuro
 
-Le stesse quarantacinque videate a sfondo scuro sono in `videate/scuro/`, con gli stessi nomi di file.
+Le stesse videate a sfondo scuro sono in `videate/scuro/`, con gli stessi nomi di file.
 
 ![Panoramica delle videate, tema scuro](videate/scuro/00-panoramica.png)
 

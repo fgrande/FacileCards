@@ -254,3 +254,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Su richiesta di Fabio, per il solo Codice Fiscale la scansione controlla il carattere finale di controllo: le letture storte del Code 39 si scartano invece di finire nella tessera.
 - Codice Fiscale controllato anche al "Salva" (Fabio): un codice con il carattere di controllo sbagliato non si salva, nemmeno scritto a mano.
 - Commit di UPC-A→EAN-13, doppia lettura e controllo del Codice Fiscale prima delle prove complete sul telefono, su richiesta di Fabio, che le approfondisce dopo.
+- Bandiere accanto alle lingue, nell'app (emoji, con spunta sulla lingua attuale; videata 47) e sul sito (piccoli SVG, perché Windows non mostra le emoji delle bandiere). Per l'inglese la bandiera del Regno Unito (Fabio).
