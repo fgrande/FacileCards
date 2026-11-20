@@ -6,6 +6,12 @@ import 'database.dart';
 /// Catalogo iniziale delle tipologie. L'identificativo è stabile: serve a
 /// riconoscere la tipologia anche dopo un'esportazione o una migrazione.
 ///
+/// Dopo la pubblicazione una tipologia non si toglie mai: si segna come non
+/// più valida (decisioni 73 e 83). Togliere è ammesso solo durante lo
+/// sviluppo: la toglie da "Nuova tessera", e dal database sparisce quando
+/// nessuna tessera la usa più (vedi syncCatalog). Tolte finora: Carrefour
+/// (20 nov 2026).
+///
 /// Il formato del codice è lasciato vuoto finché non si verificano le
 /// tessere vere (punto B1 dell'analisi): senza formato si accetta qualunque
 /// formato. Il logo è fatto dalle iniziali su colore (decisione presa).
@@ -16,7 +22,6 @@ List<CardTypesCompanion> catalogTypes() => [
       _t('acqua-e-sapone', 'Acqua & Sapone', 0xFF00897B),
       _t('basko', 'Basko', 0xFFC62828),
       _t('calliope', 'Calliope', 0xFFF4511E),
-      _t('carrefour', 'Carrefour', 0xFF1D4E9E),
       _t('decathlon', 'Decathlon', 0xFF0B74C4),
       _t('kiabi', 'Kiabi', 0xFF6A3FB5),
       _t('biblioteca', 'Biblioteca', 0xFF546E7A, category: 'biblioteca'),

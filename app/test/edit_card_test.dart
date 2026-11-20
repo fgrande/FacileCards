@@ -17,7 +17,7 @@ void main() {
     cardId = newId();
     await db.into(db.cards).insert(CardsCompanion.insert(
           id: Value(cardId),
-          typeId: 'carrefour',
+          typeId: 'basko',
           name: 'Carrefour',
           code: '2400123456780',
           codeFormat: 'ean13',

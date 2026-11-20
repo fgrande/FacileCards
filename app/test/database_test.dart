@@ -25,7 +25,7 @@ void main() {
     expect(ids.toSet().length, ids.length);
     final types = await db.activeCardTypes();
     expect(types.length, ids.length);
-    expect(types.any((t) => t.id == 'carrefour' && hasFixedName(t)), isTrue);
+    expect(types.any((t) => t.id == 'basko' && hasFixedName(t)), isTrue);
     expect(types.any((t) => t.id == 'biblioteca' && !hasFixedName(t)), isTrue);
   });
 

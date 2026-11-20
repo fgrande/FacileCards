@@ -42,7 +42,8 @@ abstract final class SettingKeys {
   static const lastBackupAt = 'lastBackupAt'; // ultima "Esporta tutto"
   static const lastBackupUri = 'lastBackupUri'; // dove si è salvato (dec. 112)
   static const adsIntroShown = 'adsIntroShown'; // videata 40 già vista
-  static const payApp = 'payApp'; // app per pagare (dec. 118): pacchetto, '' = nessuna
+  static const payApp =
+      'payApp'; // app per pagare (dec. 118): pacchetto, '' = nessuna
 }
 
 /// Sezione. Una sezione eliminata che ha ancora tessere nel cestino resta
@@ -50,7 +51,8 @@ abstract final class SettingKeys {
 /// recuperate o cancellate.
 class Sections extends Table {
   TextColumn get id => text().clientDefault(newId)();
-  TextColumn get name => text()(); // unico tra le sezioni visibili (controllo nel codice)
+  TextColumn get name =>
+      text()(); // unico tra le sezioni visibili (controllo nel codice)
   BoolColumn get isDefault => boolean().withDefault(const Constant(false))();
   BoolColumn get hidden => boolean().withDefault(const Constant(false))();
 
@@ -128,10 +130,12 @@ class Settings extends Table {
 @DriftDatabase(tables: [Sections, CardTypes, Cards, CardImages, Settings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
-      : super(driftDatabase(
+    : super(
+        driftDatabase(
           name: 'facilecards',
           native: const DriftNativeOptions(setup: backupBeforeMigration),
-        ));
+        ),
+      );
 
   /// Per i test (database in memoria).
   AppDatabase.forTesting(super.executor);
@@ -145,34 +149,38 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) async {
-          await m.createAll();
-          await into(sections).insert(SectionsCompanion.insert(
-            name: defaultSectionName,
-            isDefault: const Value(true),
-          ));
-          await into(cardTypes).insert(CardTypesCompanion.insert(
-            id: 'generic',
-            name: 'Generica',
-            isGeneric: const Value(true),
-          ));
-        },
-        // Il catalogo delle tipologie si riallinea solo quando cambia (cioè
-        // con una nuova versione dell'app): a ogni avvio si confronta solo la
-        // sua impronta. Il cestino si svuota dopo la prima schermata (main.dart).
-        beforeOpen: (details) => syncCatalog(),
-        // Un passo per versione, in ordine. Prima di migrare il database si
-        // copia accanto all'originale (vedi [backupBeforeMigration]).
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            // Versione 2 (18 nov 2026): identificativi d'origine per la
-            // condivisione.
-            await m.addColumn(sections, sections.originId);
-            await m.addColumn(sections, sections.receivedAt);
-            await m.addColumn(cards, cards.originId);
-          }
-        },
+    onCreate: (m) async {
+      await m.createAll();
+      await into(sections).insert(
+        SectionsCompanion.insert(
+          name: defaultSectionName,
+          isDefault: const Value(true),
+        ),
       );
+      await into(cardTypes).insert(
+        CardTypesCompanion.insert(
+          id: 'generic',
+          name: 'Generica',
+          isGeneric: const Value(true),
+        ),
+      );
+    },
+    // Il catalogo delle tipologie si riallinea solo quando cambia (cioè
+    // con una nuova versione dell'app): a ogni avvio si confronta solo la
+    // sua impronta. Il cestino si svuota dopo la prima schermata (main.dart).
+    beforeOpen: (details) => syncCatalog(),
+    // Un passo per versione, in ordine. Prima di migrare il database si
+    // copia accanto all'originale (vedi [backupBeforeMigration]).
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // Versione 2 (18 nov 2026): identificativi d'origine per la
+        // condivisione.
+        await m.addColumn(sections, sections.originId);
+        await m.addColumn(sections, sections.receivedAt);
+        await m.addColumn(cards, cards.originId);
+      }
+    },
+  );
 
   /// Riallinea le tipologie al catalogo dell'app se l'impronta salvata è
   /// diversa. Restituisce true se ha scritto.
@@ -180,8 +188,17 @@ class AppDatabase extends _$AppDatabase {
     final types = catalogTypes();
     final signature = catalogSignature(types);
     if (await setting(SettingKeys.catalogSignature) == signature) return false;
+    final ids = types.map((t) => t.id.value).toList();
     await transaction(() async {
       await batch((b) => b.insertAllOnConflictUpdate(cardTypes, types));
+      // Tipologie uscite dal catalogo: si cancellano solo se nessuna
+      // tessera (cestino compreso) le usa; le altre restano per quelle
+      // tessere, ma non si offrono più per le nuove.
+      final used = selectOnly(cards, distinct: true)
+        ..addColumns([cards.typeId]);
+      await (delete(
+        cardTypes,
+      )..where((t) => t.id.isNotIn(ids) & t.id.isNotInQuery(used))).go();
       await setSetting(SettingKeys.catalogSignature, signature);
     });
     return true;
@@ -193,23 +210,31 @@ class AppDatabase extends _$AppDatabase {
   Future<int> activeCardCount() async =>
       (await (select(cards)..where((c) => c.deletedAt.isNull())).get()).length;
 
-  Future<List<Section>> visibleSections() => (select(sections)
-        ..where((s) => s.hidden.equals(false))
-        ..orderBy([(s) => OrderingTerm.asc(s.name)]))
-      .get();
+  Future<List<Section>> visibleSections() =>
+      (select(sections)
+            ..where((s) => s.hidden.equals(false))
+            ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+          .get();
 
-  /// Tipologie attive (non ritirate), in ordine alfabetico.
-  Future<List<CardType>> activeCardTypes() => (select(cardTypes)
-        ..where((t) => t.retired.equals(false))
-        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
-      .get();
+  /// Tipologie da offrire per una tessera nuova: quelle del catalogo
+  /// attuale non ritirate, in ordine alfabetico.
+  Future<List<CardType>> activeCardTypes() =>
+      (select(cardTypes)
+            ..where(
+              (t) =>
+                  t.retired.equals(false) &
+                  t.id.isIn(catalogTypes().map((c) => c.id.value)),
+            )
+            ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+          .get();
 
   // ---- Sezioni -------------------------------------------------------
 
   /// Numero di tessere (non nel cestino) per ogni sezione.
   Future<Map<String, int>> sectionCounts() async {
-    final active =
-        await (select(cards)..where((c) => c.deletedAt.isNull())).get();
+    final active = await (select(
+      cards,
+    )..where((c) => c.deletedAt.isNull())).get();
     final counts = <String, int>{};
     for (final c in active) {
       counts[c.sectionId] = (counts[c.sectionId] ?? 0) + 1;
@@ -234,8 +259,9 @@ class AppDatabase extends _$AppDatabase {
   Future<bool> renameSection(String id, String name) async {
     final n = name.trim();
     if (n.isEmpty || await sectionNameInUse(n, exceptId: id)) return false;
-    await (update(sections)..where((s) => s.id.equals(id)))
-        .write(SectionsCompanion(name: Value(n)));
+    await (update(
+      sections,
+    )..where((s) => s.id.equals(id))).write(SectionsCompanion(name: Value(n)));
     return true;
   }
 
@@ -243,8 +269,9 @@ class AppDatabase extends _$AppDatabase {
   /// [moveTo] oppure, se è null, vanno nel cestino insieme alla sezione, che
   /// resta nascosta finché quelle tessere non sono recuperate o cancellate.
   Future<void> deleteSection(String id, {String? moveTo}) async {
-    final section =
-        await (select(sections)..where((s) => s.id.equals(id))).getSingle();
+    final section = await (select(
+      sections,
+    )..where((s) => s.id.equals(id))).getSingle();
     if (section.isDefault) {
       throw StateError('La sezione di partenza non si elimina.');
     }
@@ -263,13 +290,15 @@ class AppDatabase extends _$AppDatabase {
   /// Una sezione senza più tessere (nemmeno nel cestino) sparisce; se ne ha
   /// ancora nel cestino resta registrata ma nascosta.
   Future<void> _dropOrHideSection(String id) async {
-    final left =
-        await (select(cards)..where((c) => c.sectionId.equals(id))).get();
+    final left = await (select(
+      cards,
+    )..where((c) => c.sectionId.equals(id))).get();
     if (left.isEmpty) {
       await (delete(sections)..where((s) => s.id.equals(id))).go();
     } else {
-      await (update(sections)..where((s) => s.id.equals(id)))
-          .write(const SectionsCompanion(hidden: Value(true)));
+      await (update(sections)..where((s) => s.id.equals(id))).write(
+        const SectionsCompanion(hidden: Value(true)),
+      );
     }
   }
 
@@ -277,26 +306,29 @@ class AppDatabase extends _$AppDatabase {
 
   static const trashDays = 30;
 
-  Stream<List<Card>> watchTrash() => (select(cards)
-        ..where((c) => c.deletedAt.isNotNull())
-        ..orderBy([(c) => OrderingTerm.desc(c.deletedAt)]))
-      .watch();
+  Stream<List<Card>> watchTrash() =>
+      (select(cards)
+            ..where((c) => c.deletedAt.isNotNull())
+            ..orderBy([(c) => OrderingTerm.desc(c.deletedAt)]))
+          .watch();
 
-  Future<int> trashCount() async =>
-      (await (select(cards)..where((c) => c.deletedAt.isNotNull())).get())
-          .length;
+  Future<int> trashCount() async => (await (select(
+    cards,
+  )..where((c) => c.deletedAt.isNotNull())).get()).length;
 
   Future<void> moveCardToTrash(String id) =>
-      (update(cards)..where((c) => c.id.equals(id)))
-          .write(CardsCompanion(deletedAt: Value(DateTime.now())));
+      (update(cards)..where((c) => c.id.equals(id))).write(
+        CardsCompanion(deletedAt: Value(DateTime.now())),
+      );
 
   /// Recupera una tessera dal cestino nella sezione indicata (se era nascosta
   /// la sezione torna visibile). Restituisce false se non c'è posto nel limite.
   Future<bool> recoverCard(String cardId, String sectionId) async {
     if (await activeCardCount() >= freeCardLimit) return false;
     await transaction(() async {
-      await (update(sections)..where((s) => s.id.equals(sectionId)))
-          .write(const SectionsCompanion(hidden: Value(false)));
+      await (update(sections)..where((s) => s.id.equals(sectionId))).write(
+        const SectionsCompanion(hidden: Value(false)),
+      );
       await (update(cards)..where((c) => c.id.equals(cardId))).write(
         CardsCompanion(
           sectionId: Value(sectionId),
@@ -309,15 +341,16 @@ class AppDatabase extends _$AppDatabase {
 
   /// Elimina definitivamente una tessera (e i riferimenti alle sue foto).
   Future<void> deleteCardForever(String id) async {
-    final card =
-        await (select(cards)..where((c) => c.id.equals(id))).getSingleOrNull();
+    final card = await (select(
+      cards,
+    )..where((c) => c.id.equals(id))).getSingleOrNull();
     if (card == null) return;
     await transaction(() async {
       await (delete(cardImages)..where((i) => i.cardId.equals(id))).go();
       await (delete(cards)..where((c) => c.id.equals(id))).go();
-      final section = await (select(sections)
-            ..where((s) => s.id.equals(card.sectionId)))
-          .getSingleOrNull();
+      final section = await (select(
+        sections,
+      )..where((s) => s.id.equals(card.sectionId))).getSingleOrNull();
       if (section != null && section.hidden) {
         await _dropOrHideSection(section.id);
       }
@@ -327,9 +360,9 @@ class AppDatabase extends _$AppDatabase {
   /// Cancella le tessere nel cestino da più di 30 giorni.
   Future<void> purgeExpiredTrash(DateTime now) async {
     final limit = now.subtract(const Duration(days: trashDays));
-    final old = await (select(cards)
-          ..where((c) => c.deletedAt.isSmallerThanValue(limit)))
-        .get();
+    final old = await (select(
+      cards,
+    )..where((c) => c.deletedAt.isSmallerThanValue(limit))).get();
     for (final c in old) {
       await deleteCardForever(c.id);
     }
@@ -339,10 +372,9 @@ class AppDatabase extends _$AppDatabase {
 
   static const defaultExpiryDays = 30;
 
-  Future<String?> setting(String key) async =>
-      (await (select(settings)..where((s) => s.key.equals(key)))
-              .getSingleOrNull())
-          ?.value;
+  Future<String?> setting(String key) async => (await (select(
+    settings,
+  )..where((s) => s.key.equals(key))).getSingleOrNull())?.value;
 
   Future<void> setSetting(String key, String value) => into(settings)
       .insertOnConflictUpdate(SettingsCompanion.insert(key: key, value: value));
@@ -358,40 +390,45 @@ class AppDatabase extends _$AppDatabase {
     required String language,
     required bool expiryAlerts,
     required int expiryDays,
-  }) =>
-      transaction(() async {
-        await setSetting(SettingKeys.holderName, holderName.trim());
-        await setSetting(SettingKeys.language, language);
-        await setSetting(SettingKeys.expiryAlerts, expiryAlerts.toString());
-        await setSetting(SettingKeys.expiryDays, expiryDays.toString());
-        final name = defaultSectionNames[language] ?? defaultSectionName;
-        await (update(sections)..where((s) => s.isDefault.equals(true)))
-            .write(SectionsCompanion(name: Value(name)));
-        await setSetting(SettingKeys.setupDone, 'true');
-      });
+  }) => transaction(() async {
+    await setSetting(SettingKeys.holderName, holderName.trim());
+    await setSetting(SettingKeys.language, language);
+    await setSetting(SettingKeys.expiryAlerts, expiryAlerts.toString());
+    await setSetting(SettingKeys.expiryDays, expiryDays.toString());
+    final name = defaultSectionNames[language] ?? defaultSectionName;
+    await (update(sections)..where((s) => s.isDefault.equals(true))).write(
+      SectionsCompanion(name: Value(name)),
+    );
+    await setSetting(SettingKeys.setupDone, 'true');
+  });
 
   // ---- Foto della tessera ----------------------------------------------
 
   /// Foto della tessera per lato ('front', 'back') → nome del file.
   Future<Map<String, String>> cardPhotos(String cardId) async {
-    final rows = await (select(cardImages)
-          ..where((i) => i.cardId.equals(cardId)))
-        .get();
+    final rows = await (select(
+      cardImages,
+    )..where((i) => i.cardId.equals(cardId))).get();
     return {for (final r in rows) r.side: r.fileName};
   }
 
   Stream<Map<String, String>> watchCardPhotos(String cardId) =>
-      (select(cardImages)..where((i) => i.cardId.equals(cardId)))
-          .watch()
-          .map((rows) => {for (final r in rows) r.side: r.fileName});
+      (select(cardImages)..where((i) => i.cardId.equals(cardId))).watch().map(
+        (rows) => {for (final r in rows) r.side: r.fileName},
+      );
 
   /// Imposta la foto di un lato. Restituisce il nome del file sostituito
   /// (da cancellare), se c'era.
   Future<String?> setCardPhoto(String cardId, String side, String fileName) =>
       transaction(() async {
         final old = (await cardPhotos(cardId))[side];
-        await into(cardImages).insertOnConflictUpdate(CardImagesCompanion.insert(
-            cardId: cardId, side: side, fileName: fileName));
+        await into(cardImages).insertOnConflictUpdate(
+          CardImagesCompanion.insert(
+            cardId: cardId,
+            side: side,
+            fileName: fileName,
+          ),
+        );
         return old;
       });
 
@@ -399,9 +436,9 @@ class AppDatabase extends _$AppDatabase {
   Future<String?> removeCardPhoto(String cardId, String side) =>
       transaction(() async {
         final old = (await cardPhotos(cardId))[side];
-        await (delete(cardImages)
-              ..where((i) => i.cardId.equals(cardId) & i.side.equals(side)))
-            .go();
+        await (delete(
+          cardImages,
+        )..where((i) => i.cardId.equals(cardId) & i.side.equals(side))).go();
         return old;
       });
 
@@ -414,28 +451,28 @@ class AppDatabase extends _$AppDatabase {
     CardsCompanion values, {
     Map<String, String> newPhotos = const {},
     Set<String> removedPhotos = const {},
-  }) =>
-      transaction(() async {
-        await (update(cards)..where((c) => c.id.equals(cardId))).write(values);
-        final obsolete = <String>[];
-        for (final side in removedPhotos) {
-          final old = await removeCardPhoto(cardId, side);
-          if (old != null) obsolete.add(old);
-        }
-        for (final e in newPhotos.entries) {
-          final old = await setCardPhoto(cardId, e.key, e.value);
-          if (old != null) obsolete.add(old);
-        }
-        return obsolete;
-      });
+  }) => transaction(() async {
+    await (update(cards)..where((c) => c.id.equals(cardId))).write(values);
+    final obsolete = <String>[];
+    for (final side in removedPhotos) {
+      final old = await removeCardPhoto(cardId, side);
+      if (old != null) obsolete.add(old);
+    }
+    for (final e in newPhotos.entries) {
+      final old = await setCardPhoto(cardId, e.key, e.value);
+      if (old != null) obsolete.add(old);
+    }
+    return obsolete;
+  });
 
   Future<Card?> cardById(String id) =>
       (select(cards)..where((c) => c.id.equals(id))).getSingleOrNull();
 
   /// Sposta la tessera in un'altra sezione (videata 5, "Sposta").
   Future<void> moveCard(String cardId, String sectionId) =>
-      (update(cards)..where((c) => c.id.equals(cardId)))
-          .write(CardsCompanion(sectionId: Value(sectionId)));
+      (update(cards)..where((c) => c.id.equals(cardId))).write(
+        CardsCompanion(sectionId: Value(sectionId)),
+      );
 
   Future<Section> defaultSection() =>
       (select(sections)..where((s) => s.isDefault.equals(true))).getSingle();

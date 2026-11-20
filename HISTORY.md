@@ -223,3 +223,10 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Videata 46 semplificata di conseguenza (niente "Altre app" né ricerca, aggiunta la richiesta "Manca la tua app?", visibile quando ci sarà l'email sul dominio).
 - Il pulsante nella scheda arriva dopo il codice (lettura dal telefono in un secondo momento), così la tessera resta immediata. Informativa aggiornata: la verifica delle app installate avviene solo sul telefono.
 - Fabio ha provato l'app per pagare sul telefono con Satispay: funziona.
+
+## 20 novembre 2026: catalogo delle tessere
+
+- Account Google Play verificato. Preparata la firma per il caricamento (la chiave la crea Fabio, fuori da git), ma il primo caricamento è rimandato: Fabio dà la precedenza al catalogo delle tessere.
+- Tolto Carrefour. Il riallineamento del catalogo prima aggiungeva e aggiornava soltanto: ora una tipologia tolta sparisce da "Nuova tessera" e dal database solo se nessuna tessera la usa, così chi ha già una tessera Carrefour la tiene com'è.
+- Fabio manderà screenshot delle tessere vere: se ne ricavano marchio, formato del codice e colori, senza conservare i codici.
+- Precisazione di Fabio: dopo la pubblicazione nessuna tipologia si toglierà, si segnerà come non più valida (decisioni 73 e 83); togliere è ammesso solo ora, in pieno sviluppo, dove si accettano anche cambiamenti radicali.

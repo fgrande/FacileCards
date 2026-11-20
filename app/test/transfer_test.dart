@@ -21,7 +21,7 @@ void main() {
       cards: [
         ArchiveCard(
           id: 'card-1',
-          typeId: 'carrefour',
+          typeId: 'basko',
           name: 'Carrefour',
           code: '2400123456780',
           codeFormat: 'ean13',
