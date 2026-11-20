@@ -38,7 +38,9 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
     title: Text(typeName(t)),
     subtitle: hasFixedName(t)
         ? null
-        : Text(t.isGeneric ? context.t.genericTypeHint : context.t.freeNameHint),
+        : Text(
+            t.isGeneric ? context.t.genericTypeHint : context.t.freeNameHint,
+          ),
     trailing: const Chevron(),
     onTap: () => _open(t),
   );
@@ -55,9 +57,9 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
           final shown = all
               .where((t) => typeName(t).toLowerCase().contains(q))
               .toList();
-          final shops = shown.where(hasFixedName).toList();
+          final shops = shown.where(isShop).toList();
           final others = shown
-              .where((t) => !hasFixedName(t) && !t.isGeneric)
+              .where((t) => !isShop(t) && !t.isGeneric)
               .toList();
           final generic = shown.where((t) => t.isGeneric).toList();
           return ListView(

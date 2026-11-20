@@ -1,7 +1,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'data/catalog.dart' show typeName;
+import 'data/catalog.dart' show hasFixedName, typeName;
 import 'data/database.dart' as db;
 import 'theme.dart';
 
@@ -40,7 +40,7 @@ class TypeLogo extends StatelessWidget {
   static const fallbackColor = 0xFF78909C;
 
   String get _initials =>
-      initialsOf(type.category != 'fedelta' && name != null ? name! : typeName(type));
+      initialsOf(!hasFixedName(type) && name != null ? name! : typeName(type));
 
   @override
   Widget build(BuildContext context) {

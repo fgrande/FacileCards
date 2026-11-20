@@ -13,14 +13,23 @@ class ScannedCode {
 /// Il codice letto è accettabile? Se la tipologia non indica un formato
 /// ([expected] vuoto) vale qualunque formato; altrimenti deve coincidere.
 bool formatAccepted(String? expected, BarcodeFormat read) =>
-    expected == null || expected == formatToText(read);
+    expected == null || _family(formatFromText(expected)) == _family(read);
+
+/// I codici ITF (Interleaved 2 of 5) il lettore li chiama in modi diversi
+/// secondo la versione e il telefono: per il controllo sono la stessa cosa.
+bool isItf(BarcodeFormat f) =>
+    // ignore: deprecated_member_use
+    f == BarcodeFormat.itf ||
+    f == BarcodeFormat.itf14 ||
+    f == BarcodeFormat.itf2of5 ||
+    f == BarcodeFormat.itf2of5WithChecksum;
+
+Object _family(BarcodeFormat f) => isItf(f) ? 'itf' : f;
 
 /// Esito del controllo di un codice letto: accettato, oppure rifiutato con
 /// un messaggio da mostrare (titolo e dettaglio).
 class ScanCheck {
-  const ScanCheck.accepted(ScannedCode this.code)
-      : title = null,
-        detail = null;
+  const ScanCheck.accepted(ScannedCode this.code) : title = null, detail = null;
   const ScanCheck.rejected(String this.title, String this.detail) : code = null;
 
   final ScannedCode? code;
@@ -68,6 +77,9 @@ BarcodeFormat formatFromText(String text) {
 /// Converte il formato del lettore in quello del disegnatore del codice.
 /// Restituisce null se il formato non si sa disegnare.
 bw.Barcode? drawableBarcode(BarcodeFormat f) {
+  // ITF di lunghezza libera: il lettore lo chiama "ITF-14" anche quando le
+  // cifre non sono 14 (per esempio la tessera OVS).
+  if (isItf(f)) return bw.Barcode.itf();
   switch (f) {
     case BarcodeFormat.ean13:
       return bw.Barcode.ean13();
@@ -83,10 +95,6 @@ bw.Barcode? drawableBarcode(BarcodeFormat f) {
       return bw.Barcode.code39();
     case BarcodeFormat.code93:
       return bw.Barcode.code93();
-    // TODO: sostituire con il formato itf14 quando si controllano i formati reali.
-    // ignore: deprecated_member_use
-    case BarcodeFormat.itf:
-      return bw.Barcode.itf();
     case BarcodeFormat.codabar:
       return bw.Barcode.codabar();
     case BarcodeFormat.qrCode:
@@ -136,6 +144,7 @@ String formatLabel(BarcodeFormat f) {
     case BarcodeFormat.codabar:
       return 'Codabar';
     default:
+      if (isItf(f)) return 'ITF';
       return f.name;
   }
 }

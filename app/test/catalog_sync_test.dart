@@ -1,5 +1,6 @@
-import 'package:drift/drift.dart' hide isNull;
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
+import 'package:facilecards/barcode_support.dart';
 import 'package:facilecards/data/catalog.dart';
 import 'package:facilecards/data/database.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,5 +85,18 @@ void main() {
     ];
     expect(catalogSignature(changed), isNot(catalogSignature(types)));
     expect(catalogSignature(catalogTypes()), catalogSignature(types));
+  });
+
+  test('catalogo: identificativi unici, formati noti e disegnabili', () {
+    final types = catalogTypes();
+    final ids = types.map((t) => t.id.value).toList();
+    expect(ids.toSet().length, ids.length);
+    for (final t in types) {
+      final f = t.codeFormat.value;
+      if (f == null) continue;
+      final format = formatFromText(f);
+      expect(formatToText(format), f, reason: t.id.value);
+      expect(drawableBarcode(format), isNotNull, reason: t.id.value);
+    }
   });
 }

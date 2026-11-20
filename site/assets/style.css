@@ -66,6 +66,7 @@ a { color: var(--accent); }
   padding: 1.25rem 1.5rem;
   margin: 1.5rem 0;
 }
+.card.highlight { border-left: 4px solid var(--accent); }
 .card p:last-child, .card ul:last-child { margin-bottom: 0; }
 .muted { color: var(--muted); font-size: .9rem; }
 footer.site {

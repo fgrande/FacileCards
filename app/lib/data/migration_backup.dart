@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:sqlite3/common.dart';
 
 /// Decisione 88: prima di una migrazione il database si copia accanto
-/// all'originale (`facilecards.sqlite.v1.bak`), così un errore nel passo di
-/// migrazione non fa perdere le tessere. Gira all'apertura, prima di drift,
+/// all'originale (per esempio `facilecards.sqlite.v1.bak`), così un errore
+/// nel passo di migrazione non fa perdere le tessere. Gira all'apertura, prima di drift,
 /// nell'isolate del database: deve essere una funzione a sé.
 void backupBeforeMigration(CommonDatabase db) {
   final version = db.userVersion;
@@ -20,4 +20,4 @@ void backupBeforeMigration(CommonDatabase db) {
 
 /// Deve coincidere con `AppDatabase.currentSchemaVersion` (controllato da una
 /// prova): qui non si importa il database, per non legarlo all'isolate.
-const migrationTargetVersion = 2;
+const migrationTargetVersion = 1;

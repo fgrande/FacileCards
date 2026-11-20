@@ -58,8 +58,8 @@ class Sections extends Table {
 
   /// Sezione ricevuta da un altro telefono: identificativo che aveva là
   /// (decisione 79) e quando è arrivata. Null per le sezioni create qui.
-  TextColumn get originId => text().nullable()(); // dalla versione 2
-  DateTimeColumn get receivedAt => dateTime().nullable()(); // dalla versione 2
+  TextColumn get originId => text().nullable()();
+  DateTimeColumn get receivedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -102,7 +102,7 @@ class Cards extends Table {
 
   /// Tessera ricevuta: identificativo che aveva sul telefono di chi l'ha
   /// mandata, per riconoscerla in una copia successiva (decisione 80).
-  TextColumn get originId => text().nullable()(); // dalla versione 2
+  TextColumn get originId => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -144,8 +144,10 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => currentSchemaVersion;
 
   /// Versione dello schema. A ogni cambio: un passo in [migration], lo
-  /// schema salvato in `test/fixtures/` e una prova (decisione 88).
-  static const currentSchemaVersion = 2;
+  /// schema salvato in `test/fixtures/` e una prova (decisione 88). Si
+  /// riparte dalla 1 il 20 nov 2026: l'app non era installata da nessuna
+  /// parte, quindi niente migrazioni dalle versioni di sviluppo.
+  static const currentSchemaVersion = 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -169,17 +171,10 @@ class AppDatabase extends _$AppDatabase {
     // con una nuova versione dell'app): a ogni avvio si confronta solo la
     // sua impronta. Il cestino si svuota dopo la prima schermata (main.dart).
     beforeOpen: (details) => syncCatalog(),
-    // Un passo per versione, in ordine. Prima di migrare il database si
-    // copia accanto all'originale (vedi [backupBeforeMigration]).
-    onUpgrade: (m, from, to) async {
-      if (from < 2) {
-        // Versione 2 (18 nov 2026): identificativi d'origine per la
-        // condivisione.
-        await m.addColumn(sections, sections.originId);
-        await m.addColumn(sections, sections.receivedAt);
-        await m.addColumn(cards, cards.originId);
-      }
-    },
+    // Un passo per versione, in ordine (`if (from < 2) {...}` e così via).
+    // Prima di migrare il database si copia accanto all'originale (vedi
+    // [backupBeforeMigration]). Per ora nessun passo: c'è solo la versione 1.
+    onUpgrade: (m, from, to) async {},
   );
 
   /// Riallinea le tipologie al catalogo dell'app se l'impronta salvata è
