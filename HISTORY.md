@@ -255,3 +255,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Codice Fiscale controllato anche al "Salva" (Fabio): un codice con il carattere di controllo sbagliato non si salva, nemmeno scritto a mano.
 - Commit di UPC-A→EAN-13, doppia lettura e controllo del Codice Fiscale prima delle prove complete sul telefono, su richiesta di Fabio, che le approfondisce dopo.
 - Bandiere accanto alle lingue, nell'app (emoji, con spunta sulla lingua attuale; videata 47) e sul sito (piccoli SVG, perché Windows non mostra le emoji delle bandiere). Per l'inglese la bandiera del Regno Unito (Fabio).
+- Messo in coda (Fabio): ritaglio, rotazione e zoom delle foto della tessera prima di salvarle, per una prossima versione.

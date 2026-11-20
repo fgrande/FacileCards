@@ -78,6 +78,7 @@ Fase 1 del percorso (sezione 7 dell'analisi) in corso. Database Drift con schema
 
 ### Da fare: app
 
+- Foto della tessera, un minimo di modifica prima di salvarla (richiesta di Fabio, 20 nov, per una prossima versione): ritaglio, rotazione e zoom. Da decidere: plugin (es. `image_cropper`, controllare l'avviso KGP) o schermata nostra con il pacchetto `image` già usato in `photos.dart`; servirà una videata nuova.
 - Inserimento a mano: oggi il codice scritto a mano si salva come Code 128 se la tipologia non indica un formato; valutare se far scegliere il formato.
 - App per pagare: verificare sul telefono di Fabio che Satispay venga trovata e proposta, e quali altre app compaiono (elenco in `PayApps.kt`: i nomi dei pacchetti di Postepay, Hype, Intesa, Fineco… sono da confermare); aggiungere le app che mancano, anche su richiesta degli utenti.
 - Richiesta di una tipologia mancante (decisione 36), con mail precompilata e senza invii in background (niente server, niente raccolta di dati): oltre alla voce nelle Impostazioni (14), "Non trovi «nome cercato»? Chiedi di aggiungerlo" nella schermata Nuova tessera quando la ricerca non trova nulla; si apre l'app di posta con indirizzo, oggetto e testo già compilati (nome cercato, lingua, versione dell'app), invito ad allegare una foto della tessera per il formato del codice (B1), senza allegarla in automatico. Le voci compaiono solo quando c'è l'indirizzo (`contactEmail` in `lib/links.dart`): serve prima l'email sul dominio (inoltro della posta di Porkbun, per esempio `tessere@facilecards.eu`).
