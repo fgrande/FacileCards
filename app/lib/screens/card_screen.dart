@@ -9,6 +9,7 @@ import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../format_utils.dart';
 import '../l10n/l10n.dart';
+import '../photo_draft.dart';
 import '../photos.dart';
 import '../system_settings.dart';
 import '../theme.dart';
@@ -106,7 +107,11 @@ class _CardScreenState extends State<CardScreen> {
   Future<void> _addPhoto(Map<String, String> photos) async {
     final store = _store;
     if (store == null) return;
-    final bytes = await pickCardPhoto(context, title: context.t.photoFront);
+    final bytes = await pickCardPhoto(
+      context,
+      title: context.t.photoFront,
+      draft: cardPhotoDraft(_card.id, PhotoSide.front),
+    );
     if (bytes == null || !mounted) return;
     final name = await store.write(_card.id, PhotoSide.front, bytes);
     if (name == null) return;

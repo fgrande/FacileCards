@@ -9,6 +9,7 @@ import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../gallery_scan.dart';
 import '../format_utils.dart';
+import '../photo_draft.dart';
 import '../photos.dart';
 import '../theme.dart';
 import '../l10n/l10n.dart';
@@ -24,11 +25,16 @@ class NewCardDataScreen extends StatefulWidget {
     required this.database,
     required this.type,
     this.card,
+    this.restore,
   });
 
   final db.AppDatabase database;
   final db.CardType type;
   final db.Card? card;
+
+  /// Bozza da cui ripartire: la pagina era aperta quando Android ha chiuso
+  /// l'app durante lo scatto di una foto (vedi photo_draft.dart).
+  final PhotoDraft? restore;
 
   @override
   State<NewCardDataScreen> createState() => _NewCardDataScreenState();
@@ -74,8 +80,48 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   @override
   void initState() {
     super.initState();
+    final draft = widget.restore;
+    if (draft != null) _applyDraft(draft);
     _load();
   }
+
+  /// Bozza della pagina, salvata prima di aprire fotocamera o galleria per
+  /// il lato [side].
+  PhotoDraft _draft(String side) => PhotoDraft(
+    kind: DraftKind.form,
+    side: side,
+    data: {
+      'typeId': widget.type.id,
+      'cardId': widget.card?.id,
+      'name': _name.text,
+      'code': _code.text,
+      'format': _scannedFormat,
+      'sectionId': _section?.id,
+      'expiresOn': _expiresOn?.toIso8601String(),
+      'favorite': _favorite,
+      'holder': _holder.text,
+      'notes': _notes.text,
+      'removed': _removedPhotos.toList(),
+    },
+    photos: Map.of(_photos),
+  );
+
+  void _applyDraft(PhotoDraft draft) {
+    final d = draft.data;
+    _name.text = d['name'] as String? ?? _name.text;
+    _code.text = d['code'] as String? ?? '';
+    _holder.text = d['holder'] as String? ?? '';
+    _notes.text = d['notes'] as String? ?? '';
+    _scannedFormat = d['format'] as String?;
+    _expiresOn = DateTime.tryParse(d['expiresOn'] as String? ?? '');
+    _favorite = d['favorite'] as bool? ?? false;
+    _restoredSectionId = d['sectionId'] as String?;
+    _removedPhotos.addAll(((d['removed'] as List?) ?? const []).cast<String>());
+    _photos.addAll(draft.photos);
+  }
+
+  /// Sezione della bozza, da applicare quando le sezioni sono caricate.
+  String? _restoredSectionId;
 
   Future<void> _load() async {
     final d = widget.database;
@@ -88,15 +134,16 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         : await d.cardPhotos(card.id);
     // Intestatario proposto (solo per una tessera nuova): il nome dato nella
     // configurazione iniziale.
-    final holder = card == null
+    final holder = card == null && widget.restore == null
         ? await d.setting(db.SettingKeys.holderName)
         : null;
     if (!mounted) return;
     if (_holder.text.isEmpty && holder != null) _holder.text = holder;
     setState(() {
       _sections = sections;
+      final wanted = _restoredSectionId ?? card?.sectionId;
       _section = sections.firstWhere(
-        (s) => card != null ? s.id == card.sectionId : s.isDefault,
+        (s) => wanted != null ? s.id == wanted : s.isDefault,
         orElse: () => sections.firstWhere(
           (s) => s.isDefault,
           orElse: () => sections.first,
@@ -195,7 +242,11 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         });
       }
     }
-    final bytes = await pickCardPhoto(context, title: title);
+    final bytes = await pickCardPhoto(
+      context,
+      title: title,
+      draft: _draft(side),
+    );
     if (bytes != null && mounted) {
       setState(() {
         _photos[side] = bytes;

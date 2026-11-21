@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
 import '../l10n/l10n.dart';
+import '../photo_draft.dart';
 import '../photos.dart';
 import '../theme.dart';
 import 'photo_picker.dart';
@@ -52,7 +53,8 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
     final bytes = await pickCardPhoto(context,
         title: side == PhotoSide.front
             ? context.t.photoFront
-            : context.t.photoBack);
+            : context.t.photoBack,
+        draft: cardPhotoDraft(widget.card.id, side));
     if (bytes == null || !mounted) return;
     setState(() => _busy = true);
     try {

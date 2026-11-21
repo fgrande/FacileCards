@@ -5,11 +5,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/l10n.dart';
+import '../photo_draft.dart';
 import '../photos.dart';
 
 /// Chiede da dove prendere la foto (fotocamera o galleria) e la restituisce.
 /// Null se si annulla o se la fotocamera non è consentita (con un messaggio).
-Future<Uint8List?> pickCardPhoto(BuildContext context, {required String title}) async {
+/// Con [draft], prima di lasciare l'app si salva la bozza della pagina: se
+/// Android chiude FacileCards mentre si scatta, al ritorno la pagina si
+/// riapre com'era (vedi photo_draft.dart).
+Future<Uint8List?> pickCardPhoto(
+  BuildContext context, {
+  required String title,
+  PhotoDraft? draft,
+}) async {
   final source = await showModalBottomSheet<ImageSource>(
     context: context,
     showDragHandle: true,
@@ -37,6 +45,7 @@ Future<Uint8List?> pickCardPhoto(BuildContext context, {required String title}) 
     ),
   );
   if (source == null) return null;
+  await draft?.save();
   try {
     // Il telefono riduce già la foto; shrinkPhoto controlla poi i 500 KB.
     final file = await ImagePicker().pickImage(
@@ -48,13 +57,20 @@ Future<Uint8List?> pickCardPhoto(BuildContext context, {required String title}) 
     return file == null ? null : await file.readAsBytes();
   } on PlatformException catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.code == 'camera_access_denied'
-            ? context.t.cameraDeniedUseGallery
-            : context.t.photoFailed),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.code == 'camera_access_denied'
+                ? context.t.cameraDeniedUseGallery
+                : context.t.photoFailed,
+          ),
+        ),
+      );
     }
     return null;
+  } finally {
+    // Tornati normalmente: la bozza non serve più.
+    if (draft != null) await PhotoDraft.clear();
   }
 }
 

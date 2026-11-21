@@ -10,6 +10,7 @@ import '../system_settings.dart';
 import 'ads_intro_screen.dart';
 import 'card_screen.dart';
 import 'data_screen.dart';
+import 'draft_restore.dart';
 import 'expiry_panel.dart';
 import 'import_screen.dart';
 import 'new_card_type_screen.dart';
@@ -55,11 +56,16 @@ class _CardListScreenState extends State<CardListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _afterFirstFrame());
   }
 
-  /// Dopo la prima schermata, mai prima (regola dei 2 secondi): la prima
-  /// volta la presentazione degli annunci (videata 40), poi consenso e
-  /// annunci (decisione 105), poi un eventuale file ricevuto.
+  /// Dopo la prima schermata, mai prima (regola dei 2 secondi): un'eventuale
+  /// pagina da riaprire dopo una foto (photo_draft.dart), la prima volta la
+  /// presentazione degli annunci (videata 40), poi consenso e annunci
+  /// (decisione 105), poi un eventuale file ricevuto.
   Future<void> _afterFirstFrame() async {
     final d = widget.database;
+    // Prima di tutto: se Android aveva chiuso l'app durante lo scatto di una
+    // foto, si riapre la pagina che si stava compilando.
+    if (await restorePhotoDraft(context, d)) _loadRefs();
+    if (!mounted) return;
     if (await d.setting(db.SettingKeys.adsIntroShown) != 'true' && mounted) {
       await Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => const AdsIntroScreen()));
