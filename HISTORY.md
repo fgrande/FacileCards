@@ -257,3 +257,5 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Bandiere accanto alle lingue, nell'app (emoji, con spunta sulla lingua attuale; videata 47) e sul sito (piccoli SVG, perché Windows non mostra le emoji delle bandiere). Per l'inglese la bandiera del Regno Unito (Fabio).
 - Messo in coda (Fabio): ritaglio, rotazione e zoom delle foto della tessera prima di salvarle, per una prossima versione.
 - La pagina della nuova tessera a volte si chiudeva dopo la foto: Android chiudeva FacileCards mentre la Fotocamera era aperta. Soluzione scelta con Fabio: una bozza salvata prima di aprire fotocamera o galleria e riaperta all'avvio, con la foto recuperata da image_picker; scartata l'idea di una fotocamera dentro l'app.
+- Fabio ha provato sul telefono la bozza della pagina durante le foto: funziona.
+- Fabio ha provato sul telefono le bandiere delle lingue, la lettura di Acqua & Sapone (UPC-A → EAN-13) e il controllo del Codice Fiscale: funzionano.
