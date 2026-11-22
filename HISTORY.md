@@ -259,3 +259,5 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - La pagina della nuova tessera a volte si chiudeva dopo la foto: Android chiudeva FacileCards mentre la Fotocamera era aperta. Soluzione scelta con Fabio: una bozza salvata prima di aprire fotocamera o galleria e riaperta all'avvio, con la foto recuperata da image_picker; scartata l'idea di una fotocamera dentro l'app.
 - Fabio ha provato sul telefono la bozza della pagina durante le foto: funziona.
 - Fabio ha provato sul telefono le bandiere delle lingue, la lettura di Acqua & Sapone (UPC-A → EAN-13) e il controllo del Codice Fiscale: funzionano.
+- Pubblicazione su Google Play avviata: Fabio ha creato la chiave di caricamento (dati personali nel certificato: solo nome, città e paese; nessuna organizzazione, è un privato). Costruito il primo App Bundle 1.0.0+1 firmato.
+- Materiali per lo store: niente nomi di catene né nelle descrizioni né negli screenshot (Google può contestare i marchi di terzi), quindi screenshot con negozi inventati. Tolta dalla descrizione la frase sulla luminosità al massimo, perché l'app non la alza.

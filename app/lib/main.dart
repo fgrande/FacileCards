@@ -3,6 +3,8 @@
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'ads.dart' show screenshotMode;
+
 import 'data/database.dart';
 import 'l10n/l10n.dart';
 import 'photos.dart';
@@ -56,6 +58,7 @@ class _FacileCardsAppState extends State<FacileCardsApp> {
       listenable: Listenable.merge([appThemeMode, appLocale]),
       builder: (context, _) => MaterialApp(
         title: 'FacileCards',
+        debugShowCheckedModeBanner: !screenshotMode,
         locale: appLocale.value,
         supportedLocales: AppLocalizations.supportedLocales,
         // Testi nostri, più quelli dei componenti di sistema (Material,

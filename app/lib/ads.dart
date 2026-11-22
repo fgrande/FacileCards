@@ -23,6 +23,10 @@ abstract final class AdUnits {
       kReleaseMode ? 'ca-app-pub-4977111287348568/3598123679' : _testBanner;
 }
 
+/// Solo per gli screenshot dello store (`--dart-define=SCREENSHOTS=true`):
+/// niente annunci e niente scritta DEBUG. Nelle versioni pubblicate è falso.
+const screenshotMode = bool.fromEnvironment('SCREENSHOTS');
+
 /// Altezza dello spazio riservato al banner, come nei disegni (2, 5).
 const adStripHeight = 74.0;
 
@@ -39,7 +43,7 @@ class Ads {
 
   /// Falso con la versione Pro (quando ci sarà l'acquisto, decisione 98):
   /// niente spazio riservato e niente annunci.
-  final enabled = ValueNotifier<bool>(true);
+  final enabled = ValueNotifier<bool>(!screenshotMode);
 
   bool _starting = false;
 
