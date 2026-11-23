@@ -261,3 +261,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Fabio ha provato sul telefono le bandiere delle lingue, la lettura di Acqua & Sapone (UPC-A → EAN-13) e il controllo del Codice Fiscale: funzionano.
 - Pubblicazione su Google Play avviata: Fabio ha creato la chiave di caricamento (dati personali nel certificato: solo nome, città e paese; nessuna organizzazione, è un privato). Costruito il primo App Bundle 1.0.0+1 firmato.
 - Materiali per lo store: niente nomi di catene né nelle descrizioni né negli screenshot (Google può contestare i marchi di terzi), quindi screenshot con negozi inventati. Tolta dalla descrizione la frase sulla luminosità al massimo, perché l'app non la alza.
+- Valutata la versione iOS (domanda di Fabio): non è solo una ricompilazione, per il codice nativo Android, l'app per pagare, il permesso di tracciamento di Apple e l'acquisto Pro. Messa in coda per dopo il lancio su Android.
