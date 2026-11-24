@@ -267,3 +267,6 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - "Per sezione" diventa "Sezioni" (Fabio): su un Samsung A54 l'etichetta andava a capo. Il selettore ora tiene il testo su una riga in ogni caso.
 - Aggiunte Famila, Feltrinelli e Lidl al catalogo, senza formato (Fabio): si verificherà con le tessere vere.
 - Famila arancione e Lidl con il QR della sua app (Fabio).
+- Preparata la 1.0.0+3: release provata sull'emulatore prima del caricamento, come da regola; screenshot dello store rifatti.
+
+- 2026-11-24: in AdMob comparivano due app. Quella buona è `~7708372032` (nel manifest da sempre); `~5734978640` è un doppione, non usato. Il collegamento a Google Play si fa solo dopo l'uscita in produzione, perché AdMob non trova le app in test chiuso.
