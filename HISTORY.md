@@ -265,3 +265,5 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Primo pacchetto caricato nel test chiuso; etichetta v1.0.0+1 sul commit da cui è stato costruito (decisione 111).
 - La 1.0.0+1 dallo store si chiudeva subito: crash di R8 sul database di WorkManager (libreria degli annunci), mai visto prima perché le prove erano in debug. Regole R8 aggiunte, nuova regola di lavoro: provare sempre la versione release prima di caricare. Preparata la 1.0.0+2.
 - "Per sezione" diventa "Sezioni" (Fabio): su un Samsung A54 l'etichetta andava a capo. Il selettore ora tiene il testo su una riga in ogni caso.
+- Aggiunte Famila, Feltrinelli e Lidl al catalogo, senza formato (Fabio): si verificherà con le tessere vere.
+- Famila arancione e Lidl con il QR della sua app (Fabio).

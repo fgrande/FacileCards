@@ -38,6 +38,9 @@ List<CardTypesCompanion> catalogTypes() => [
   _t('decathlon', 'Decathlon', 0xFF3643BA, format: 'ean13'),
   // Tessera nell'app di Dispensa Emilia: QR mostrato in cassa.
   _t('dispensa-emilia', 'Dispensa Emilia', 0xFF7A2E21, format: 'qrCode'),
+  // Famila (gruppo Selex): formato da verificare.
+  _t('famila', 'Famila', 0xFFF07D00),
+  _t('feltrinelli', 'Feltrinelli', 0xFFE2001A),
   _t('gamestop', 'GameStop', 0xFFD71920, format: 'code128'),
   _t('guess', 'Guess', 0xFF1A1A1A, format: 'code128'),
   _t('idexe', 'Idexè', 0xFF5F86C9, format: 'ean13'),
@@ -52,6 +55,8 @@ List<CardTypesCompanion> catalogTypes() => [
   _t('la-piadineria', 'La Piadineria', 0xFFB5121B, format: 'code128'),
   _t('lego', 'Lego', 0xFFE3000B, format: 'code128'),
   _t('leroy-merlin', 'Leroy Merlin', 0xFF78BE20, format: 'code128'),
+  // Carta Lidl Plus, nell'app di Lidl: QR mostrato in cassa.
+  _t('lidl', 'Lidl', 0xFF0050AA, format: 'qrCode'),
   _t('lovable', 'Lovable', 0xFF7B2D26, format: 'ean13'),
   _t('maison-et-cadeaux', 'Maison et Cadeaux', 0xFF2E7D32, format: 'ean13'),
   _t('marionnaud', 'Marionnaud', 0xFF9A6CD6, format: 'ean13'),
