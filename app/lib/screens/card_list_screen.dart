@@ -363,12 +363,21 @@ class _CardListScreenState extends State<CardListScreen> {
               color: selected ? c.surface : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
-              label,
-              style: TextStyle(
-                color: selected ? c.primary : c.muted,
-                fontSize: 14.5,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            // Su una riga sola: con caratteri grandi (impostazioni del
+            // telefono) il testo si rimpicciolisce invece di andare a capo.
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: selected ? c.primary : c.muted,
+                    fontSize: 14.5,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ),

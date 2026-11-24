@@ -26,7 +26,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | # | Videata | Cosa mostra | Decisioni |
 |---|---|---|---|
 | 1 | [Configurazione iniziale](videate/01-configurazione-iniziale.svg) | Le domande del primo avvio: nome (facoltativo), lingua, app per pagare (facoltativa, proposta Satispay se c'è), avviso scadenze con giorni | 65, 118 |
-| 2 | [Elenco, tutte le tessere](videate/02-elenco-tutte.svg) | Ricerca su tutti i campi, selettore Tutte / Per sezione, ordinamento, preferite in cima, campanella delle scadenze, contatore, annuncio al piede | 10, 53, 58, 70 |
+| 2 | [Elenco, tutte le tessere](videate/02-elenco-tutte.svg) | Ricerca su tutti i campi, selettore Tutte / Sezioni, ordinamento, preferite in cima, campanella delle scadenze, contatore, annuncio al piede | 10, 53, 58, 70 |
 | 3 | [Elenco per sezione](videate/03-elenco-per-sezione.svg) | Preferite in cima (e ripetute nella loro sezione), poi una intestazione per sezione: Generale per prima, le altre in ordine alfabetico | 10, 58, 85, 86 |
 | 4 | [Scadenze](videate/04-scadenze.svg) | Campanella espansa: tessere scadute e in scadenza | 63, 70 |
 | 5 | [Tessera](videate/05-tessera.svg) | Miniatura della foto del fronte (toccandola si apre il visualizzatore, videate 25–27); codice a barre grande, numero in chiaro, intestatario, scadenza, note; nella fascia in alto, a destra del nome, il pulsante con icona e nome dell'app per pagare (decisione 118, anche nelle videate 6, 18, 19, 28, 44); nella barra: preferita, modifica, condividi, cestino; annuncio al piede, staccato dal codice | 13, 62, 75, 118 |

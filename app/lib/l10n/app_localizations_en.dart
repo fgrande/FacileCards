@@ -268,7 +268,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewAll => 'All';
 
   @override
-  String get viewBySection => 'By section';
+  String get viewBySection => 'Sections';
 
   @override
   String get sortLastUsed => 'Last used';

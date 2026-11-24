@@ -270,7 +270,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get viewAll => 'Toutes';
 
   @override
-  String get viewBySection => 'Par section';
+  String get viewBySection => 'Sections';
 
   @override
   String get sortLastUsed => 'Dernière utilisation';

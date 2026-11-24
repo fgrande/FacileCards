@@ -529,7 +529,7 @@ abstract class AppLocalizations {
   /// No description provided for @viewBySection.
   ///
   /// In it, this message translates to:
-  /// **'Per sezione'**
+  /// **'Sezioni'**
   String get viewBySection;
 
   /// No description provided for @sortLastUsed.
