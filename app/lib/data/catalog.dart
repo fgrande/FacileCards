@@ -27,18 +27,35 @@ List<CardTypesCompanion> catalogTypes() => [
   _t('abbonamento-musei', 'Abbonamento Musei', 0xFF00A19A, format: 'qrCode'),
   _t('aci', 'ACI', 0xFF0A3D91, format: 'code128'),
   _t('acqua-e-sapone', 'Acqua & Sapone', 0xFF1B4A9C, format: 'ean13'),
+  // Giallo del marchio, scurito come Tigros (scritte bianche); formato da
+  // confermare.
+  _t('arcaplanet', 'Arcaplanet', 0xFFE0AB00),
   _t('baldinini', 'Baldinini', 0xFF1A1A1A, format: 'code128'),
   _t('basko', 'Basko', 0xFFC62828, format: 'ean13'),
   _t('bennet', 'Bennet', 0xFF2B3594, format: 'ean13'),
+  // Verde del marchio; formato da confermare con la scansione.
+  _t('bottega-verde', 'Bottega Verde', 0xFF4E7A4A),
   _t('briko', 'Brikò', 0xFFD7141A, format: 'ean13'),
   _t('calliope', 'Calliope', 0xFF1A1A1A, format: 'qrCode'),
   // Action Card del gruppo Cisalfa (vale anche da Longoni, Germani, ...).
+  // Baby Card: tessera bianca con l'ovale blu del logo, da cui il colore;
+  // formato da confermare con la scansione.
+  _t('chicco', 'Chicco', 0xFF1E3F95),
   _t('cisalfa', 'Cisalfa Sport', 0xFFF26522, format: 'ean13'),
   _t('conad', 'Conad', 0xFFE30613, format: 'ean13'),
   _t('decathlon', 'Decathlon', 0xFF3643BA, format: 'ean13'),
   // Tessera nell'app di Dispensa Emilia: QR mostrato in cassa.
+  // Nero del logo; formato da confermare con la scansione.
+  _t('desigual', 'Desigual', 0xFF1A1A1A),
   _t('dispensa-emilia', 'Dispensa Emilia', 0xFF7A2E21, format: 'qrCode'),
   // Famila (gruppo Selex): formato da verificare.
+  // Verde acqua della tessera, più scuro perché le scritte bianche si
+  // leggano (l'originale è chiaro, con il logo nero); formato da confermare.
+  _t('douglas', 'Douglas', 0xFF3E9E92),
+  // Giallo scuro come Tigros (scritte bianche); formato da confermare.
+  _t('esselunga', 'Esselunga', 0xFFE6A300),
+  // Blu del marchio; formato da confermare con la scansione.
+  _t('eurospin', 'Eurospin', 0xFF1F4FB4),
   _t('famila', 'Famila', 0xFFF07D00),
   _t('feltrinelli', 'Feltrinelli', 0xFFE2001A),
   _t('gamestop', 'GameStop', 0xFFD71920, format: 'code128'),
@@ -49,7 +66,11 @@ List<CardTypesCompanion> catalogTypes() => [
   // Tessera socio Coop (cooperative regionali, per esempio Novacoop).
   _t('ipercoop', 'Ipercoop', 0xFFE2001A, format: 'ean13'),
   _t('ipersoap', 'IperSoap', 0xFF1FA824, format: 'ean13'),
+  // Verde della Card Club; formato da confermare con la scansione.
+  _t('isola-dei-tesori', 'Isola dei Tesori', 0xFF4A9E33),
   _t('kiabi', 'Kiabi', 0xFF0A3CA0, format: 'ean13'),
+  // Rosso delle immagini del marchio; formato da confermare con la scansione.
+  _t('kiko', 'Kiko', 0xFFC8102E),
   _t('king-sport', 'King Sport & Style', 0xFF262626, format: 'ean13'),
   // Carta MondoPiada, nell'app de La Piadineria.
   _t('la-piadineria', 'La Piadineria', 0xFFB5121B, format: 'code128'),
@@ -70,13 +91,24 @@ List<CardTypesCompanion> catalogTypes() => [
   // Carta fedeltà multipartner (vale in più catene).
   _t('payback', 'Payback', 0xFF0046AA, format: 'ean13'),
   _t('penny', 'Penny', 0xFFE2231A, format: 'ean13'),
+  // PittaRosso (ex Pittarello): formato da confermare con la scansione.
+  _t('pittarosso', 'PittaRosso', 0xFFE30613),
   _t('prealpina', 'Prealpina', 0xFF2F5BD8, format: 'ean13'),
   _t('prenatal', 'Prénatal', 0xFFE5007E, format: 'ean13'),
+  // Blu del marchio; formato da confermare con la scansione.
+  _t('risparmio-casa', 'RisparmioCasa', 0xFF1F4E9E),
   _t('sapore-di-mare', 'Sapore di Mare', 0xFF1450B4, format: 'ean13'),
   _t('scarpe-e-scarpe', 'Scarpe & Scarpe', 0xFFD52B1E, format: 'ean13'),
   _t('seconda-strada', 'Seconda Strada', 0xFF0D3B9E, format: 'code128'),
+  // Nero del marchio (sito e logo in bianco e nero); formato da confermare.
+  _t('sephora', 'Sephora', 0xFF1A1A1A),
   _t('sisley', 'Sisley', 0xFF222222, format: 'ean13'),
   _t('terranova', 'Terranova', 0xFF1A1A1A, format: 'qrCode'),
+  // Turchese della tessera (la tonalità più scura, per le scritte bianche);
+  // formato da confermare con la scansione.
+  _t('tigota', 'Tigotà', 0xFF1B9AA6),
+  // Giallo scuro: sul logo e sulla scheda le scritte sono bianche.
+  _t('tigros', 'Tigros', 0xFFE0A100, format: 'ean13'),
   _t('trony', 'Trony', 0xFF1C2A5A, format: 'ean13'),
   // UCI Cinemas: codice EAN-8.
   _t('uci', 'UCI Cinemas', 0xFF1E4DA1, format: 'ean8'),

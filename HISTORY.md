@@ -270,3 +270,18 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - Preparata la 1.0.0+3: release provata sull'emulatore prima del caricamento, come da regola; screenshot dello store rifatti.
 
 - 2026-11-24: in AdMob comparivano due app. Quella buona è `~7708372032` (nel manifest da sempre); `~5734978640` è un doppione, non usato. Il collegamento a Google Play si fa solo dopo l'uscita in produzione, perché AdMob non trova le app in test chiuso.
+
+- 2026-11-24: catalogo: aggiunta Tigros (EAN-13). Il logo è giallo, ma le scritte su logo e scheda sono sempre bianche: scelto un giallo scuro (`0xFFE0A100`) perché restino leggibili.
+- 2026-11-24: catalogo: aggiunta Esselunga (giallo scuro come Tigros, nessun formato atteso finché non si scansiona una tessera).
+- 2026-11-24: catalogo: aggiunta PittaRosso (rosso, nessun formato atteso). Il 20 nov Pittarello era stata esclusa perché nell'app mostra un QR che cambia: da verificare con la tessera vera.
+- 2026-11-24: catalogo: aggiunta Tigotà (turchese preso dalla gift card, nella tonalità più scura perché le scritte bianche si leggano; nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Kiko (rosso preso da un'immagine del marchio, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Douglas (verde acqua della tessera, scurito perché sull'originale chiaro le scritte bianche non si leggerebbero; nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Sephora (nero del marchio, nessun formato atteso). Il sito sephora.it rifiuta le richieste automatiche (403): colore preso dal logo, che è nero su bianco.
+- 2026-11-24: catalogo: aggiunta Arcaplanet (giallo del marchio scurito per le scritte bianche, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta RisparmioCasa (blu del marchio, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Bottega Verde (verde del marchio, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Eurospin (blu del marchio, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Isola dei Tesori (verde della Card Club, nessun formato atteso).
+- 2026-11-24: catalogo: aggiunta Desigual (nero del logo, nessun formato atteso). Il sito non risponde alle richieste automatiche (pagina vuota): colore preso dal logo, nero su bianco.
+- 2026-11-24: catalogo: aggiunta Chicco (Baby Card; blu dell'ovale del logo, perché la tessera è bianca e il turchese dell'immagine è solo lo sfondo promozionale; nessun formato atteso).
