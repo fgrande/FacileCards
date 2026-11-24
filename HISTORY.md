@@ -285,3 +285,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-24: catalogo: aggiunta Isola dei Tesori (verde della Card Club, nessun formato atteso).
 - 2026-11-24: catalogo: aggiunta Desigual (nero del logo, nessun formato atteso). Il sito non risponde alle richieste automatiche (pagina vuota): colore preso dal logo, nero su bianco.
 - 2026-11-24: catalogo: aggiunta Chicco (Baby Card; blu dell'ovale del logo, perché la tessera è bianca e il turchese dell'immagine è solo lo sfondo promozionale; nessun formato atteso).
+- 2026-11-24: versione 1.0.0+4 con le 14 tessere nuove. Release provata sull'emulatore (nessun crash; il consenso ora ha anche "Do not consent", aggiunto da Fabio in AdMob). Screenshot dello store non rifatti: mostrano negozi inventati, il catalogo non vi compare.
