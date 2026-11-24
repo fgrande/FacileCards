@@ -54,6 +54,12 @@ android {
         release {
             signingConfig = signingConfigs.findByName("upload")
                 ?: signingConfigs.getByName("debug")
+            // Regole nostre per R8 (vedi il file): senza, l'app si chiudeva
+            // all'avvio nella versione release.
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
