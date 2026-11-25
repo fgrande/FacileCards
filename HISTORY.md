@@ -300,3 +300,6 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-25: scorciatoie in Home (decisioni 89, 90), anticipate rispetto alla fase 5 su richiesta di Fabio. Decisione 122: niente riquadro nostro prima della conferma di Android, per non far confermare due volte. Codice nativo nostro con ShortcutManager, nessun plugin.
 - 2026-11-25: Sigma: formato EAN-13 confermato dalla scansione di Fabio.
 - 2026-11-25: versione 1.0.0+7 per il test chiuso: scorciatoie in Home e sei tessere nuove nel catalogo.
+- 2026-11-25: 1.0.0+7 caricata da Fabio nel test chiuso.
+- 2026-11-25: riquadro bianco (`Panel`) trasformato in foglio di Material: l'effetto del tocco delle righe era nascosto sotto il bianco (avviso di Flutter in sviluppo).
+- 2026-11-25: prova in cassa riuscita con Pam e Payback (alla cassa di Carrefour): il codice disegnato dall'app viene letto dagli scanner veri.

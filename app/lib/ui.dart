@@ -175,7 +175,9 @@ class TileGroup extends StatelessWidget {
 }
 
 /// Riquadro bianco arrotondato con bordo sottile (dettagli della tessera,
-/// gruppi delle impostazioni).
+/// gruppi delle impostazioni). È un foglio di Material, non una semplice
+/// decorazione: così l'effetto del tocco delle righe al suo interno si
+/// disegna sopra il bianco e si vede.
 class Panel extends StatelessWidget {
   const Panel({super.key, required this.child, this.padding = EdgeInsets.zero});
 
@@ -185,15 +187,14 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
-    return Container(
-      padding: padding,
+    return Material(
+      color: c.surface,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: c.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: c.border),
+        side: BorderSide(color: c.border),
       ),
-      child: child,
+      child: Padding(padding: padding, child: child),
     );
   }
 }
