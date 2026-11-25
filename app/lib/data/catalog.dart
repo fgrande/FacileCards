@@ -107,8 +107,8 @@ List<CardTypesCompanion> catalogTypes() => [
   _t('seconda-strada', 'Seconda Strada', 0xFF0D3B9E, format: 'code128'),
   // Nero del marchio (sito e logo in bianco e nero); formato da confermare.
   _t('sephora', 'Sephora', 0xFF1A1A1A),
-  // Club Sigma: blu della tessera; formato da confermare con la scansione.
-  _t('sigma', 'Sigma', 0xFF1E3F95),
+  // Club Sigma: blu della tessera.
+  _t('sigma', 'Sigma', 0xFF1E3F95, format: 'ean13'),
   _t('sisley', 'Sisley', 0xFF222222, format: 'ean13'),
   _t('terranova', 'Terranova', 0xFF1A1A1A, format: 'qrCode'),
   // Turchese della tessera (la tonalità più scura, per le scritte bianche);
