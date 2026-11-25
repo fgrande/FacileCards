@@ -303,6 +303,9 @@ class _CardScreenState extends State<CardScreen> {
     final type = widget.type;
     // L'intestazione ha il colore della tipologia, uguale nei due temi.
     final headerColor = Color(type?.color ?? TypeLogo.fallbackColor);
+    // Testo e icone: bianchi, scuri sui colori chiari (gialli).
+    final fg = onTypeColor(headerColor);
+    final darkText = fg != Colors.white;
     final details = [
       if (holder != null) _info(context.t.holder, holder),
       if (expires != null) _info(context.t.expiry, longDate(expires)),
@@ -312,11 +315,13 @@ class _CardScreenState extends State<CardScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: headerColor,
-        foregroundColor: Colors.white,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        foregroundColor: fg,
+        systemOverlayStyle: darkText
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light,
         title: Text(c.name, overflow: TextOverflow.ellipsis),
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
+        titleTextStyle: TextStyle(
+          color: fg,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
@@ -325,7 +330,8 @@ class _CardScreenState extends State<CardScreen> {
             tooltip: context.t.favorite,
             icon: Icon(
               _favorite ? Icons.star_rounded : Icons.star_outline_rounded,
-              color: _favorite ? const Color(0xFFFFD166) : Colors.white,
+              // Sul giallo la stella gialla non si vedrebbe: piena e scura.
+              color: _favorite && !darkText ? const Color(0xFFFFD166) : fg,
               size: 28,
             ),
             onPressed: _toggleFavorite,
@@ -380,7 +386,7 @@ class _CardScreenState extends State<CardScreen> {
                       height: 52,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.14),
+                        color: fg.withValues(alpha: 0.14),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Text(
@@ -389,8 +395,8 @@ class _CardScreenState extends State<CardScreen> {
                               ? type.name
                               : c.name,
                         ),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: fg,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),
@@ -404,8 +410,8 @@ class _CardScreenState extends State<CardScreen> {
                           Text(
                             c.name,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: fg,
                               fontSize: 21,
                               fontWeight: FontWeight.w700,
                             ),
@@ -415,7 +421,7 @@ class _CardScreenState extends State<CardScreen> {
                             [?holder, _sectionName].join(' · '),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.88),
+                              color: fg.withValues(alpha: 0.88),
                               fontSize: 13.5,
                             ),
                           ),

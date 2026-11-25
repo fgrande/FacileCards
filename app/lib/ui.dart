@@ -16,8 +16,19 @@ class AppMark extends StatelessWidget {
       SvgPicture.asset('assets/logo-mark.svg', height: height);
 }
 
-/// Logo della tipologia: iniziali bianche su quadrato arrotondato colorato.
-/// Il colore non cambia con il tema.
+/// Colore del testo sopra il colore di una tipologia: bianco, salvo sui
+/// colori chiari (i gialli di Tigros, Esselunga, Arcaplanet…), dove il bianco
+/// si leggerebbe male (contrasto sotto 2,5) e si usa un quasi nero. Così i
+/// colori dei marchi restano quelli veri.
+Color onTypeColor(Color background) =>
+    background.computeLuminance() > 0.37 ? typeDarkText : Colors.white;
+
+/// Testo scuro sui colori chiari delle tipologie.
+const typeDarkText = Color(0xFF1F2430);
+
+/// Logo della tipologia: iniziali bianche (scure sui colori chiari, vedi
+/// [onTypeColor]) su quadrato arrotondato colorato. Il colore non cambia con
+/// il tema.
 class TypeLogo extends StatelessWidget {
   const TypeLogo({
     super.key,
@@ -44,18 +55,19 @@ class TypeLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final background = Color(type.color ?? fallbackColor);
     final logo = Container(
       width: size,
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Color(type.color ?? fallbackColor),
+        color: background,
         borderRadius: BorderRadius.circular(size * 0.27),
       ),
       child: Text(
         _initials,
         style: TextStyle(
-          color: Colors.white,
+          color: onTypeColor(background),
           fontWeight: FontWeight.w600,
           fontSize: size * (_initials.length > 1 ? 0.36 : 0.40),
         ),
