@@ -1552,4 +1552,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestCodeNotSent => 'The code is never sent: only the format.';
+
+  @override
+  String get addToHome => 'Add to Home screen';
+
+  @override
+  String get shortcutAdded => 'Icon added to the Home screen';
+
+  @override
+  String get shortcutFailed => 'The icon couldn\'t be added';
+
+  @override
+  String get shortcutInTrashTitle => 'This card is in the bin';
+
+  @override
+  String shortcutInTrashBody(String name, String when) {
+    return '“$name”: $when.\nYou can restore it or remove the shortcut from the Home screen.';
+  }
+
+  @override
+  String get shortcutGoneTitle => 'This card no longer exists';
+
+  @override
+  String shortcutGoneBody(String name) {
+    return '“$name” has been deleted. You can remove the shortcut from the Home screen.';
+  }
+
+  @override
+  String get restoreCard => 'Restore the card';
+
+  @override
+  String get deleteShortcut => 'Remove shortcut';
+
+  @override
+  String get shortcutDisabled =>
+      'Shortcut turned off. To remove it from the Home screen, press and hold the icon and choose Remove.';
 }

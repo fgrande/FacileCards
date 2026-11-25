@@ -407,5 +407,15 @@
   "notFoundQuery": "Vous ne trouvez pas « {query} » ?",
   "notFoundAsk": "Demandez à l'ajouter",
   "notFoundShop": "Vous ne trouvez pas votre magasin ?",
-  "requestCodeNotSent": "Le code n'est jamais envoyé : seulement le format."
+  "requestCodeNotSent": "Le code n'est jamais envoyé : seulement le format.",
+  "addToHome": "Ajouter à l'écran d'accueil",
+  "shortcutAdded": "Icône ajoutée à l'écran d'accueil",
+  "shortcutFailed": "Impossible d'ajouter l'icône",
+  "shortcutInTrashTitle": "Cette carte est dans la corbeille",
+  "shortcutInTrashBody": "« {name} » : {when}.\nVous pouvez la restaurer ou supprimer le raccourci de l'écran d'accueil.",
+  "shortcutGoneTitle": "Cette carte n'existe plus",
+  "shortcutGoneBody": "« {name} » a été supprimée. Vous pouvez supprimer le raccourci de l'écran d'accueil.",
+  "restoreCard": "Restaurer la carte",
+  "deleteShortcut": "Supprimer le raccourci",
+  "shortcutDisabled": "Raccourci désactivé. Pour le retirer de l'écran d'accueil, appuyez longuement sur l'icône et choisissez Supprimer."
 }

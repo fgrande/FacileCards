@@ -1,6 +1,9 @@
 package eu.facilecards.facilecards
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.Settings
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -29,20 +33,57 @@ class MainActivity : FlutterActivity() {
     private var incomingError: String? = null
     private var waitingTake: MethodChannel.Result? = null
 
+    // Scorciatoia in Home (Shortcuts.kt): tessera da aprire, tenuta qui finché
+    // Flutter non la chiede ("takeShortcutCard").
+    private var shortcutCard: Map<String, String>? = null
+
+    // Android avvisa quando l'icona è stata davvero aggiunta alla Home.
+    private val pinnedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            channel?.invokeMethod("shortcutPinned", null)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Solo al primo avvio dell'attività, non quando Android la ricrea.
         if (savedInstanceState == null) {
             File(cacheDir, "incoming").deleteRecursively()
-            receive(intent)
+            if (!receiveShortcut(intent)) receive(intent)
         }
+        ContextCompat.registerReceiver(
+            this,
+            pinnedReceiver,
+            IntentFilter(Shortcuts.ACTION_PINNED),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(pinnedReceiver)
+        super.onDestroy()
+    }
+
+    /// Tocco su una scorciatoia in Home: si ricorda quale tessera aprire.
+    private fun receiveShortcut(intent: Intent?): Boolean {
+        if (intent?.action != Shortcuts.ACTION_OPEN_CARD) return false
+        val id = intent.getStringExtra(Shortcuts.EXTRA_CARD_ID) ?: return false
+        shortcutCard = mapOf(
+            "id" to id,
+            "name" to (intent.getStringExtra(Shortcuts.EXTRA_CARD_NAME) ?: ""),
+        )
+        return true
     }
 
     // App già aperta (launchMode singleTask): il file arriva qui.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        if (receive(intent)) channel?.invokeMethod("incomingFile", null)
+        if (receiveShortcut(intent)) {
+            channel?.invokeMethod("shortcutCard", null)
+        } else if (receive(intent)) {
+            channel?.invokeMethod("incomingFile", null)
+        }
     }
 
     /// Copia il file di un'intenzione VIEW; il permesso di lettura dura poco.
@@ -134,6 +175,37 @@ class MainActivity : FlutterActivity() {
                         } else {
                             deliverIncoming(result)
                         }
+                    }
+                    // Scorciatoie in Home (decisioni 89 e 90, Shortcuts.kt).
+                    "takeShortcutCard" -> {
+                        result.success(shortcutCard)
+                        shortcutCard = null
+                    }
+                    "canPinShortcut" -> result.success(Shortcuts.canPin(this))
+                    "pinShortcut" -> result.success(
+                        Shortcuts.pin(
+                            this,
+                            call.argument<String>("id")!!,
+                            call.argument<String>("name")!!,
+                            call.argument<ByteArray>("icon")!!,
+                        ),
+                    )
+                    "updateShortcut" -> {
+                        Shortcuts.update(
+                            this,
+                            call.argument<String>("id")!!,
+                            call.argument<String>("name")!!,
+                            call.argument<ByteArray>("icon")!!,
+                        )
+                        result.success(null)
+                    }
+                    "disableShortcut" -> {
+                        Shortcuts.disable(
+                            this,
+                            call.argument<String>("id")!!,
+                            call.argument<String>("message")!!,
+                        )
+                        result.success(null)
                     }
                     // Pagina dell'app nelle impostazioni di Android (videata 24,
                     // permesso della fotocamera negato).

@@ -1566,4 +1566,39 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get requestCodeNotSent =>
       'Le code n\'est jamais envoyé : seulement le format.';
+
+  @override
+  String get addToHome => 'Ajouter à l\'écran d\'accueil';
+
+  @override
+  String get shortcutAdded => 'Icône ajoutée à l\'écran d\'accueil';
+
+  @override
+  String get shortcutFailed => 'Impossible d\'ajouter l\'icône';
+
+  @override
+  String get shortcutInTrashTitle => 'Cette carte est dans la corbeille';
+
+  @override
+  String shortcutInTrashBody(String name, String when) {
+    return '« $name » : $when.\nVous pouvez la restaurer ou supprimer le raccourci de l\'écran d\'accueil.';
+  }
+
+  @override
+  String get shortcutGoneTitle => 'Cette carte n\'existe plus';
+
+  @override
+  String shortcutGoneBody(String name) {
+    return '« $name » a été supprimée. Vous pouvez supprimer le raccourci de l\'écran d\'accueil.';
+  }
+
+  @override
+  String get restoreCard => 'Restaurer la carte';
+
+  @override
+  String get deleteShortcut => 'Supprimer le raccourci';
+
+  @override
+  String get shortcutDisabled =>
+      'Raccourci désactivé. Pour le retirer de l\'écran d\'accueil, appuyez longuement sur l\'icône et choisissez Supprimer.';
 }

@@ -16,6 +16,7 @@ import '../theme.dart';
 import '../ui.dart';
 import '../transfer/export.dart' show ExportTarget;
 import 'export_screen.dart';
+import 'home_shortcut.dart';
 import 'new_card_data_screen.dart';
 import 'photo_picker.dart';
 import 'photo_viewer_screen.dart';
@@ -63,7 +64,14 @@ class _CardScreenState extends State<CardScreen> {
       if (mounted) setState(() => _store = s);
     });
     _loadPayApp();
+    canPinShortcut().then((ok) {
+      if (mounted && ok) setState(() => _canPin = true);
+    });
   }
+
+  /// "Aggiungi alla schermata Home" (decisione 89): solo se il telefono lo
+  /// permette (non su Android 7, decisione 90).
+  bool _canPin = false;
 
   /// App per pagare da aprire dalla tessera (decisione 118); compare dopo
   /// il codice, senza ritardarlo, e solo se è ancora installata.
@@ -155,6 +163,8 @@ class _CardScreenState extends State<CardScreen> {
       _favorite = card.favorite;
       _sectionName = section?.name ?? _sectionName;
     });
+    // L'icona in Home prende il nome nuovo.
+    await refreshCardShortcut(card, widget.type);
   }
 
   /// "Sposta": cambia la sezione della tessera.
@@ -509,7 +519,18 @@ class _CardScreenState extends State<CardScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              if (_canPin && widget.type != null) ...[
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () => addCardShortcut(context, c, widget.type),
+                    icon: const Icon(Icons.add_to_home_screen),
+                    label: Text(context.t.addToHome),
+                  ),
+                ),
+              ] else
+                const SizedBox(height: 14),
               Text(
                 context.t.addedOn(longDate(c.createdAt)),
                 style: TextStyle(color: colors.muted, fontSize: 13),

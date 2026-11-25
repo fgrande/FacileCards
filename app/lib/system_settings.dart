@@ -59,11 +59,61 @@ Future<({String? path, String? error})?> takeIncomingFile() async {
   return (path: r['path'], error: r['error']);
 }
 
+/// Avvisi da Android (MainActivity.kt), con l'app già aperta: un solo
+/// ascoltatore per il canale, che passa ciascun avviso a chi lo aspetta.
+final _listeners = <String, void Function()>{};
+
+void _listen(String method, void Function() callback) {
+  _listeners[method] = callback;
+  _channel.setMethodCallHandler(
+    (call) async => _listeners[call.method]?.call(),
+  );
+}
+
 /// [onArrived] si chiama quando arriva un file con l'app già aperta.
 void listenIncomingFiles(void Function() onArrived) =>
-    _channel.setMethodCallHandler((call) async {
-      if (call.method == 'incomingFile') onArrived();
-    });
+    _listen('incomingFile', onArrived);
+
+/// Scorciatoie in Home: [onCard] quando si tocca un'icona con l'app già
+/// aperta, [onPinned] quando Android ha aggiunto l'icona.
+void listenShortcuts({
+  required void Function() onCard,
+  required void Function() onPinned,
+}) {
+  _listen('shortcutCard', onCard);
+  _listen('shortcutPinned', onPinned);
+}
+
+/// La tessera della scorciatoia toccata (identificativo e nome che aveva),
+/// o null se l'app non è stata aperta da una scorciatoia.
+Future<({String id, String name})?> takeShortcutCard() async {
+  final r = await _channel.invokeMapMethod<String, String>('takeShortcutCard');
+  final id = r?['id'];
+  return id == null ? null : (id: id, name: r?['name'] ?? '');
+}
+
+/// Il telefono accetta icone fissate in Home (Android 8 e successivi, con un
+/// launcher che lo permette).
+Future<bool> canPinShortcut() async =>
+    await _channel.invokeMethod<bool>('canPinShortcut') ?? false;
+
+/// Chiede ad Android di aggiungere l'icona: compare la sua conferma.
+Future<bool> pinShortcut(String id, String name, Uint8List icon) async =>
+    await _channel.invokeMethod<bool>('pinShortcut', {
+      'id': id,
+      'name': name,
+      'icon': icon,
+    }) ??
+    false;
+
+/// Aggiorna nome e icona, se l'icona è sulla Home.
+Future<void> updateShortcut(String id, String name, Uint8List icon) => _channel
+    .invokeMethod('updateShortcut', {'id': id, 'name': name, 'icon': icon});
+
+/// Spegne l'icona (Android non lascia toglierla): toccandola si legge
+/// [message].
+Future<void> disableShortcut(String id, String message) =>
+    _channel.invokeMethod('disableShortcut', {'id': id, 'message': message});
 
 /// Un'app per pagare installata (decisione 118): pacchetto, nome e icona.
 class PayApp {

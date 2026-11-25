@@ -1553,4 +1553,39 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get requestCodeNotSent =>
       'Il codice non viene mai inviato: solo il formato.';
+
+  @override
+  String get addToHome => 'Aggiungi alla schermata Home';
+
+  @override
+  String get shortcutAdded => 'Icona aggiunta alla schermata Home';
+
+  @override
+  String get shortcutFailed => 'Non è stato possibile aggiungere l\'icona';
+
+  @override
+  String get shortcutInTrashTitle => 'Questa tessera è nel cestino';
+
+  @override
+  String shortcutInTrashBody(String name, String when) {
+    return '«$name»: $when.\nPuoi ripristinarla oppure eliminare la scorciatoia dalla schermata Home.';
+  }
+
+  @override
+  String get shortcutGoneTitle => 'Questa tessera non c\'è più';
+
+  @override
+  String shortcutGoneBody(String name) {
+    return '«$name» è stata eliminata. Puoi eliminare la scorciatoia dalla schermata Home.';
+  }
+
+  @override
+  String get restoreCard => 'Ripristina la tessera';
+
+  @override
+  String get deleteShortcut => 'Elimina scorciatoia';
+
+  @override
+  String get shortcutDisabled =>
+      'Scorciatoia disattivata. Per toglierla dalla schermata Home, tieni premuta l\'icona e scegli Rimuovi.';
 }

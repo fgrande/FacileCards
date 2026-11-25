@@ -44,7 +44,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 16 | [Scorciatoie in Home](videate/16-scorciatoie-home.svg) | Schermata iniziale del telefono con icone che aprono direttamente una tessera | 89 |
 | 17 | [Elimina: scorrimento](videate/17-elimina-scorrimento.svg) | Riga dell'elenco trascinata verso sinistra, con il pulsante di eliminazione | 75 |
 | 18 | [Elimina: conferma](videate/18-elimina-conferma.svg) | Scelta tra cestino ed eliminazione definitiva, raggiungibile sia dallo scorrimento sia dal cestino nella barra della tessera | 20, 75 |
-| 19 | [Aggiungi alla schermata Home](videate/19-scorciatoia-aggiungi.svg) | Riquadro di conferma aperto dal collegamento sotto i pulsanti della tessera | 89, 90 |
+| 19 | [Aggiungi alla schermata Home](videate/19-scorciatoia-aggiungi.svg) | Riquadro di conferma aperto dal collegamento sotto i pulsanti della tessera. **Superata dalla decisione 122**: la conferma è la finestra di Android (diversa a seconda del telefono), senza riquadro nostro; poi il messaggio "Icona aggiunta alla schermata Home" | 89, 90, 122 |
 | 20 | [Scorciatoia: tessera nel cestino](videate/20-scorciatoia-tessera-eliminata.svg) | Toccando una scorciatoia la cui tessera è eliminata: ripristino o eliminazione della scorciatoia | 90 |
 | 21 | [Informazioni](videate/21-informazioni.svg) | Versione, sviluppatore, avvertenza sui marchi, informativa e sito | 99 |
 | 22 | [Scansione](videate/22-scansione.svg) | Fotocamera a tutto schermo con cornice, torcia, inserimento a mano; si ferma da sola alla lettura | 71, 82, 100, 110 |

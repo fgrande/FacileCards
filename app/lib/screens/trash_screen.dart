@@ -6,6 +6,65 @@ import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
 
+/// Recupero dal cestino (videata 13): scelta della sezione, poi la tessera
+/// torna in uso. Serve anche alla scorciatoia in Home (videata 20).
+/// Restituisce true se la tessera è stata recuperata.
+Future<bool> recoverCardWithChoice(
+  BuildContext context,
+  db.AppDatabase d,
+  db.Card card,
+) async {
+  final visible = await d.visibleSections();
+  final counts = await d.sectionCounts();
+  final total = await d.activeCardCount();
+  final original = await (d.select(
+    d.sections,
+  )..where((s) => s.id.equals(card.sectionId))).getSingleOrNull();
+
+  // La sezione d'origine, se era stata eliminata, viene ricreata; ma se il
+  // suo nome è stato riusato, la tessera va nella sezione che lo porta.
+  final options = <_Option>[];
+  String? preselected;
+  if (original != null && original.hidden) {
+    final sameName = visible
+        .where((s) => s.name.toLowerCase() == original.name.toLowerCase())
+        .toList();
+    if (sameName.isEmpty) {
+      options.add(_Option(original, 0, recreated: true));
+      preselected = original.id;
+    } else {
+      preselected = sameName.first.id;
+    }
+  } else if (original != null) {
+    preselected = original.id;
+  }
+  for (final s in visible) {
+    options.add(_Option(s, counts[s.id] ?? 0));
+  }
+  preselected ??= visible.first.id;
+  if (!context.mounted) return false;
+
+  final chosen = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (_) => _RecoverSheet(
+      cardName: card.name,
+      options: options,
+      selected: preselected!,
+      activeTotal: total,
+    ),
+  );
+  if (chosen == null) return false;
+  final ok = await d.recoverCard(card.id, chosen);
+  if (!ok && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr.noRoomLimit(db.AppDatabase.freeCardLimit))),
+    );
+  }
+  return ok;
+}
+
 /// Videata 13: il cestino. Le tessere restano 30 giorni e si possono
 /// recuperare in una sezione a scelta.
 class TrashScreen extends StatefulWidget {
@@ -18,58 +77,8 @@ class TrashScreen extends StatefulWidget {
 }
 
 class _TrashScreenState extends State<TrashScreen> {
-  void _message(String text) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-
-  Future<void> _recover(db.Card card) async {
-    final d = widget.database;
-    final visible = await d.visibleSections();
-    final counts = await d.sectionCounts();
-    final total = await d.activeCardCount();
-    final original = await (d.select(d.sections)
-          ..where((s) => s.id.equals(card.sectionId)))
-        .getSingleOrNull();
-
-    // La sezione d'origine, se era stata eliminata, viene ricreata; ma se il
-    // suo nome è stato riusato, la tessera va nella sezione che lo porta.
-    final options = <_Option>[];
-    String? preselected;
-    if (original != null && original.hidden) {
-      final sameName = visible
-          .where((s) => s.name.toLowerCase() == original.name.toLowerCase())
-          .toList();
-      if (sameName.isEmpty) {
-        options.add(_Option(original, 0, recreated: true));
-        preselected = original.id;
-      } else {
-        preselected = sameName.first.id;
-      }
-    } else if (original != null) {
-      preselected = original.id;
-    }
-    for (final s in visible) {
-      options.add(_Option(s, counts[s.id] ?? 0));
-    }
-    preselected ??= visible.first.id;
-    if (!mounted) return;
-
-    final chosen = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (_) => _RecoverSheet(
-        cardName: card.name,
-        options: options,
-        selected: preselected!,
-        activeTotal: total,
-      ),
-    );
-    if (chosen == null) return;
-    final ok = await d.recoverCard(card.id, chosen);
-    if (!ok) {
-      _message(tr.noRoomLimit(db.AppDatabase.freeCardLimit));
-    }
-  }
+  Future<void> _recover(db.Card card) =>
+      recoverCardWithChoice(context, widget.database, card);
 
   Future<void> _deleteForever(db.Card card) async {
     final ok = await showDialog<bool>(
@@ -111,11 +120,13 @@ class _TrashScreenState extends State<TrashScreen> {
             ]),
             builder: (context, refs) {
               final names = {
-                for (final s in (refs.data?[0] as List<db.Section>? ?? const []))
+                for (final s
+                    in (refs.data?[0] as List<db.Section>? ?? const []))
                   s.id: s.name,
               };
               final types = {
-                for (final t in (refs.data?[1] as List<db.CardType>? ?? const []))
+                for (final t
+                    in (refs.data?[1] as List<db.CardType>? ?? const []))
                   t.id: t,
               };
               return ListView(
@@ -123,27 +134,36 @@ class _TrashScreenState extends State<TrashScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
                     child: Text(
-                        context.t.trashExplain(db.AppDatabase.trashDays),
-                        style: TextStyle(color: c.muted, fontSize: 13.5)),
+                      context.t.trashExplain(db.AppDatabase.trashDays),
+                      style: TextStyle(color: c.muted, fontSize: 13.5),
+                    ),
                   ),
                   if (cards.isEmpty)
                     Padding(
                       padding: const EdgeInsets.all(32),
-                      child: Text(context.t.trashEmpty,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: c.muted)),
+                      child: Text(
+                        context.t.trashEmpty,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: c.muted),
+                      ),
                     )
                   else
                     TileGroup(
                       children: [
                         for (final card in cards)
                           ListTile(
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(16, 4, 4, 4),
+                            contentPadding: const EdgeInsets.fromLTRB(
+                              16,
+                              4,
+                              4,
+                              4,
+                            ),
                             leading: types[card.typeId] == null
                                 ? const IconTile(Icons.credit_card)
                                 : TypeLogo(
-                                    type: types[card.typeId]!, name: card.name),
+                                    type: types[card.typeId]!,
+                                    name: card.name,
+                                  ),
                             title: Text(card.name),
                             subtitle: Text(
                               context.t.wasIn(
@@ -213,9 +233,14 @@ class _RecoverSheetState extends State<_RecoverSheet> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-              child: Text(context.t.restoreInto(widget.cardName),
-                  style: TextStyle(
-                      color: c.text, fontSize: 20, fontWeight: FontWeight.w500)),
+              child: Text(
+                context.t.restoreInto(widget.cardName),
+                style: TextStyle(
+                  color: c.text,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             Flexible(
               child: ListView(
@@ -237,17 +262,26 @@ class _RecoverSheetState extends State<_RecoverSheet> {
               ),
               child: Row(
                 children: [
-                  Icon(fits ? Icons.check : Icons.warning_amber_rounded,
-                      color: fits ? c.success : c.warn, size: 20),
+                  Icon(
+                    fits ? Icons.check : Icons.warning_amber_rounded,
+                    color: fits ? c.success : c.warn,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       fits
                           ? context.t.afterRestore(
-                              after, db.AppDatabase.freeCardLimit)
-                          : context.t.limitReached(db.AppDatabase.freeCardLimit),
+                              after,
+                              db.AppDatabase.freeCardLimit,
+                            )
+                          : context.t.limitReached(
+                              db.AppDatabase.freeCardLimit,
+                            ),
                       style: TextStyle(
-                          color: fits ? c.success : c.warn, fontSize: 13.5),
+                        color: fits ? c.success : c.warn,
+                        fontSize: 13.5,
+                      ),
                     ),
                   ),
                 ],
@@ -275,7 +309,9 @@ class _RecoverSheetState extends State<_RecoverSheet> {
           color: c.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-              color: selected ? c.primary : c.border, width: selected ? 1.6 : 1),
+            color: selected ? c.primary : c.border,
+            width: selected ? 1.6 : 1,
+          ),
         ),
         child: Row(
           children: [
@@ -288,8 +324,10 @@ class _RecoverSheetState extends State<_RecoverSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(o.section.name,
-                      style: TextStyle(color: c.text, fontSize: 16)),
+                  Text(
+                    o.section.name,
+                    style: TextStyle(color: c.text, fontSize: 16),
+                  ),
                   Text(
                     o.recreated
                         ? context.t.sectionWillBeRecreated

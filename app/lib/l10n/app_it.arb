@@ -1102,5 +1102,17 @@
   },
   "notFoundAsk": "Chiedi di aggiungerlo",
   "notFoundShop": "Non trovi il tuo negozio?",
-  "requestCodeNotSent": "Il codice non viene mai inviato: solo il formato."
+  "requestCodeNotSent": "Il codice non viene mai inviato: solo il formato.",
+  "addToHome": "Aggiungi alla schermata Home",
+  "shortcutAdded": "Icona aggiunta alla schermata Home",
+  "shortcutFailed": "Non è stato possibile aggiungere l'icona",
+  "shortcutInTrashTitle": "Questa tessera è nel cestino",
+  "shortcutInTrashBody": "«{name}»: {when}.\nPuoi ripristinarla oppure eliminare la scorciatoia dalla schermata Home.",
+  "@shortcutInTrashBody": {"placeholders": {"name": {"type": "String"}, "when": {"type": "String"}}},
+  "shortcutGoneTitle": "Questa tessera non c'è più",
+  "shortcutGoneBody": "«{name}» è stata eliminata. Puoi eliminare la scorciatoia dalla schermata Home.",
+  "@shortcutGoneBody": {"placeholders": {"name": {"type": "String"}}},
+  "restoreCard": "Ripristina la tessera",
+  "deleteShortcut": "Elimina scorciatoia",
+  "shortcutDisabled": "Scorciatoia disattivata. Per toglierla dalla schermata Home, tieni premuta l'icona e scegli Rimuovi."
 }

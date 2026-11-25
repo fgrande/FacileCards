@@ -407,5 +407,15 @@
   "notFoundQuery": "Can't find “{query}”?",
   "notFoundAsk": "Ask us to add it",
   "notFoundShop": "Can't find your shop?",
-  "requestCodeNotSent": "The code is never sent: only the format."
+  "requestCodeNotSent": "The code is never sent: only the format.",
+  "addToHome": "Add to Home screen",
+  "shortcutAdded": "Icon added to the Home screen",
+  "shortcutFailed": "The icon couldn't be added",
+  "shortcutInTrashTitle": "This card is in the bin",
+  "shortcutInTrashBody": "“{name}”: {when}.\nYou can restore it or remove the shortcut from the Home screen.",
+  "shortcutGoneTitle": "This card no longer exists",
+  "shortcutGoneBody": "“{name}” has been deleted. You can remove the shortcut from the Home screen.",
+  "restoreCard": "Restore the card",
+  "deleteShortcut": "Remove shortcut",
+  "shortcutDisabled": "Shortcut turned off. To remove it from the Home screen, press and hold the icon and choose Remove."
 }

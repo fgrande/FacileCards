@@ -2552,6 +2552,66 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Il codice non viene mai inviato: solo il formato.'**
   String get requestCodeNotSent;
+
+  /// No description provided for @addToHome.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi alla schermata Home'**
+  String get addToHome;
+
+  /// No description provided for @shortcutAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'Icona aggiunta alla schermata Home'**
+  String get shortcutAdded;
+
+  /// No description provided for @shortcutFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Non è stato possibile aggiungere l\'icona'**
+  String get shortcutFailed;
+
+  /// No description provided for @shortcutInTrashTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa tessera è nel cestino'**
+  String get shortcutInTrashTitle;
+
+  /// No description provided for @shortcutInTrashBody.
+  ///
+  /// In it, this message translates to:
+  /// **'«{name}»: {when}.\nPuoi ripristinarla oppure eliminare la scorciatoia dalla schermata Home.'**
+  String shortcutInTrashBody(String name, String when);
+
+  /// No description provided for @shortcutGoneTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa tessera non c\'è più'**
+  String get shortcutGoneTitle;
+
+  /// No description provided for @shortcutGoneBody.
+  ///
+  /// In it, this message translates to:
+  /// **'«{name}» è stata eliminata. Puoi eliminare la scorciatoia dalla schermata Home.'**
+  String shortcutGoneBody(String name);
+
+  /// No description provided for @restoreCard.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina la tessera'**
+  String get restoreCard;
+
+  /// No description provided for @deleteShortcut.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina scorciatoia'**
+  String get deleteShortcut;
+
+  /// No description provided for @shortcutDisabled.
+  ///
+  /// In it, this message translates to:
+  /// **'Scorciatoia disattivata. Per toglierla dalla schermata Home, tieni premuta l\'icona e scegli Rimuovi.'**
+  String get shortcutDisabled;
 }
 
 class _AppLocalizationsDelegate

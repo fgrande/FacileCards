@@ -13,6 +13,7 @@ import 'card_screen.dart';
 import 'data_screen.dart';
 import 'draft_restore.dart';
 import 'expiry_panel.dart';
+import 'home_shortcut.dart';
 import 'import_screen.dart';
 import 'new_card_type_screen.dart';
 import 'search_field.dart';
@@ -54,6 +55,14 @@ class _CardListScreenState extends State<CardListScreen> {
     // "Apri con FacileCards": il file si apre dopo che l'elenco è comparso,
     // così l'avvio resta rapido; con l'app già aperta arriva un avviso.
     listenIncomingFiles(_openIncoming);
+    // Scorciatoie in Home: tessera da aprire con l'app già aperta, e avviso
+    // quando Android ha aggiunto l'icona.
+    listenShortcuts(
+      onCard: _openShortcut,
+      onPinned: () =>
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(context.t.shortcutAdded))),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) => _afterFirstFrame());
   }
 
@@ -67,6 +76,9 @@ class _CardListScreenState extends State<CardListScreen> {
     // foto, si riapre la pagina che si stava compilando.
     if (await restorePhotoDraft(context, d)) _loadRefs();
     if (!mounted) return;
+    // Aperta da una scorciatoia in Home: subito la tessera.
+    await _openShortcut();
+    if (!mounted) return;
     if (await d.setting(db.SettingKeys.adsIntroShown) != 'true' && mounted) {
       await Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => const AdsIntroScreen()));
@@ -74,6 +86,11 @@ class _CardListScreenState extends State<CardListScreen> {
     }
     Ads.instance.start();
     await _openIncoming();
+  }
+
+  Future<void> _openShortcut() async {
+    if (!mounted) return;
+    if (await openShortcutCard(context, widget.database)) _loadRefs();
   }
 
   bool _incomingBusy = false;
