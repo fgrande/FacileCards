@@ -47,7 +47,7 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
     onTap: () => _open(t),
   );
 
-  Widget _requestLink(String query) {
+  Widget _requestLink(String query, {required bool found}) {
     final c = AppColors.of(context);
     return InkWell(
       onTap: () => Navigator.of(context).push(
@@ -60,7 +60,7 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
         child: Text.rich(
           TextSpan(
             text:
-                '${query.isEmpty ? context.t.notFoundShop : context.t.notFoundQuery(query)} ',
+                '${query.isEmpty || found ? context.t.notFoundShop : context.t.notFoundQuery(query)} ',
             style: TextStyle(color: c.muted, fontSize: 14),
             children: [
               TextSpan(
@@ -106,8 +106,9 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
                 TileGroup(indent: 74, children: shops.map(_tile).toList()),
               ],
               // Decisione 120: sempre in fondo ai negozi (chi scorre e non
-              // trova il suo può chiederlo), col nome cercato se c'è.
-              _requestLink(_query.trim()),
+              // trova il suo può chiederlo); il nome cercato si cita solo se
+              // non ha trovato niente, ma si propone comunque nella richiesta.
+              _requestLink(_query.trim(), found: shops.isNotEmpty),
               if (others.isNotEmpty || generic.isNotEmpty) ...[
                 GroupHeader(context.t.otherCards),
                 TileGroup(
