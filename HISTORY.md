@@ -299,3 +299,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-25: catalogo con Crai, Unieuro, Sigma e la Cyao Card (anche come Carpisa e Yamamay, scelta di Fabio: tre voci per la stessa tessera, per trovarla con qualsiasi nome).
 - 2026-11-25: scorciatoie in Home (decisioni 89, 90), anticipate rispetto alla fase 5 su richiesta di Fabio. Decisione 122: niente riquadro nostro prima della conferma di Android, per non far confermare due volte. Codice nativo nostro con ShortcutManager, nessun plugin.
 - 2026-11-25: Sigma: formato EAN-13 confermato dalla scansione di Fabio.
+- 2026-11-25: versione 1.0.0+7 per il test chiuso: scorciatoie in Home e sei tessere nuove nel catalogo.
