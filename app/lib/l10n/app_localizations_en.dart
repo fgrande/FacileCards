@@ -396,6 +396,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removePhoto => 'Remove photo';
 
   @override
+  String get photoEditTitle => 'Adjust photo';
+
+  @override
+  String get photoEditHint =>
+      'Drag the frame or its corners · pinch to zoom the photo';
+
+  @override
+  String get rotateLeft => 'Rotate left';
+
+  @override
+  String get rotateRight => 'Rotate right';
+
+  @override
+  String get cardShape => 'Card shape';
+
+  @override
+  String get resetEdit => 'Reset';
+
+  @override
+  String get usePhoto => 'Use photo';
+
+  @override
   String get anyCodeFormat => 'Any code format';
 
   @override

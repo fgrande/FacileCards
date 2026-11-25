@@ -14,6 +14,7 @@ import '../photos.dart';
 import '../theme.dart';
 import '../l10n/l10n.dart';
 import '../ui.dart';
+import 'photo_edit_screen.dart';
 import 'photo_picker.dart';
 import 'scan_screen.dart';
 
@@ -212,7 +213,7 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         ? context.t.photoFront
         : context.t.photoBack;
     if (_hasPhoto(side)) {
-      final remove = await showModalBottomSheet<bool>(
+      final action = await showModalBottomSheet<_PhotoAction>(
         context: context,
         showDragHandle: true,
         builder: (context) => SafeArea(
@@ -220,26 +221,36 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
+                leading: const Icon(Icons.crop_rotate),
+                title: Text(context.t.edit),
+                onTap: () => Navigator.of(context).pop(_PhotoAction.edit),
+              ),
+              ListTile(
                 leading: const Icon(Icons.photo_camera_outlined),
                 title: Text(context.t.replace),
-                onTap: () => Navigator.of(context).pop(false),
+                onTap: () => Navigator.of(context).pop(_PhotoAction.replace),
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline),
                 title: Text(context.t.removePhoto),
-                onTap: () => Navigator.of(context).pop(true),
+                onTap: () => Navigator.of(context).pop(_PhotoAction.remove),
               ),
               const SizedBox(height: 8),
             ],
           ),
         ),
       );
-      if (remove == null || !mounted) return;
-      if (remove) {
-        return setState(() {
-          _photos.remove(side);
-          if (_savedPhotos.containsKey(side)) _removedPhotos.add(side);
-        });
+      if (action == null || !mounted) return;
+      switch (action) {
+        case _PhotoAction.remove:
+          return setState(() {
+            _photos.remove(side);
+            if (_savedPhotos.containsKey(side)) _removedPhotos.add(side);
+          });
+        case _PhotoAction.edit:
+          return _editPhoto(side);
+        case _PhotoAction.replace:
+          break;
       }
     }
     final bytes = await pickCardPhoto(
@@ -253,6 +264,25 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
         _removedPhotos.remove(side);
       });
     }
+  }
+
+  /// Ritocco della foto (decisione 121): quella appena scattata o quella già
+  /// salvata; come le altre modifiche, vale solo dopo "Salva".
+  Future<void> _editPhoto(String side) async {
+    final store = _store;
+    final saved = _savedPhotos[side];
+    final bytes =
+        _photos[side] ??
+        (saved != null && store != null
+            ? await store.file(saved).readAsBytes()
+            : null);
+    if (bytes == null || !mounted) return;
+    final edited = await editCardPhoto(context, bytes);
+    if (edited == null || !mounted) return;
+    setState(() {
+      _photos[side] = edited;
+      _removedPhotos.remove(side);
+    });
   }
 
   Widget _photoSlot(String side) {
@@ -651,3 +681,6 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
     );
   }
 }
+
+/// Scelte sulla foto già presente nel modulo.
+enum _PhotoAction { edit, replace, remove }

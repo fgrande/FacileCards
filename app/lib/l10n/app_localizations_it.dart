@@ -391,6 +391,28 @@ class AppLocalizationsIt extends AppLocalizations {
   String get removePhoto => 'Togli la foto';
 
   @override
+  String get photoEditTitle => 'Sistema la foto';
+
+  @override
+  String get photoEditHint =>
+      'Trascina il riquadro o gli angoli · pizzica per ingrandire';
+
+  @override
+  String get rotateLeft => 'Ruota a sinistra';
+
+  @override
+  String get rotateRight => 'Ruota a destra';
+
+  @override
+  String get cardShape => 'Formato tessera';
+
+  @override
+  String get resetEdit => 'Ripristina';
+
+  @override
+  String get usePhoto => 'Usa foto';
+
+  @override
   String get anyCodeFormat => 'Qualunque formato di codice';
 
   @override

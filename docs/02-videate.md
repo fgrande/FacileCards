@@ -50,7 +50,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 22 | [Scansione](videate/22-scansione.svg) | Fotocamera a tutto schermo con cornice, torcia, inserimento a mano; si ferma da sola alla lettura | 71, 82, 100, 110 |
 | 23 | [Scansione: formato errato](videate/23-scansione-formato-errato.svg) | Codice letto in un formato diverso da quello della tipologia: la cornice diventa ambra e compare il messaggio | 82 |
 | 24 | [Fotocamera non consentita](videate/24-fotocamera-negata.svg) | Se il permesso è negato: apri impostazioni, inserisci a mano, leggi da galleria | 100 |
-| 25 | [Foto: fronte](videate/25-foto-fronte.svg) | Foto a tutto schermo; scorrimento verso il retro, pizzico per ingrandire, tocco per chiudere; barra fissa con Sostituisci ed Elimina foto | 101 |
+| 25 | [Foto: fronte](videate/25-foto-fronte.svg) | Foto a tutto schermo; scorrimento verso il retro, pizzico per ingrandire, tocco per chiudere; barra fissa con Modifica (videata 49), Sostituisci ed Elimina foto | 101, 121 |
 | 26 | [Foto: retro](videate/26-foto-retro.svg) | Lo stesso visualizzatore sul retro | 101 |
 | 27 | [Foto: retro mancante](videate/27-foto-retro-mancante.svg) | Pagina con il pulsante per aggiungere la foto del retro | 101 |
 | 28 | [Tessera senza foto](videate/28-tessera-senza-foto.svg) | Al posto della miniatura, il pulsante "Aggiungi foto" | 101 |
@@ -74,6 +74,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna" e le app per pagare trovate sul telefono (elenco nostro e app che pagano con NFC), con le icone vere; "Manca la tua app? Chiedi di aggiungerla" | 36, 118 |
 | 47 | [Scelta della lingua](videate/47-scelta-lingua.svg) | Finestra aperta dalla configurazione iniziale (1) e dalle Impostazioni (14): bandiera, nome della lingua nella lingua stessa, spunta su quella attuale; la lingua scelta si mostra con la sua bandiera anche nel campo e nella riga. Per l'inglese la bandiera del Regno Unito | 35 |
 | 48 | [Richiesta di una tessera](videate/48-richiesta-tessera.svg) | Aperta dalle Impostazioni (14, "Richiedi una tessera mancante") e da Nuova tessera (7), dove il collegamento sta sempre in fondo ai negozi ("Non trovi il tuo negozio? Chiedi di aggiungerlo"; dopo una ricerca "Non trovi «…»?", col nome cercato già scritto). Nome del negozio; lettura facoltativa del codice con "Scansiona" (senza "Inserisci a mano") o "Da galleria", che mostra solo formato e numero di caratteri; "Scrivi l'email" apre l'app di posta con l'email già compilata | 36, 120 |
+| 49 | [Sistema la foto](videate/49-ritocco-foto.svg) | Dopo ogni foto (fotocamera o galleria) e da "Modifica" sulle foto salvate: foto su fondo scuro con il riquadro di ritaglio fermo sullo schermo (angoli trascinabili, si sposta dall'interno, linee dei terzi, fuori scurito); la foto si ingrandisce con due dita e si sposta con un dito fuori dal riquadro; strumenti Ruota a sinistra, Ruota a destra, Formato tessera (riquadro orizzontale con le proporzioni bloccate, evidenziato quando attivo), Ripristina; Annulla e Usa foto. Uguale nei due temi, come il visualizzatore | 101, 121 |
 
 ## Tema scuro
 

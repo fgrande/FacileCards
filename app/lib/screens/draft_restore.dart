@@ -8,6 +8,7 @@ import '../photo_draft.dart';
 import '../photos.dart';
 import 'card_screen.dart';
 import 'new_card_data_screen.dart';
+import 'photo_edit_screen.dart';
 
 /// All'avvio, dopo la prima schermata: se Android aveva chiuso l'app mentre
 /// si scattava o sceglieva una foto, riapre la pagina com'era, con la foto
@@ -17,8 +18,13 @@ Future<bool> restorePhotoDraft(BuildContext context, db.AppDatabase d) async {
   final draft = await PhotoDraft.load();
   if (draft == null) return false;
   await PhotoDraft.clear();
-  final photo = await _lostPhoto();
+  var photo = await _lostPhoto();
   if (!context.mounted) return false;
+  // Come dopo uno scatto normale: prima il ritocco (videata 49).
+  if (photo != null) {
+    photo = await editCardPhoto(context, photo);
+    if (!context.mounted) return false;
+  }
   switch (draft.kind) {
     case DraftKind.form:
       return _restoreForm(context, d, draft, photo);

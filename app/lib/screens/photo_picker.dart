@@ -7,8 +7,10 @@ import 'package:material_ui/material_ui.dart';
 import '../l10n/l10n.dart';
 import '../photo_draft.dart';
 import '../photos.dart';
+import 'photo_edit_screen.dart';
 
-/// Chiede da dove prendere la foto (fotocamera o galleria) e la restituisce.
+/// Chiede da dove prendere la foto (fotocamera o galleria), la fa ritoccare
+/// (videata 49) e la restituisce.
 /// Null se si annulla o se la fotocamera non è consentita (con un messaggio).
 /// Con [draft], prima di lasciare l'app si salva la bozza della pagina: se
 /// Android chiude FacileCards mentre si scatta, al ritorno la pagina si
@@ -46,6 +48,18 @@ Future<Uint8List?> pickCardPhoto(
   );
   if (source == null) return null;
   await draft?.save();
+  if (!context.mounted) return null;
+  final bytes = await _take(context, source, draft);
+  // Decisione 121: prima di usarla, la foto si può ritagliare e ruotare.
+  if (bytes == null || !context.mounted) return null;
+  return editCardPhoto(context, bytes);
+}
+
+Future<Uint8List?> _take(
+  BuildContext context,
+  ImageSource source,
+  PhotoDraft? draft,
+) async {
   try {
     // Il telefono riduce già la foto; shrinkPhoto controlla poi i 500 KB.
     final file = await ImagePicker().pickImage(

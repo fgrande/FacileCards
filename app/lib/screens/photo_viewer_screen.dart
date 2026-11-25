@@ -5,13 +5,15 @@ import '../l10n/l10n.dart';
 import '../photo_draft.dart';
 import '../photos.dart';
 import '../theme.dart';
+import 'photo_edit_screen.dart';
 import 'photo_picker.dart';
 
 const _sides = [PhotoSide.front, PhotoSide.back];
 
 /// Videate 25, 26, 27, 39: foto della tessera a tutto schermo. Si scorre tra
 /// fronte e retro, si ingrandisce con due dita, un tocco chiude. La barra in
-/// basso sostituisce o elimina la foto mostrata (decisione 101).
+/// basso ritocca (decisione 121), sostituisce o elimina la foto mostrata
+/// (decisione 101).
 class PhotoViewerScreen extends StatefulWidget {
   const PhotoViewerScreen({
     super.key,
@@ -35,8 +37,9 @@ class PhotoViewerScreen extends StatefulWidget {
 }
 
 class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
-  late final _pages =
-      PageController(initialPage: _sides.indexOf(widget.initialSide));
+  late final _pages = PageController(
+    initialPage: _sides.indexOf(widget.initialSide),
+  );
   late final _photos = widget.database.watchCardPhotos(widget.card.id);
   late int _page = _sides.indexOf(widget.initialSide);
   bool _busy = false;
@@ -50,11 +53,13 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   String get _side => _sides[_page];
 
   Future<void> _put(String side) async {
-    final bytes = await pickCardPhoto(context,
-        title: side == PhotoSide.front
-            ? context.t.photoFront
-            : context.t.photoBack,
-        draft: cardPhotoDraft(widget.card.id, side));
+    final bytes = await pickCardPhoto(
+      context,
+      title: side == PhotoSide.front
+          ? context.t.photoFront
+          : context.t.photoBack,
+      draft: cardPhotoDraft(widget.card.id, side),
+    );
     if (bytes == null || !mounted) return;
     setState(() => _busy = true);
     try {
@@ -63,12 +68,66 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
         _message(tr.notAnImage);
         return;
       }
-      final old = await widget.database.setCardPhoto(widget.card.id, side, name);
+      final old = await widget.database.setCardPhoto(
+        widget.card.id,
+        side,
+        name,
+      );
       if (old != null) await widget.store.delete(old);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
+
+  /// Ritocco di una foto già salvata (decisione 121): la foto sistemata
+  /// prende il posto di quella di prima.
+  Future<void> _edit(String side, String fileName) async {
+    final bytes = await widget.store.file(fileName).readAsBytes();
+    if (!mounted) return;
+    final edited = await editCardPhoto(context, bytes);
+    if (edited == null || !mounted) return;
+    setState(() => _busy = true);
+    try {
+      final name = await widget.store.write(widget.card.id, side, edited);
+      if (name == null) return _message(tr.notAnImage);
+      final old = await widget.database.setCardPhoto(
+        widget.card.id,
+        side,
+        name,
+      );
+      if (old != null) await widget.store.delete(old);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Pulsante della barra in basso: icona sopra, scritta sotto.
+  Widget _action({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    Color color = Colors.white,
+  }) => Expanded(
+    child: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+        child: Column(
+          children: [
+            Icon(icon, color: color),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: TextStyle(color: color, fontSize: 12.5, height: 1.2),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   void _message(String text) {
     if (mounted) {
@@ -87,9 +146,11 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
       builder: (context) {
         final error = Theme.of(context).colorScheme.error;
         return AlertDialog(
-          title: Text(side == PhotoSide.front
-              ? context.t.deleteFrontPhotoQuestion
-              : context.t.deleteBackPhotoQuestion),
+          title: Text(
+            side == PhotoSide.front
+                ? context.t.deleteFrontPhotoQuestion
+                : context.t.deleteBackPhotoQuestion,
+          ),
           content: Text(context.t.deletePhotoExplain),
           actionsAlignment: MainAxisAlignment.center,
           actionsOverflowDirection: VerticalDirection.down,
@@ -117,71 +178,71 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
   }
 
   Widget _photoPage(String fileName) => GestureDetector(
-        onTap: () => Navigator.of(context).pop(),
-        child: InteractiveViewer(
-          maxScale: 5,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(widget.store.file(fileName)),
-              ),
-            ),
+    onTap: () => Navigator.of(context).pop(),
+    child: InteractiveViewer(
+      maxScale: 5,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.file(widget.store.file(fileName)),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   /// Videata 27: lato senza foto, con "Aggiungi foto".
   Widget _missingPage(String side) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: AspectRatio(
-            aspectRatio: 358 / 226,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white24),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: AspectRatio(
+        aspectRatio: 358 / 226,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white24),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.photo_camera_outlined, color: Colors.white),
+              const SizedBox(height: 12),
+              Text(
+                side == PhotoSide.front
+                    ? context.t.noFrontPhoto
+                    : context.t.noBackPhoto,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.photo_camera_outlined, color: Colors.white),
-                  const SizedBox(height: 12),
-                  Text(
-                    side == PhotoSide.front
-                        ? context.t.noFrontPhoto
-                        : context.t.noBackPhoto,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: _busy ? null : () => _put(side),
-                    child: Text(context.t.addPhoto),
-                  ),
-                ],
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: _busy ? null : () => _put(side),
+                child: Text(context.t.addPhoto),
               ),
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _dots() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          for (var i = 0; i < _sides.length; i++)
-            Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: i == _page ? Colors.white : Colors.white38,
-              ),
-            ),
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      for (var i = 0; i < _sides.length; i++)
+        Container(
+          width: 8,
+          height: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: i == _page ? Colors.white : Colors.white38,
+          ),
+        ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +256,8 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
           final hint = current == null
               ? (_page == 0 ? context.t.swipeToBack : context.t.swipeToFront)
               : (_page == 0
-                  ? context.t.swipeToBackZoom
-                  : context.t.swipeToFrontZoom);
+                    ? context.t.swipeToBackZoom
+                    : context.t.swipeToFrontZoom);
           return Scaffold(
             backgroundColor: const Color(0xFF0B0F16),
             appBar: AppBar(
@@ -219,15 +280,17 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                 ),
                 _dots(),
                 const SizedBox(height: 16),
-                Text(hint,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                Text(
+                  hint,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
                 const SizedBox(height: 24),
                 if (_busy) const LinearProgressIndicator(),
                 // Barra fissa: solo se il lato mostrato ha una foto.
                 Container(
                   color: const Color(0xFF151A22),
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                   child: SafeArea(
                     top: false,
                     child: Opacity(
@@ -235,24 +298,23 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                       child: IgnorePointer(
                         ignoring: current == null || _busy,
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: FilledButton.tonalIcon(
-                                onPressed: () => _put(_side),
-                                icon: const Icon(Icons.photo_camera_outlined),
-                                label: Text(context.t.replace),
-                              ),
+                            _action(
+                              icon: Icons.crop_rotate,
+                              label: context.t.edit,
+                              onTap: () => _edit(_side, current!),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: FilledButton.tonalIcon(
-                                style: FilledButton.styleFrom(
-                                  foregroundColor: const Color(0xFFFF8A80),
-                                ),
-                                onPressed: () => _delete(_side),
-                                icon: const Icon(Icons.delete_outline),
-                                label: Text(context.t.deletePhoto),
-                              ),
+                            _action(
+                              icon: Icons.photo_camera_outlined,
+                              label: context.t.replace,
+                              onTap: () => _put(_side),
+                            ),
+                            _action(
+                              icon: Icons.delete_outline,
+                              label: context.t.deletePhoto,
+                              color: const Color(0xFFFF8A80),
+                              onTap: () => _delete(_side),
                             ),
                           ],
                         ),

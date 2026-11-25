@@ -742,6 +742,48 @@ abstract class AppLocalizations {
   /// **'Togli la foto'**
   String get removePhoto;
 
+  /// No description provided for @photoEditTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sistema la foto'**
+  String get photoEditTitle;
+
+  /// No description provided for @photoEditHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascina il riquadro o gli angoli · pizzica per ingrandire'**
+  String get photoEditHint;
+
+  /// No description provided for @rotateLeft.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruota a sinistra'**
+  String get rotateLeft;
+
+  /// No description provided for @rotateRight.
+  ///
+  /// In it, this message translates to:
+  /// **'Ruota a destra'**
+  String get rotateRight;
+
+  /// No description provided for @cardShape.
+  ///
+  /// In it, this message translates to:
+  /// **'Formato tessera'**
+  String get cardShape;
+
+  /// No description provided for @resetEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina'**
+  String get resetEdit;
+
+  /// No description provided for @usePhoto.
+  ///
+  /// In it, this message translates to:
+  /// **'Usa foto'**
+  String get usePhoto;
+
   /// No description provided for @anyCodeFormat.
   ///
   /// In it, this message translates to:

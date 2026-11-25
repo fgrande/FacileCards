@@ -267,6 +267,13 @@
   "otherCards": "Altre tessere",
   "replace": "Sostituisci",
   "removePhoto": "Togli la foto",
+  "photoEditTitle": "Sistema la foto",
+  "photoEditHint": "Trascina il riquadro o gli angoli · pizzica per ingrandire",
+  "rotateLeft": "Ruota a sinistra",
+  "rotateRight": "Ruota a destra",
+  "cardShape": "Formato tessera",
+  "resetEdit": "Ripristina",
+  "usePhoto": "Usa foto",
   "anyCodeFormat": "Qualunque formato di codice",
   "codeFormatIs": "Formato del codice: {format}",
   "@codeFormatIs": {
