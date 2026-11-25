@@ -305,3 +305,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-25: prova in cassa riuscita con Pam e Payback (alla cassa di Carrefour): il codice disegnato dall'app viene letto dagli scanner veri.
 - 2026-11-25: decisione 123: niente versione Pro e niente limite di 50 tessere. Da privato gestire profilo pagamenti, dati pubblici da venditore e tasse sulle vendite era troppo complesso (Fabio); l'app resta gratuita con annunci.
 - 2026-11-25: versione 1.0.0+8 per il test chiuso: tolte versione Pro e limite, effetto del tocco visibile nei riquadri bianchi.
+- 2026-11-26: 1.0.0+9 al posto della +8 (codice di versione 8 già usato su Google Play), stesso codice.
