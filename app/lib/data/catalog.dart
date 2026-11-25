@@ -40,9 +40,14 @@ List<CardTypesCompanion> catalogTypes() => [
   // Action Card del gruppo Cisalfa (vale anche da Longoni, Germani, ...).
   // Baby Card: tessera bianca con l'ovale blu del logo, da cui il colore;
   // formato da confermare con la scansione.
+  // Cyao Card: la stessa tessera vale da Carpisa e da Yamamay; tre voci
+  // perché si trovi cercando uno qualsiasi dei nomi.
+  _t('carpisa', 'Carpisa', 0xFFB5BD00, format: 'ean13'),
   _t('chicco', 'Chicco', 0xFF1E3F95),
   _t('cisalfa', 'Cisalfa Sport', 0xFFF26522, format: 'ean13'),
   _t('conad', 'Conad', 0xFFE30613, format: 'ean13'),
+  _t('crai', 'Crai', 0xFFE2001A, format: 'ean13'),
+  _t('cyao-card', 'Cyao Card', 0xFF1A1A1A, format: 'ean13'),
   _t('decathlon', 'Decathlon', 0xFF3643BA, format: 'ean13'),
   // Tessera nell'app di Dispensa Emilia: QR mostrato in cassa.
   // Nero del logo; formato da confermare con la scansione.
@@ -102,6 +107,8 @@ List<CardTypesCompanion> catalogTypes() => [
   _t('seconda-strada', 'Seconda Strada', 0xFF0D3B9E, format: 'code128'),
   // Nero del marchio (sito e logo in bianco e nero); formato da confermare.
   _t('sephora', 'Sephora', 0xFF1A1A1A),
+  // Club Sigma: blu della tessera; formato da confermare con la scansione.
+  _t('sigma', 'Sigma', 0xFF1E3F95),
   _t('sisley', 'Sisley', 0xFF222222, format: 'ean13'),
   _t('terranova', 'Terranova', 0xFF1A1A1A, format: 'qrCode'),
   // Turchese della tessera (la tonalità più scura, per le scritte bianche);
@@ -115,6 +122,8 @@ List<CardTypesCompanion> catalogTypes() => [
   // Carta multipartner UniClub: il codice è l'EAN-13 in basso (il QR sulla
   // carta serve solo a scaricare la loro app).
   _t('uniclub', 'UniClub', 0xFF2B4C9B, format: 'ean13'),
+  _t('unieuro', 'Unieuro', 0xFFF26522, format: 'ean13'),
+  _t('yamamay', 'Yamamay', 0xFFD6213A, format: 'ean13'),
   // Codice fiscale sul retro della tessera sanitaria (TEAM): Code 39.
   _t(
     'codice-fiscale',
