@@ -11,7 +11,7 @@ import '../transfer/import_shared.dart';
 import '../ui.dart';
 
 /// Videata 11 (sezione ricevuta) e decisione 107 (tessera ricevuta): dove
-/// mettere le tessere, con l'esito sul limite prima di importare.
+/// mettere le tessere, con l'esito prima di importare.
 class SharedImportScreen extends StatefulWidget {
   const SharedImportScreen({
     super.key,
@@ -251,19 +251,15 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
   }
 
   Widget _outcome(AppColors c, SharedImportPlan p) {
-    final ok = p.fits;
     final String title;
     String? detail;
-    if (!ok) {
-      title = context.t.wouldBeOverLimit(p.result);
-      detail = context.t.freeLimitDetail(p.limit);
-    } else if (p.added == 0 && p.updated == 0) {
+    if (p.added == 0 && p.updated == 0) {
       title = _single
           ? context.t.cardAlreadyInSection
           : context.t.allAlreadyInSection;
       detail = context.t.nothingToAdd;
     } else {
-      title = context.t.afterImport(p.result, p.limit);
+      title = context.t.afterImport(p.result);
       final parts = [
         if (p.updated > 0) context.t.updatedCount(p.updated),
         if (p.toTrash > 0)
@@ -272,17 +268,17 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
       ];
       detail = parts.isEmpty ? null : parts.join(' · ');
     }
-    final fg = ok ? c.success : c.danger;
+    final fg = c.success;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: ok ? c.successBg : c.dangerBg,
+        color: c.successBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(ok ? Icons.check : Icons.error, color: fg, size: 22),
+          Icon(Icons.check, color: fg, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -311,7 +307,6 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
         (_name.text.trim().isNotEmpty && !_nameTaken);
     final canImport =
         p != null &&
-        p.fits &&
         nameOk &&
         !_busy &&
         (p.added > 0 || p.updated > 0 || p.toTrash > 0);
@@ -445,13 +440,6 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (p != null && !p.fits) ...[
-                  FilledButton.tonal(
-                    onPressed: () => _message(context.t.purchaseComing),
-                    child: Text(context.t.discoverPro),
-                  ),
-                  const SizedBox(height: 10),
-                ],
                 FilledButton(
                   onPressed: canImport ? _import : null,
                   child: Text(

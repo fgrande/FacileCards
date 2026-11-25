@@ -373,26 +373,8 @@ abstract class AppLocalizations {
   /// No description provided for @freeVersionCount.
   ///
   /// In it, this message translates to:
-  /// **'{count} di {limit} tessere · con annunci'**
-  String freeVersionCount(int count, int limit);
-
-  /// No description provided for @purchaseComing.
-  ///
-  /// In it, this message translates to:
-  /// **'L\'acquisto arriverà con la pubblicazione su Google Play.'**
-  String get purchaseComing;
-
-  /// No description provided for @upgradePro.
-  ///
-  /// In it, this message translates to:
-  /// **'Passa a Pro · 2,00 €  →'**
-  String get upgradePro;
-
-  /// No description provided for @restorePurchase.
-  ///
-  /// In it, this message translates to:
-  /// **'Ripristina acquisto'**
-  String get restorePurchase;
+  /// **'{count, plural, =1{1 tessera} other{{count} tessere}} · con annunci'**
+  String freeVersionCount(int count);
 
   /// No description provided for @settingsOther.
   ///
@@ -477,12 +459,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{count, plural, =1{1 tessera} other{{count} tessere}}'**
   String cardCount(int count);
-
-  /// No description provided for @countOfLimit.
-  ///
-  /// In it, this message translates to:
-  /// **'{count} di {limit}'**
-  String countOfLimit(int count, int limit);
 
   /// No description provided for @expiryTooltip.
   ///
@@ -825,12 +801,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Per la tessera generica serve la foto del fronte.'**
   String get genericNeedsFront;
-
-  /// No description provided for @limitReached.
-  ///
-  /// In it, this message translates to:
-  /// **'Hai raggiunto il limite di {limit} tessere.'**
-  String limitReached(int limit);
 
   /// No description provided for @saving.
   ///
@@ -1342,12 +1312,6 @@ abstract class AppLocalizations {
   /// **'Le tue tessere esistono solo su questo telefono.\n{when}'**
   String onlyOnThisPhone(String when);
 
-  /// No description provided for @noRoomLimit.
-  ///
-  /// In it, this message translates to:
-  /// **'Non c\'è posto: hai raggiunto il limite di {limit} tessere.'**
-  String noRoomLimit(int limit);
-
   /// No description provided for @deleteForeverQuestion.
   ///
   /// In it, this message translates to:
@@ -1389,12 +1353,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Recupera «{name}» in…'**
   String restoreInto(String name);
-
-  /// No description provided for @afterRestore.
-  ///
-  /// In it, this message translates to:
-  /// **'Dopo il recupero: {count} di {limit} tessere'**
-  String afterRestore(int count, int limit);
 
   /// No description provided for @restore.
   ///
@@ -1557,12 +1515,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Scegli un nome che non sia già usato da un\'altra sezione.'**
   String get transferSectionNameTaken;
-
-  /// No description provided for @transferLimitExceeded.
-  ///
-  /// In it, this message translates to:
-  /// **'Con questa importazione saresti a {count} tessere: il limite è {limit}.'**
-  String transferLimitExceeded(int count, int limit);
 
   /// No description provided for @passwordTooShort.
   ///
@@ -1954,12 +1906,6 @@ abstract class AppLocalizations {
   /// **'Stai per sostituire {cards} con {incoming}.'**
   String aboutToReplace(String cards, int incoming);
 
-  /// No description provided for @trashNotCounted.
-  ///
-  /// In it, this message translates to:
-  /// **'Le tessere del cestino non contano per il limite.'**
-  String get trashNotCounted;
-
   /// No description provided for @replaceXWithY.
   ///
   /// In it, this message translates to:
@@ -1977,18 +1923,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Importazione non riuscita: le tue tessere non sono cambiate.'**
   String get importFailedNothingChanged;
-
-  /// No description provided for @wouldBeOverLimit.
-  ///
-  /// In it, this message translates to:
-  /// **'Con questa scelta saresti a {count} tessere'**
-  String wouldBeOverLimit(int count);
-
-  /// No description provided for @freeLimitDetail.
-  ///
-  /// In it, this message translates to:
-  /// **'Il limite della versione gratuita è {limit}.\nCon Pro non hai limiti.'**
-  String freeLimitDetail(int limit);
 
   /// No description provided for @allAlreadyPresent.
   ///
@@ -2017,8 +1951,8 @@ abstract class AppLocalizations {
   /// No description provided for @afterImport.
   ///
   /// In it, this message translates to:
-  /// **'Dopo l\'importazione: {count} di {limit} tessere'**
-  String afterImport(int count, int limit);
+  /// **'Dopo l\'importazione: {count, plural, =1{1 tessera} other{{count} tessere}}'**
+  String afterImport(int count);
 
   /// No description provided for @replacesXWithY.
   ///
@@ -2085,12 +2019,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Se hai già ripristinato i dati con il backup di Android, le tessere già presenti non vengono duplicate.'**
   String get androidBackupNote;
-
-  /// No description provided for @discoverPro.
-  ///
-  /// In it, this message translates to:
-  /// **'Scopri Pro · 2,00 €'**
-  String get discoverPro;
 
   /// No description provided for @importButton.
   ///

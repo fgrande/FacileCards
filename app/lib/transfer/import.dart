@@ -1,6 +1,5 @@
 // "Importa tutto" (videate 29–31, decisione 102): unisce un backup alle
-// tessere esistenti oppure le sostituisce. Il limite si calcola sul risultato
-// (decisione 17): se lo supera, non si importa niente.
+// tessere esistenti oppure le sostituisce.
 
 import 'package:drift/drift.dart';
 
@@ -19,7 +18,6 @@ class ImportPlan {
     required this.added,
     required this.alreadyPresent,
     required this.result,
-    required this.limit,
     this.toTrash = 0,
   });
 
@@ -43,9 +41,6 @@ class ImportPlan {
   /// Sostituisci: tessere attuali che finiscono davvero nel cestino (quelle
   /// presenti anche nel file restano in uso, con i dati del file).
   final int toTrash;
-  final int limit;
-
-  bool get fits => result <= limit;
 }
 
 Future<ImportPlan> planImport(
@@ -67,7 +62,6 @@ Future<ImportPlan> planImport(
       added: incoming,
       alreadyPresent: 0,
       result: incoming,
-      limit: AppDatabase.freeCardLimit,
     );
   }
   final present = content.cards.where((c) => active.contains(c.id)).length;
@@ -78,27 +72,16 @@ Future<ImportPlan> planImport(
     added: incoming - present,
     alreadyPresent: present,
     result: active.length + incoming - present,
-    limit: AppDatabase.freeCardLimit,
   );
 }
 
 /// Importa. Restituisce il numero di tessere aggiunte (o rimesse in uso).
-/// Lancia [TransferException] se il risultato supererebbe il limite.
 Future<int> runImport(
   AppDatabase db,
   PhotoStore store,
   ArchiveContent content,
   ImportMode mode,
 ) async {
-  final plan = await planImport(db, content, mode);
-  if (!plan.fits) {
-    throw TransferException(
-      TransferProblem.limitExceeded,
-      count: plan.result,
-      limit: plan.limit,
-    );
-  }
-
   final existing = {for (final c in await db.select(db.cards).get()) c.id: c};
   final knownTypes = (await db.select(db.cardTypes).get())
       .map((t) => t.id)

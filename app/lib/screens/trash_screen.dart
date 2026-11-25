@@ -16,7 +16,6 @@ Future<bool> recoverCardWithChoice(
 ) async {
   final visible = await d.visibleSections();
   final counts = await d.sectionCounts();
-  final total = await d.activeCardCount();
   final original = await (d.select(
     d.sections,
   )..where((s) => s.id.equals(card.sectionId))).getSingleOrNull();
@@ -52,17 +51,11 @@ Future<bool> recoverCardWithChoice(
       cardName: card.name,
       options: options,
       selected: preselected!,
-      activeTotal: total,
     ),
   );
   if (chosen == null) return false;
-  final ok = await d.recoverCard(card.id, chosen);
-  if (!ok && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr.noRoomLimit(db.AppDatabase.freeCardLimit))),
-    );
-  }
-  return ok;
+  await d.recoverCard(card.id, chosen);
+  return true;
 }
 
 /// Videata 13: il cestino. Le tessere restano 30 giorni e si possono
@@ -204,13 +197,11 @@ class _RecoverSheet extends StatefulWidget {
     required this.cardName,
     required this.options,
     required this.selected,
-    required this.activeTotal,
   });
 
   final String cardName;
   final List<_Option> options;
   final String selected;
-  final int activeTotal;
 
   @override
   State<_RecoverSheet> createState() => _RecoverSheetState();
@@ -222,8 +213,6 @@ class _RecoverSheetState extends State<_RecoverSheet> {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
-    final after = widget.activeTotal + 1;
-    final fits = after <= db.AppDatabase.freeCardLimit;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -254,40 +243,7 @@ class _RecoverSheetState extends State<_RecoverSheet> {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: fits ? c.successBg : c.warnBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    fits ? Icons.check : Icons.warning_amber_rounded,
-                    color: fits ? c.success : c.warn,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      fits
-                          ? context.t.afterRestore(
-                              after,
-                              db.AppDatabase.freeCardLimit,
-                            )
-                          : context.t.limitReached(
-                              db.AppDatabase.freeCardLimit,
-                            ),
-                      style: TextStyle(
-                        color: fits ? c.success : c.warn,
-                        fontSize: 13.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 6),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(_selected),
               child: Text(context.t.restore),

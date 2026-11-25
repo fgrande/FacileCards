@@ -183,7 +183,7 @@ Future<bool> openArchiveFile(
 }
 
 /// Videate 29, 30, 31: riepilogo dell'archivio, unisci o sostituisci, esito
-/// sul limite (decisione 102).
+/// (decisione 102).
 class ImportScreen extends StatefulWidget {
   const ImportScreen({
     super.key,
@@ -274,18 +274,6 @@ class _ImportScreenState extends State<ImportScreen> {
                 _trashText(p),
                 style: TextStyle(color: c.muted, fontSize: 14),
               ),
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: c.warnBg,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  context.t.trashNotCounted,
-                  style: TextStyle(color: c.warn, fontSize: 13),
-                ),
-              ),
               const SizedBox(height: 16),
               FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: c.danger),
@@ -306,7 +294,7 @@ class _ImportScreenState extends State<ImportScreen> {
 
   Future<void> _import() async {
     final p = _plan;
-    if (p == null || !p.fits) return;
+    if (p == null) return;
     if (_mode == ImportMode.replace &&
         p.current > 0 &&
         !await _confirmReplace(p)) {
@@ -396,15 +384,11 @@ class _ImportScreenState extends State<ImportScreen> {
     );
   }
 
-  /// Esito sul limite: verde se ci sta, rosso se no (videata 30).
+  /// Esito dell'importazione (videata 30).
   Widget _outcome(AppColors c, ImportPlan p) {
-    final ok = p.fits;
     final String title;
     final String detail;
-    if (!ok) {
-      title = context.t.wouldBeOverLimit(p.result);
-      detail = context.t.freeLimitDetail(p.limit);
-    } else if (p.mode == ImportMode.merge && p.added == 0) {
+    if (p.mode == ImportMode.merge && p.added == 0) {
       title = context.t.allAlreadyPresent;
       detail = context.t.nothingToAdd;
     } else if (p.mode == ImportMode.merge) {
@@ -412,22 +396,22 @@ class _ImportScreenState extends State<ImportScreen> {
           ? context.t.addsNew(p.added)
           : '${context.t.addsNew(p.added)} '
                 '(${context.t.alreadyPresent(p.alreadyPresent)})';
-      detail = context.t.afterImport(p.result, p.limit);
+      detail = context.t.afterImport(p.result);
     } else {
       title = context.t.replacesXWithY(_cards(p.current), p.incoming);
-      detail = context.t.afterImport(p.result, p.limit);
+      detail = context.t.afterImport(p.result);
     }
-    final fg = ok ? c.success : c.danger;
+    final fg = c.success;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: ok ? c.successBg : c.dangerBg,
+        color: c.successBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(ok ? Icons.check : Icons.error, color: fg, size: 22),
+          Icon(Icons.check, color: fg, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -453,7 +437,6 @@ class _ImportScreenState extends State<ImportScreen> {
     final sections = content.sections.length;
     final canImport =
         p != null &&
-        p.fits &&
         !_busy &&
         !(p.mode == ImportMode.merge && p.added == 0);
     return PopScope(
@@ -543,17 +526,10 @@ class _ImportScreenState extends State<ImportScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (p != null && !p.fits) ...[
-                  FilledButton.tonal(
-                    onPressed: () => _message(context.t.purchaseComing),
-                    child: Text(context.t.discoverPro),
-                  ),
-                  const SizedBox(height: 10),
-                ],
                 FilledButton(
                   onPressed: canImport ? _import : null,
                   child: Text(
-                    p == null || !p.fits
+                    p == null
                         ? context.t.importButton
                         : p.mode == ImportMode.merge
                         ? (p.added == 0

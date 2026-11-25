@@ -171,19 +171,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get freeVersion => 'Versione gratuita';
 
   @override
-  String freeVersionCount(int count, int limit) {
-    return '$count di $limit tessere · con annunci';
+  String freeVersionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tessere',
+      one: '1 tessera',
+    );
+    return '$_temp0 · con annunci';
   }
-
-  @override
-  String get purchaseComing =>
-      'L\'acquisto arriverà con la pubblicazione su Google Play.';
-
-  @override
-  String get upgradePro => 'Passa a Pro · 2,00 €  →';
-
-  @override
-  String get restorePurchase => 'Ripristina acquisto';
 
   @override
   String get settingsOther => 'Altro';
@@ -240,11 +236,6 @@ class AppLocalizationsIt extends AppLocalizations {
       one: '1 tessera',
     );
     return '$_temp0';
-  }
-
-  @override
-  String countOfLimit(int count, int limit) {
-    return '$count di $limit';
   }
 
   @override
@@ -435,11 +426,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get genericNeedsFront =>
       'Per la tessera generica serve la foto del fronte.';
-
-  @override
-  String limitReached(int limit) {
-    return 'Hai raggiunto il limite di $limit tessere.';
-  }
 
   @override
   String get saving => 'Salvataggio…';
@@ -732,11 +718,6 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String noRoomLimit(int limit) {
-    return 'Non c\'è posto: hai raggiunto il limite di $limit tessere.';
-  }
-
-  @override
   String deleteForeverQuestion(String name) {
     return 'Eliminare «$name» per sempre?';
   }
@@ -763,11 +744,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String restoreInto(String name) {
     return 'Recupera «$name» in…';
-  }
-
-  @override
-  String afterRestore(int count, int limit) {
-    return 'Dopo il recupero: $count di $limit tessere';
   }
 
   @override
@@ -854,11 +830,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get transferSectionNameTaken =>
       'Scegli un nome che non sia già usato da un\'altra sezione.';
-
-  @override
-  String transferLimitExceeded(int count, int limit) {
-    return 'Con questa importazione saresti a $count tessere: il limite è $limit.';
-  }
 
   @override
   String passwordTooShort(int min) {
@@ -1127,10 +1098,6 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get trashNotCounted =>
-      'Le tessere del cestino non contano per il limite.';
-
-  @override
   String replaceXWithY(int current, int incoming) {
     return 'Sostituisci $current con $incoming';
   }
@@ -1149,16 +1116,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get importFailedNothingChanged =>
       'Importazione non riuscita: le tue tessere non sono cambiate.';
-
-  @override
-  String wouldBeOverLimit(int count) {
-    return 'Con questa scelta saresti a $count tessere';
-  }
-
-  @override
-  String freeLimitDetail(int limit) {
-    return 'Il limite della versione gratuita è $limit.\nCon Pro non hai limiti.';
-  }
 
   @override
   String get allAlreadyPresent => 'Tutte le tessere del file sono già presenti';
@@ -1189,8 +1146,14 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String afterImport(int count, int limit) {
-    return 'Dopo l\'importazione: $count di $limit tessere';
+  String afterImport(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tessere',
+      one: '1 tessera',
+    );
+    return 'Dopo l\'importazione: $_temp0';
   }
 
   @override
@@ -1235,9 +1198,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get androidBackupNote =>
       'Se hai già ripristinato i dati con il backup di Android, le tessere già presenti non vengono duplicate.';
-
-  @override
-  String get discoverPro => 'Scopri Pro · 2,00 €';
 
   @override
   String get importButton => 'Importa';

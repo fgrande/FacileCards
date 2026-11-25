@@ -266,7 +266,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
               decoration: BoxDecoration(
                 color: c.infoBg,
                 borderRadius: BorderRadius.circular(16),
@@ -284,39 +284,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    context.t.freeVersionCount(
-                      _count,
-                      db.AppDatabase.freeCardLimit,
-                    ),
+                    context.t.freeVersionCount(_count),
                     style: TextStyle(color: c.infoText, fontSize: 13.5),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          textStyle: const TextStyle(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        onPressed: () => _message(context.t.purchaseComing),
-                        child: Text(context.t.upgradePro),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: c.infoText,
-                          textStyle: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        onPressed: () => _message(context.t.purchaseComing),
-                        child: Text(context.t.restorePurchase),
-                      ),
-                    ],
                   ),
                 ],
               ),

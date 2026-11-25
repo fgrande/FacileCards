@@ -38,9 +38,9 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 11 | [Importa sezione](videate/11-importa-sezione.svg) | Anteprima del file, tre destinazioni (se già ricevuta, proposta "Sostituisci"), esito sul limite di 50 | 16, 17, 18, 79, 80, 113 |
 | 12 | [Sezioni](videate/12-sezioni.svg) | Sezioni con condivisione e menu; nuova sezione | 104, 114 |
 | 12b | [Dati](videate/12b-dati.svg) | Esporta tutto, Importa da file, promemoria "Ultima copia", cestino | 19, 26, 114 |
-| 13 | [Cestino: recupero](videate/13-cestino-recupero.svg) | Scelta della sezione di destinazione, sezione eliminata che viene ricreata, esito sul limite | 20, 27, 28 |
-| 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale (anche l'app per pagare, anche nella 42), tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa | 36, 65, 74, 118 |
-| 15 | [Limite raggiunto](videate/15-limite-versione-pro.svg) | Proposta della versione Pro a 2 € | 13, 14, 98 |
+| 13 | [Cestino: recupero](videate/13-cestino-recupero.svg) | Scelta della sezione di destinazione, sezione eliminata che viene ricreata, esito sul limite (**il riquadro sul limite è superato dalla decisione 123**) | 20, 27, 28 |
+| 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale (anche l'app per pagare, anche nella 42), tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa. **Con la decisione 123** il riquadro della versione mostra solo il numero di tessere, senza Pro né "Ripristina acquisto" | 36, 65, 74, 118 |
+| 15 | [Limite raggiunto](videate/15-limite-versione-pro.svg) | Proposta della versione Pro a 2 €. **Superata dalla decisione 123** (niente limite né Pro) | 13, 14, 98 |
 | 16 | [Scorciatoie in Home](videate/16-scorciatoie-home.svg) | Schermata iniziale del telefono con icone che aprono direttamente una tessera | 89 |
 | 17 | [Elimina: scorrimento](videate/17-elimina-scorrimento.svg) | Riga dell'elenco trascinata verso sinistra, con il pulsante di eliminazione | 75 |
 | 18 | [Elimina: conferma](videate/18-elimina-conferma.svg) | Scelta tra cestino ed eliminazione definitiva, raggiungibile sia dallo scorrimento sia dal cestino nella barra della tessera | 20, 75 |
@@ -54,9 +54,9 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 26 | [Foto: retro](videate/26-foto-retro.svg) | Lo stesso visualizzatore sul retro | 101 |
 | 27 | [Foto: retro mancante](videate/27-foto-retro-mancante.svg) | Pagina con il pulsante per aggiungere la foto del retro | 101 |
 | 28 | [Tessera senza foto](videate/28-tessera-senza-foto.svg) | Al posto della miniatura, il pulsante "Aggiungi foto" | 101 |
-| 29 | [Importa tutto](videate/29-importa-tutto.svg) | Riepilogo dell'archivio, scelta tra unire e sostituire tutto, esito sul limite | 17, 18, 102 |
-| 30 | [Importa tutto: oltre il limite](videate/30-importa-tutto-limite.svg) | Messaggio rosso, invito a Pro, pulsante disattivato | 15, 102 |
-| 31 | [Importa tutto: conferma della sostituzione](videate/31-importa-tutto-conferma.svg) | Seconda conferma, con i numeri e il cestino | 102 |
+| 29 | [Importa tutto](videate/29-importa-tutto.svg) | Riepilogo dell'archivio, scelta tra unire e sostituire tutto, esito (**senza limite dalla decisione 123**) | 17, 18, 102 |
+| 30 | [Importa tutto: oltre il limite](videate/30-importa-tutto-limite.svg) | Messaggio rosso, invito a Pro, pulsante disattivato. **Superata dalla decisione 123** | 15, 102 |
+| 31 | [Importa tutto: conferma della sostituzione](videate/31-importa-tutto-conferma.svg) | Seconda conferma, con i numeri e il cestino (senza il riquadro sul limite, decisione 123) | 102 |
 | 32 | [Esporta tutto: avviso](videate/32-esporta-tutto-avviso.svg) | Primo passaggio: cosa contiene il file e come custodirlo | 64, 68, 103 |
 | 33 | [Esporta tutto: conferma](videate/33-esporta-tutto-conferma.svg) | Casella "Ho capito", password facoltativa con ripetizione, salva sul telefono o condividi | 103 |
 | 34 | [Importa: file protetto](videate/34-importa-password.svg) | Richiesta della password | 103 |
@@ -67,10 +67,10 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 39 | [Elimina foto](videate/39-elimina-foto.svg) | Conferma dentro il visualizzatore | 101 |
 | 40 | [Consenso agli annunci: presentazione](videate/40-consenso-presentazione.svg) | Schermata nostra, prima di quella di Google: perché gli annunci, e cosa cambia se non si acconsente | 105 |
 | 41 | [Consenso agli annunci: finestra di Google](videate/41-consenso-finestra-google.svg) | Rappresentazione indicativa: testo e aspetto reali li fornisce Google (UMP) | 105 |
-| 42 | [Impostazioni, versione Pro](videate/42-impostazioni-pro.svg) | "Pro attivo · grazie!"; senza la voce sul consenso agli annunci | 106 |
-| 43 | [Acquisto in elaborazione](videate/43-acquisto-in-elaborazione.svg) | Pagamento non ancora confermato da Google Play | 106 |
-| 44 | [Tessera, versione Pro](videate/44-tessera-pro.svg) | Senza banner; il codice non viene ingrandito | 106 |
-| 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende | 106 |
+| 42 | [Impostazioni, versione Pro](videate/42-impostazioni-pro.svg) | "Pro attivo · grazie!"; senza la voce sul consenso agli annunci. **Superata dalla decisione 123** | 106 |
+| 43 | [Acquisto in elaborazione](videate/43-acquisto-in-elaborazione.svg) | Pagamento non ancora confermato da Google Play. **Superata dalla decisione 123** | 106 |
+| 44 | [Tessera, versione Pro](videate/44-tessera-pro.svg) | Senza banner; il codice non viene ingrandito. **Superata dalla decisione 123** | 106 |
+| 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende. **Superata dalla decisione 123** | 106 |
 | 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna" e le app per pagare trovate sul telefono (elenco nostro e app che pagano con NFC), con le icone vere; "Manca la tua app? Chiedi di aggiungerla" | 36, 118 |
 | 47 | [Scelta della lingua](videate/47-scelta-lingua.svg) | Finestra aperta dalla configurazione iniziale (1) e dalle Impostazioni (14): bandiera, nome della lingua nella lingua stessa, spunta su quella attuale; la lingua scelta si mostra con la sua bandiera anche nel campo e nella riga. Per l'inglese la bandiera del Regno Unito | 35 |
 | 48 | [Richiesta di una tessera](videate/48-richiesta-tessera.svg) | Aperta dalle Impostazioni (14, "Richiedi una tessera mancante") e da Nuova tessera (7), dove il collegamento sta sempre in fondo ai negozi ("Non trovi il tuo negozio? Chiedi di aggiungerlo"; dopo una ricerca "Non trovi «…»?", col nome cercato già scritto). Nome del negozio; lettura facoltativa del codice con "Scansiona" (senza "Inserisci a mano") o "Da galleria", che mostra solo formato e numero di caratteri; "Scrivi l'email" apre l'app di posta con l'email già compilata | 36, 120 |

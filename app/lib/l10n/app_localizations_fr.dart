@@ -172,19 +172,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get freeVersion => 'Version gratuite';
 
   @override
-  String freeVersionCount(int count, int limit) {
-    return '$count sur $limit cartes · avec publicités';
+  String freeVersionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cartes',
+      one: '$count carte',
+    );
+    return '$_temp0 · avec publicités';
   }
-
-  @override
-  String get purchaseComing =>
-      'L\'achat sera disponible lors de la publication sur Google Play.';
-
-  @override
-  String get upgradePro => 'Passer à Pro · 2,00 €  →';
-
-  @override
-  String get restorePurchase => 'Restaurer l\'achat';
 
   @override
   String get settingsOther => 'Autre';
@@ -241,11 +237,6 @@ class AppLocalizationsFr extends AppLocalizations {
       one: '$count carte',
     );
     return '$_temp0';
-  }
-
-  @override
-  String countOfLimit(int count, int limit) {
-    return '$count sur $limit';
   }
 
   @override
@@ -442,11 +433,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get genericNeedsFront =>
       'Une carte générique nécessite une photo du recto.';
-
-  @override
-  String limitReached(int limit) {
-    return 'Vous avez atteint la limite de $limit cartes.';
-  }
 
   @override
   String get saving => 'Enregistrement…';
@@ -740,11 +726,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String noRoomLimit(int limit) {
-    return 'Plus de place : vous avez atteint la limite de $limit cartes.';
-  }
-
-  @override
   String deleteForeverQuestion(String name) {
     return 'Supprimer « $name » définitivement ?';
   }
@@ -771,11 +752,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String restoreInto(String name) {
     return 'Récupérer « $name » dans…';
-  }
-
-  @override
-  String afterRestore(int count, int limit) {
-    return 'Après récupération : $count sur $limit cartes';
   }
 
   @override
@@ -862,11 +838,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get transferSectionNameTaken =>
       'Choisissez un nom qui n\'est pas déjà utilisé par une autre section.';
-
-  @override
-  String transferLimitExceeded(int count, int limit) {
-    return 'Avec cette importation, vous auriez $count cartes : la limite est de $limit.';
-  }
 
   @override
   String passwordTooShort(int min) {
@@ -1136,10 +1107,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get trashNotCounted =>
-      'Les cartes de la corbeille ne comptent pas dans la limite.';
-
-  @override
   String replaceXWithY(int current, int incoming) {
     return 'Remplacer $current par $incoming';
   }
@@ -1158,16 +1125,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get importFailedNothingChanged =>
       'Échec de l\'importation : vos cartes n\'ont pas changé.';
-
-  @override
-  String wouldBeOverLimit(int count) {
-    return 'Avec ce choix, vous auriez $count cartes';
-  }
-
-  @override
-  String freeLimitDetail(int limit) {
-    return 'La limite de la version gratuite est de $limit.\nAvec Pro, aucune limite.';
-  }
 
   @override
   String get allAlreadyPresent =>
@@ -1199,8 +1156,14 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String afterImport(int count, int limit) {
-    return 'Après l\'importation : $count sur $limit cartes';
+  String afterImport(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cartes',
+      one: '$count carte',
+    );
+    return 'Après l\'importation : $_temp0';
   }
 
   @override
@@ -1245,9 +1208,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get androidBackupNote =>
       'Si vous avez déjà restauré vos données avec la sauvegarde Android, les cartes déjà présentes ne sont pas dupliquées.';
-
-  @override
-  String get discoverPro => 'Découvrir Pro · 2,00 €';
 
   @override
   String get importButton => 'Importer';

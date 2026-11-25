@@ -200,9 +200,6 @@ class AppDatabase extends _$AppDatabase {
     return true;
   }
 
-  /// Limite della versione gratuita (la versione Pro non ha limite).
-  static const freeCardLimit = 50;
-
   Future<int> activeCardCount() async =>
       (await (select(cards)..where((c) => c.deletedAt.isNull())).get()).length;
 
@@ -315,9 +312,8 @@ class AppDatabase extends _$AppDatabase {
       );
 
   /// Recupera una tessera dal cestino nella sezione indicata (se era nascosta
-  /// la sezione torna visibile). Restituisce false se non c'è posto nel limite.
-  Future<bool> recoverCard(String cardId, String sectionId) async {
-    if (await activeCardCount() >= freeCardLimit) return false;
+  /// la sezione torna visibile).
+  Future<void> recoverCard(String cardId, String sectionId) async {
     await transaction(() async {
       await (update(sections)..where((s) => s.id.equals(sectionId))).write(
         const SectionsCompanion(hidden: Value(false)),
@@ -329,7 +325,6 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
     });
-    return true;
   }
 
   /// Elimina definitivamente una tessera (e i riferimenti alle sue foto).

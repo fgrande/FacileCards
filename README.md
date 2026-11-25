@@ -1,6 +1,6 @@
 # FacileCards
 
-App Android per tenere sul telefono le tessere (fedeltà, biblioteca, palestra…) con il loro codice a barre o QR, pronte da mostrare alla cassa. Funziona tutta in locale: nessun server, nessun account, nessun cloud. La versione gratuita mostra annunci e ha un limite di 50 tessere; l'acquisto una tantum "Pro" li toglie.
+App Android per tenere sul telefono le tessere (fedeltà, biblioteca, palestra…) con il loro codice a barre o QR, pronte da mostrare alla cassa. Funziona tutta in locale: nessun server, nessun account, nessun cloud. È gratuita, con annunci, e senza limite di tessere.
 
 Questo repository è privato e contiene tutto il progetto.
 

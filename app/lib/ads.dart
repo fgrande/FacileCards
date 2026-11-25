@@ -41,8 +41,8 @@ class Ads {
   /// paese) e libreria di Google avviata.
   final ready = ValueNotifier<bool>(false);
 
-  /// Falso con la versione Pro (quando ci sarà l'acquisto, decisione 98):
-  /// niente spazio riservato e niente annunci.
+  /// Falso solo nella modalità screenshot: niente spazio riservato e niente
+  /// annunci.
   final enabled = ValueNotifier<bool>(!screenshotMode);
 
   bool _starting = false;
@@ -178,7 +178,7 @@ class _AdStripState extends State<AdStrip> {
 }
 
 /// Lo spazio del banner in fondo alla schermata, con il margine di sistema;
-/// sparisce con la versione Pro.
+/// sparisce solo nella modalità screenshot.
 class AdFooter extends StatelessWidget {
   const AdFooter({super.key, required this.unitId});
 

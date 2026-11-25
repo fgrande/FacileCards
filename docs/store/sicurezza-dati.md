@@ -12,7 +12,7 @@ Risposte per **Contenuti dell'app → Sicurezza dei dati** nella Play Console. P
   - identificatori del dispositivo (ID pubblicità, ID del gruppo di app).
 
   Tutto è cifrato in transito (TLS).
-- **Acquisti:** l'acquisto Pro non c'è ancora. Quando arriverà, il pagamento lo gestisce Google Play e lo sviluppatore non riceve dati di pagamento; il modulo andrà riletto comunque.
+- **Acquisti:** nessuno. La versione Pro a pagamento è stata tolta (decisione 123): l'app è solo gratuita, con annunci.
 
 ## Risposte, schermata per schermata
 
@@ -48,4 +48,4 @@ Tutto il resto (nome, email, foto, file, contatti, posizione esatta, informazion
 ## Da ricontrollare
 
 - A ogni aggiornamento della libreria degli annunci: la pagina di Google può cambiare.
-- Quando arriverà l'acquisto Pro e, se si farà, la richiesta di tipologie via email (decisione 36).
+- Se si farà la richiesta di tipologie via email (decisione 36).

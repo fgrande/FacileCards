@@ -279,10 +279,7 @@ class _CardListScreenState extends State<CardListScreen> {
         widgets.add(
           GroupHeader(
             context.t.allCards,
-            trailing: context.t.countOfLimit(
-              all.length,
-              db.AppDatabase.freeCardLimit,
-            ),
+            trailing: context.t.cardCount(all.length),
           ),
         );
         widgets.add(TileGroup(children: [for (final c in rest) _row(c, now)]));

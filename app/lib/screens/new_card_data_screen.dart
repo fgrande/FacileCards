@@ -54,7 +54,6 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
 
   List<db.Section> _sections = const [];
   db.Section? _section;
-  int _count = 0;
   late DateTime? _expiresOn = widget.card?.expiresOn;
   late bool _favorite = widget.card?.favorite ?? false;
   // Formato del codice: quello letto (fotocamera o galleria) o, modificando,
@@ -127,7 +126,6 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
   Future<void> _load() async {
     final d = widget.database;
     final sections = await d.visibleSections();
-    final count = await d.activeCardCount();
     final card = widget.card;
     final store = await PhotoStore.instance;
     final saved = card == null
@@ -150,7 +148,6 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
           orElse: () => sections.first,
         ),
       );
-      _count = count;
       _store = store;
       _savedPhotos = saved;
     });
@@ -488,9 +485,6 @@ class _NewCardDataScreenState extends State<NewCardDataScreen> {
       return _message(context.t.genericNeedsFront);
     }
     if (section == null) return;
-    if (!_editing && _count >= db.AppDatabase.freeCardLimit) {
-      return _message(context.t.limitReached(db.AppDatabase.freeCardLimit));
-    }
     // Il formato si salva sempre sulla singola tessera. Scritto a mano e senza
     // formato indicato dalla tipologia: si usa Code 128, che accetta testo libero.
     final format = _scannedFormat ?? widget.type.codeFormat ?? 'code128';

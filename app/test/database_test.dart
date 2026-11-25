@@ -74,20 +74,21 @@ void main() {
     expect((await db.visibleSections()).map((s) => s.name), ['Generale']);
     expect(await db.createSection('Famiglia'), isTrue); // il nome è tornato libero
     // si recupera nella sezione eliminata, che torna visibile
-    expect(await db.recoverCard(id, fam.id), isTrue);
+    await db.recoverCard(id, fam.id);
     expect(await db.activeCardCount(), 1);
     expect((await db.select(db.sections).get()).where((s) => s.id == fam.id).single.hidden, isFalse);
   });
 
-  test('il recupero è bloccato al limite', () async {
+  test('nessun limite: si recupera anche con più di 50 tessere', () async {
     final gen = await db.defaultSection();
     final trashed = await addCard('Vecchia', gen.id);
     await db.moveCardToTrash(trashed);
-    for (var i = 0; i < AppDatabase.freeCardLimit; i++) {
+    for (var i = 0; i < 60; i++) {
       await addCard('T$i', gen.id);
     }
-    expect(await db.recoverCard(trashed, gen.id), isFalse);
-    expect(await db.trashCount(), 1);
+    await db.recoverCard(trashed, gen.id);
+    expect(await db.trashCount(), 0);
+    expect(await db.activeCardCount(), 61);
   });
 
   test('il cestino si svuota dopo 30 giorni e toglie le sezioni nascoste', () async {

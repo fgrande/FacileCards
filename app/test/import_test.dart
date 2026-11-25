@@ -116,20 +116,16 @@ void main() {
     expect(await db.trashCount(), 1);
   });
 
-  test('oltre il limite non si importa niente', () async {
+  test('nessun limite: si importa anche oltre 50 tessere', () async {
     for (var i = 0; i < 45; i++) {
       await addCard('T$i');
     }
     final content =
         backup([for (var i = 0; i < 10; i++) card('x$i', 'Nuova $i')]);
     final merge = await planImport(db, content, ImportMode.merge);
-    expect(merge.fits, isFalse);
     expect(merge.result, 55);
-    await expectLater(runImport(db, store, content, ImportMode.merge),
-        throwsA(isA<TransferException>()));
-    expect((await activeNames()).length, 45);
-    // Sostituendo invece si sta nel limite.
-    expect((await planImport(db, content, ImportMode.replace)).fits, isTrue);
+    await runImport(db, store, content, ImportMode.merge);
+    expect((await activeNames()).length, 55);
   });
 
   test('sezioni: la partenza va nella partenza, le altre si ritrovano o si creano',

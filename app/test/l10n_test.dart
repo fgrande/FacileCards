@@ -55,11 +55,12 @@ void main() {
   });
 
   test('i messaggi dei file si traducono quando si mostrano', () {
-    const e = TransferException(TransferProblem.limitExceeded,
-        count: 52, limit: 50);
-    expect(e.message, contains('52 tessere'));
+    const e = TransferException(TransferProblem.tooBig);
+    final italian = e.message;
+    expect(italian, tr.transferTooBig);
     setAppLanguage('en');
-    expect(e.message, contains('52 cards'));
+    expect(e.message, tr.transferTooBig);
+    expect(e.message, isNot(italian));
   });
 
   test('ogni lingua offerta ha nome e bandiera', () {

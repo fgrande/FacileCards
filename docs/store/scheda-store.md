@@ -54,7 +54,7 @@ CONDIVIDI E SALVA
 
 In italiano, inglese e francese, con tema chiaro e scuro.
 
-La versione gratuita contiene annunci e conserva fino a 50 tessere.
+FacileCards è gratuita e contiene annunci. Nessun limite al numero di tessere.
 
 FacileCards è un'app indipendente e non è affiliata, sponsorizzata né approvata dalle aziende citate. I nomi e i marchi appartengono ai rispettivi proprietari.
 
@@ -94,7 +94,7 @@ SHARE AND BACK UP
 
 In Italian, English and French, with light and dark themes.
 
-The free version contains ads and holds up to 50 cards.
+FacileCards is free and contains ads. No limit on the number of cards.
 
 FacileCards is an independent app and is not affiliated with, sponsored by or endorsed by the companies mentioned. All names and trademarks belong to their respective owners.
 
@@ -134,6 +134,6 @@ PARTAGER ET SAUVEGARDER
 
 En italien, anglais et français, avec thème clair et sombre.
 
-La version gratuite contient des publicités et conserve jusqu'à 50 cartes.
+FacileCards est gratuite et contient des publicités. Aucune limite au nombre de cartes.
 
 FacileCards est une application indépendante, non affiliée, sponsorisée ni approuvée par les entreprises citées. Les noms et marques appartiennent à leurs propriétaires respectifs.

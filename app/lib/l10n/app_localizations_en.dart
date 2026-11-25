@@ -170,19 +170,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get freeVersion => 'Free version';
 
   @override
-  String freeVersionCount(int count, int limit) {
-    return '$count of $limit cards · with ads';
+  String freeVersionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards',
+      one: '1 card',
+    );
+    return '$_temp0 · with ads';
   }
-
-  @override
-  String get purchaseComing =>
-      'Purchases will be available once the app is on Google Play.';
-
-  @override
-  String get upgradePro => 'Go Pro · €2.00  →';
-
-  @override
-  String get restorePurchase => 'Restore purchase';
 
   @override
   String get settingsOther => 'Other';
@@ -239,11 +235,6 @@ class AppLocalizationsEn extends AppLocalizations {
       one: '1 card',
     );
     return '$_temp0';
-  }
-
-  @override
-  String countOfLimit(int count, int limit) {
-    return '$count of $limit';
   }
 
   @override
@@ -439,11 +430,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get genericNeedsFront => 'A generic card needs a photo of the front.';
-
-  @override
-  String limitReached(int limit) {
-    return 'You\'ve reached the limit of $limit cards.';
-  }
 
   @override
   String get saving => 'Saving…';
@@ -734,11 +720,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String noRoomLimit(int limit) {
-    return 'No room: you\'ve reached the limit of $limit cards.';
-  }
-
-  @override
   String deleteForeverQuestion(String name) {
     return 'Delete “$name” forever?';
   }
@@ -765,11 +746,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String restoreInto(String name) {
     return 'Restore “$name” to…';
-  }
-
-  @override
-  String afterRestore(int count, int limit) {
-    return 'After restoring: $count of $limit cards';
   }
 
   @override
@@ -856,11 +832,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get transferSectionNameTaken =>
       'Choose a name not already used by another section.';
-
-  @override
-  String transferLimitExceeded(int count, int limit) {
-    return 'This import would bring you to $count cards: the limit is $limit.';
-  }
 
   @override
   String passwordTooShort(int min) {
@@ -1127,10 +1098,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get trashNotCounted =>
-      'Cards in the bin don\'t count towards the limit.';
-
-  @override
   String replaceXWithY(int current, int incoming) {
     return 'Replace $current with $incoming';
   }
@@ -1149,16 +1116,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get importFailedNothingChanged =>
       'Import failed: your cards have not changed.';
-
-  @override
-  String wouldBeOverLimit(int count) {
-    return 'With this choice you\'d have $count cards';
-  }
-
-  @override
-  String freeLimitDetail(int limit) {
-    return 'The free version\'s limit is $limit.\nWith Pro there\'s no limit.';
-  }
 
   @override
   String get allAlreadyPresent => 'All the cards in the file are already here';
@@ -1189,8 +1146,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String afterImport(int count, int limit) {
-    return 'After the import: $count of $limit cards';
+  String afterImport(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards',
+      one: '1 card',
+    );
+    return 'After the import: $_temp0';
   }
 
   @override
@@ -1235,9 +1198,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get androidBackupNote =>
       'If you\'ve already restored your data with Android backup, cards that are already here won\'t be duplicated.';
-
-  @override
-  String get discoverPro => 'Discover Pro · €2.00';
 
   @override
   String get importButton => 'Import';

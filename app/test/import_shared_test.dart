@@ -200,7 +200,7 @@ void main() {
   );
 
   test(
-    'tessera singola nella sezione scelta, oltre il limite rifiutata',
+    'tessera singola nella sezione scelta, anche oltre 50 tessere',
     () async {
       final gen = (await db.defaultSection()).id;
       final single = ArchiveContent(
@@ -227,7 +227,7 @@ void main() {
       expect(c.typeId, 'generic');
       expect(c.originId, 'z');
 
-      for (var i = 0; i < AppDatabase.freeCardLimit - 1; i++) {
+      for (var i = 0; i < 60; i++) {
         await db
             .into(db.cards)
             .insert(
@@ -259,17 +259,16 @@ void main() {
         SharedImportMode.merge,
         targetSectionId: gen,
       );
-      expect(plan.fits, isFalse);
-      await expectLater(
-        runSharedImport(
-          db,
-          store,
-          another,
-          SharedImportMode.merge,
-          targetSectionId: gen,
-        ),
-        throwsA(isA<TransferException>()),
+      expect(plan.added, 1);
+      expect(plan.result, 62);
+      await runSharedImport(
+        db,
+        store,
+        another,
+        SharedImportMode.merge,
+        targetSectionId: gen,
       );
+      expect((await cardsIn(gen)).length, 62);
     },
   );
 }

@@ -28,7 +28,6 @@ class SharedImportPlan {
     required this.toTrash,
     required this.skipped,
     required this.result,
-    required this.limit,
   });
 
   /// Tessere nuove.
@@ -45,9 +44,6 @@ class SharedImportPlan {
 
   /// Tessere attive a importazione finita.
   final int result;
-  final int limit;
-
-  bool get fits => result <= limit;
 }
 
 /// La sezione del telefono che è una copia ricevuta prima di quella nel file
@@ -93,7 +89,6 @@ Future<SharedImportPlan> planSharedImport(
   final types = await _knownTypes(db);
   String typeOf(ArchiveCard c) =>
       types.contains(c.typeId) ? c.typeId : 'generic';
-  final limit = AppDatabase.freeCardLimit;
 
   switch (mode) {
     case SharedImportMode.newSection:
@@ -104,7 +99,6 @@ Future<SharedImportPlan> planSharedImport(
         toTrash: 0,
         skipped: 0,
         result: current + n,
-        limit: limit,
       );
     case SharedImportMode.merge:
       final existing = await _activeIn(db, targetSectionId!);
@@ -127,7 +121,6 @@ Future<SharedImportPlan> planSharedImport(
         toTrash: 0,
         skipped: skipped,
         result: current + added,
-        limit: limit,
       );
     case SharedImportMode.replace:
       final existing = await _activeIn(db, targetSectionId!);
@@ -144,14 +137,12 @@ Future<SharedImportPlan> planSharedImport(
         toTrash: toTrash,
         skipped: 0,
         result: current + added - toTrash,
-        limit: limit,
       );
   }
 }
 
 /// Importa. Restituisce l'identificativo della sezione in cui sono andate le
-/// tessere. Lancia [TransferException] se il nome non va bene o se si
-/// supererebbe il limite.
+/// tessere. Lancia [TransferException] se il nome non va bene.
 Future<String> runSharedImport(
   AppDatabase db,
   PhotoStore store,
@@ -160,19 +151,6 @@ Future<String> runSharedImport(
   String? targetSectionId,
   String? newSectionName,
 }) async {
-  final plan = await planSharedImport(
-    db,
-    content,
-    mode,
-    targetSectionId: targetSectionId,
-  );
-  if (!plan.fits) {
-    throw TransferException(
-      TransferProblem.limitExceeded,
-      count: plan.result,
-      limit: plan.limit,
-    );
-  }
   final name = newSectionName?.trim() ?? '';
   if (mode == SharedImportMode.newSection &&
       (name.isEmpty || await db.sectionNameInUse(name))) {

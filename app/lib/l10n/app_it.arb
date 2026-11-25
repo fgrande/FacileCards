@@ -108,20 +108,14 @@
   "off": "Spento",
   "settingsVersion": "Versione",
   "freeVersion": "Versione gratuita",
-  "freeVersionCount": "{count} di {limit} tessere · con annunci",
+  "freeVersionCount": "{count, plural, =1{1 tessera} other{{count} tessere}} · con annunci",
   "@freeVersionCount": {
     "placeholders": {
       "count": {
         "type": "int"
-      },
-      "limit": {
-        "type": "int"
       }
     }
   },
-  "purchaseComing": "L'acquisto arriverà con la pubblicazione su Google Play.",
-  "upgradePro": "Passa a Pro · 2,00 €  →",
-  "restorePurchase": "Ripristina acquisto",
   "settingsOther": "Altro",
   "requestMissingCard": "Richiedi una tessera mancante",
   "privacyPolicy": "Informativa sulla privacy",
@@ -160,17 +154,6 @@
   "@cardCount": {
     "placeholders": {
       "count": {
-        "type": "int"
-      }
-    }
-  },
-  "countOfLimit": "{count} di {limit}",
-  "@countOfLimit": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "limit": {
         "type": "int"
       }
     }
@@ -288,14 +271,6 @@
   "enterCardName": "Scrivi il nome della tessera.",
   "enterCode": "Inserisci o scansiona il codice.",
   "genericNeedsFront": "Per la tessera generica serve la foto del fronte.",
-  "limitReached": "Hai raggiunto il limite di {limit} tessere.",
-  "@limitReached": {
-    "placeholders": {
-      "limit": {
-        "type": "int"
-      }
-    }
-  },
   "saving": "Salvataggio…",
   "name": "Nome",
   "code": "Codice",
@@ -474,14 +449,6 @@
       }
     }
   },
-  "noRoomLimit": "Non c'è posto: hai raggiunto il limite di {limit} tessere.",
-  "@noRoomLimit": {
-    "placeholders": {
-      "limit": {
-        "type": "int"
-      }
-    }
-  },
   "deleteForeverQuestion": "Eliminare «{name}» per sempre?",
   "@deleteForeverQuestion": {
     "placeholders": {
@@ -520,17 +487,6 @@
       }
     }
   },
-  "afterRestore": "Dopo il recupero: {count} di {limit} tessere",
-  "@afterRestore": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "limit": {
-        "type": "int"
-      }
-    }
-  },
   "restore": "Recupera",
   "sectionWillBeRecreated": "Sezione eliminata: verrà ricreata",
   "transferNotFacileCards": "Non è un file di FacileCards.",
@@ -558,17 +514,6 @@
   "transferBadDate": "Data non valida nel file.",
   "transferProtectedDamaged": "Il file protetto è rovinato.",
   "transferSectionNameTaken": "Scegli un nome che non sia già usato da un'altra sezione.",
-  "transferLimitExceeded": "Con questa importazione saresti a {count} tessere: il limite è {limit}.",
-  "@transferLimitExceeded": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "limit": {
-        "type": "int"
-      }
-    }
-  },
   "passwordTooShort": "Almeno {min} caratteri.",
   "@passwordTooShort": {
     "placeholders": {
@@ -761,7 +706,6 @@
       }
     }
   },
-  "trashNotCounted": "Le tessere del cestino non contano per il limite.",
   "replaceXWithY": "Sostituisci {current} con {incoming}",
   "@replaceXWithY": {
     "placeholders": {
@@ -782,22 +726,6 @@
     }
   },
   "importFailedNothingChanged": "Importazione non riuscita: le tue tessere non sono cambiate.",
-  "wouldBeOverLimit": "Con questa scelta saresti a {count} tessere",
-  "@wouldBeOverLimit": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "freeLimitDetail": "Il limite della versione gratuita è {limit}.\nCon Pro non hai limiti.",
-  "@freeLimitDetail": {
-    "placeholders": {
-      "limit": {
-        "type": "int"
-      }
-    }
-  },
   "allAlreadyPresent": "Tutte le tessere del file sono già presenti",
   "nothingToAdd": "Non c'è niente da aggiungere.",
   "addsNew": "{count, plural, =1{Aggiunge 1 tessera nuova} other{Aggiunge {count} tessere nuove}}",
@@ -816,13 +744,10 @@
       }
     }
   },
-  "afterImport": "Dopo l'importazione: {count} di {limit} tessere",
+  "afterImport": "Dopo l'importazione: {count, plural, =1{1 tessera} other{{count} tessere}}",
   "@afterImport": {
     "placeholders": {
       "count": {
-        "type": "int"
-      },
-      "limit": {
         "type": "int"
       }
     }
@@ -869,7 +794,6 @@
     }
   },
   "androidBackupNote": "Se hai già ripristinato i dati con il backup di Android, le tessere già presenti non vengono duplicate.",
-  "discoverPro": "Scopri Pro · 2,00 €",
   "importButton": "Importa",
   "importCards": "Importa {cards}",
   "@importCards": {
@@ -1108,10 +1032,25 @@
   "shortcutFailed": "Non è stato possibile aggiungere l'icona",
   "shortcutInTrashTitle": "Questa tessera è nel cestino",
   "shortcutInTrashBody": "«{name}»: {when}.\nPuoi ripristinarla oppure eliminare la scorciatoia dalla schermata Home.",
-  "@shortcutInTrashBody": {"placeholders": {"name": {"type": "String"}, "when": {"type": "String"}}},
+  "@shortcutInTrashBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "shortcutGoneTitle": "Questa tessera non c'è più",
   "shortcutGoneBody": "«{name}» è stata eliminata. Puoi eliminare la scorciatoia dalla schermata Home.",
-  "@shortcutGoneBody": {"placeholders": {"name": {"type": "String"}}},
+  "@shortcutGoneBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "restoreCard": "Ripristina la tessera",
   "deleteShortcut": "Elimina scorciatoia",
   "shortcutDisabled": "Scorciatoia disattivata. Per toglierla dalla schermata Home, tieni premuta l'icona e scegli Rimuovi."

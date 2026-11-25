@@ -60,16 +60,11 @@ enum TransferProblem {
   badDate,
   protectedDamaged,
   sectionNameTaken,
-  limitExceeded,
 }
 
 class TransferException implements Exception {
-  const TransferException(this.problem, {this.count = 0, this.limit = 0});
+  const TransferException(this.problem);
   final TransferProblem problem;
-
-  /// Per [TransferProblem.limitExceeded]: tessere risultanti e limite.
-  final int count;
-  final int limit;
 
   String get message => switch (problem) {
         TransferProblem.notFacileCards => tr.transferNotFacileCards,
@@ -97,8 +92,6 @@ class TransferException implements Exception {
         TransferProblem.badDate => tr.transferBadDate,
         TransferProblem.protectedDamaged => tr.transferProtectedDamaged,
         TransferProblem.sectionNameTaken => tr.transferSectionNameTaken,
-        TransferProblem.limitExceeded =>
-          tr.transferLimitExceeded(count, limit),
       };
 
   @override
