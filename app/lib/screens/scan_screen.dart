@@ -28,6 +28,7 @@ class ScanScreen extends StatefulWidget {
     this.typeName,
     this.expectedFormat,
     this.typeId,
+    this.allowManual = true,
   });
 
   /// Nome della tipologia scelta e formato atteso (se la tipologia lo indica).
@@ -37,6 +38,10 @@ class ScanScreen extends StatefulWidget {
   /// Identificativo della tipologia (per i controlli propri di una
   /// tipologia, come il Codice Fiscale).
   final String? typeId;
+
+  /// "Inserisci il codice a mano": non serve quando si legge solo il
+  /// formato, per la richiesta di una tessera (videata 48).
+  final bool allowManual;
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -213,10 +218,11 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                   label: Text(context.t.torch),
                 ),
-                TextButton(
-                  onPressed: _manual,
-                  child: Text(context.t.enterCodeManually),
-                ),
+                if (widget.allowManual)
+                  TextButton(
+                    onPressed: _manual,
+                    child: Text(context.t.enterCodeManually),
+                  ),
               ],
             ),
           ),
@@ -255,10 +261,11 @@ class _ScanScreenState extends State<ScanScreen> {
                 onPressed: openAppSettings,
                 child: Text(context.t.openSettings),
               ),
-            TextButton(
-              onPressed: _manual,
-              child: Text(context.t.enterCodeManually),
-            ),
+            if (widget.allowManual)
+              TextButton(
+                onPressed: _manual,
+                child: Text(context.t.enterCodeManually),
+              ),
             TextButton(
               onPressed: _fromGallery,
               child: Text(context.t.readFromGalleryPhoto),

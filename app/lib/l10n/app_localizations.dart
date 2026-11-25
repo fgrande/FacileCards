@@ -406,12 +406,6 @@ abstract class AppLocalizations {
   /// **'Richiedi una tessera mancante'**
   String get requestMissingCard;
 
-  /// No description provided for @missingCardSubject.
-  ///
-  /// In it, this message translates to:
-  /// **'Tessera mancante in FacileCards'**
-  String get missingCardSubject;
-
   /// No description provided for @privacyPolicy.
   ///
   /// In it, this message translates to:
@@ -2397,6 +2391,125 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l\'ultimo è una lettera di controllo).'**
   String get cfInvalidTyped;
+
+  /// No description provided for @requestTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiedi una tessera'**
+  String get requestTitle;
+
+  /// No description provided for @requestIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Dicci quale tessera manca: la aggiungiamo all\'elenco dei negozi.'**
+  String get requestIntro;
+
+  /// No description provided for @requestShopName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome del negozio'**
+  String get requestShopName;
+
+  /// No description provided for @requestCodeHeader.
+  ///
+  /// In it, this message translates to:
+  /// **'Codice della tessera (facoltativo)'**
+  String get requestCodeHeader;
+
+  /// No description provided for @requestCodeExplain.
+  ///
+  /// In it, this message translates to:
+  /// **'Se lo leggi, nella richiesta mettiamo il formato del codice: così la tessera si aggiunge più in fretta.'**
+  String get requestCodeExplain;
+
+  /// No description provided for @requestFormatRead.
+  ///
+  /// In it, this message translates to:
+  /// **'Formato: {label} · {count, plural, =1{1 carattere} other{{count} caratteri}}'**
+  String requestFormatRead(String label, int count);
+
+  /// No description provided for @requestCodeStays.
+  ///
+  /// In it, this message translates to:
+  /// **'Il codice resta sul telefono.'**
+  String get requestCodeStays;
+
+  /// No description provided for @requestPhotoHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Nella mail puoi allegare una foto del logo della tessera, per i colori. Senza il codice.'**
+  String get requestPhotoHint;
+
+  /// No description provided for @requestMailHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Si apre la tua app di posta: controlla il messaggio e invialo tu.'**
+  String get requestMailHint;
+
+  /// No description provided for @requestWriteMail.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivi l\'email'**
+  String get requestWriteMail;
+
+  /// No description provided for @requestNoMailApp.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna app di posta trovata sul telefono.'**
+  String get requestNoMailApp;
+
+  /// No description provided for @requestMailSubject.
+  ///
+  /// In it, this message translates to:
+  /// **'Tessera mancante: {shop}'**
+  String requestMailSubject(String shop);
+
+  /// No description provided for @requestMailBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Negozio: {shop}\nFormato del codice: {format}\nLingua: {language} · Versione: {version}\n\nSe puoi, allega una foto del logo della tessera (senza il codice).'**
+  String requestMailBody(
+    String shop,
+    String format,
+    String language,
+    String version,
+  );
+
+  /// No description provided for @requestFormatValue.
+  ///
+  /// In it, this message translates to:
+  /// **'{label} ({id}), {count, plural, =1{1 carattere} other{{count} caratteri}}'**
+  String requestFormatValue(String label, String id, int count);
+
+  /// No description provided for @requestFormatNotRead.
+  ///
+  /// In it, this message translates to:
+  /// **'non letto'**
+  String get requestFormatNotRead;
+
+  /// No description provided for @notFoundQuery.
+  ///
+  /// In it, this message translates to:
+  /// **'Non trovi «{query}»?'**
+  String notFoundQuery(String query);
+
+  /// No description provided for @notFoundAsk.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiedi di aggiungerlo'**
+  String get notFoundAsk;
+
+  /// No description provided for @notFoundShop.
+  ///
+  /// In it, this message translates to:
+  /// **'Non trovi il tuo negozio?'**
+  String get notFoundShop;
+
+  /// No description provided for @requestCodeNotSent.
+  ///
+  /// In it, this message translates to:
+  /// **'Il codice non viene mai inviato: solo il formato.'**
+  String get requestCodeNotSent;
 }
 
 class _AppLocalizationsDelegate

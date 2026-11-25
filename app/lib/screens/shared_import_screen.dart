@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../data/sort_key.dart';
 import '../format_utils.dart';
 import '../l10n/l10n.dart';
 import '../photos.dart';
@@ -58,7 +59,7 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
     final sections = await _db.visibleSections();
     sections.sort((a, b) {
       if (a.isDefault != b.isDefault) return a.isDefault ? -1 : 1;
-      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      return compareNames(a.name, b.name);
     });
     final previous = _single
         ? null
@@ -264,12 +265,10 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
     } else {
       title = context.t.afterImport(p.result, p.limit);
       final parts = [
-        if (p.updated > 0)
-          context.t.updatedCount(p.updated),
+        if (p.updated > 0) context.t.updatedCount(p.updated),
         if (p.toTrash > 0)
           context.t.noLongerInFile(p.toTrash, db.AppDatabase.trashDays),
-        if (p.skipped > 0)
-          context.t.skippedCount(p.skipped),
+        if (p.skipped > 0) context.t.skippedCount(p.skipped),
       ];
       detail = parts.isEmpty ? null : parts.join(' · ');
     }
@@ -376,7 +375,9 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
                         ),
                         if (previous?.receivedAt != null)
                           Text(
-                            context.t.alreadyReceivedOn(longDate(previous!.receivedAt!)),
+                            context.t.alreadyReceivedOn(
+                              longDate(previous!.receivedAt!),
+                            ),
                             style: TextStyle(
                               color: c.infoText.withValues(alpha: 0.85),
                               fontSize: 13,
@@ -446,9 +447,7 @@ class _SharedImportScreenState extends State<SharedImportScreen> {
               children: [
                 if (p != null && !p.fits) ...[
                   FilledButton.tonal(
-                    onPressed: () => _message(
-                      context.t.purchaseComing,
-                    ),
+                    onPressed: () => _message(context.t.purchaseComing),
                     child: Text(context.t.discoverPro),
                   ),
                   const SizedBox(height: 10),

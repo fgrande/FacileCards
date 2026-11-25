@@ -3,7 +3,9 @@ import 'package:material_ui/material_ui.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
 import '../l10n/l10n.dart';
+import '../theme.dart';
 import '../ui.dart';
+import 'card_request_screen.dart';
 import 'new_card_data_screen.dart';
 import 'search_field.dart';
 
@@ -45,6 +47,33 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
     onTap: () => _open(t),
   );
 
+  Widget _requestLink(String query) {
+    final c = AppColors.of(context);
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CardRequestScreen(initialShop: query),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
+        child: Text.rich(
+          TextSpan(
+            text:
+                '${query.isEmpty ? context.t.notFoundShop : context.t.notFoundQuery(query)} ',
+            style: TextStyle(color: c.muted, fontSize: 14),
+            children: [
+              TextSpan(
+                text: context.t.notFoundAsk,
+                style: TextStyle(color: c.primary, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +105,9 @@ class _NewCardTypeScreenState extends State<NewCardTypeScreen> {
                 GroupHeader(context.t.shops),
                 TileGroup(indent: 74, children: shops.map(_tile).toList()),
               ],
+              // Decisione 120: sempre in fondo ai negozi (chi scorre e non
+              // trova il suo può chiederlo), col nome cercato se c'è.
+              _requestLink(_query.trim()),
               if (others.isNotEmpty || generic.isNotEmpty) ...[
                 GroupHeader(context.t.otherCards),
                 TileGroup(

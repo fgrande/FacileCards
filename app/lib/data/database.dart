@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'migration_backup.dart';
 
 import 'catalog.dart';
+import 'sort_key.dart';
 
 part 'database.g.dart';
 
@@ -205,23 +206,20 @@ class AppDatabase extends _$AppDatabase {
   Future<int> activeCardCount() async =>
       (await (select(cards)..where((c) => c.deletedAt.isNull())).get()).length;
 
-  Future<List<Section>> visibleSections() =>
-      (select(sections)
-            ..where((s) => s.hidden.equals(false))
-            ..orderBy([(s) => OrderingTerm.asc(s.name)]))
-          .get();
+  Future<List<Section>> visibleSections() async =>
+      (await (select(sections)..where((s) => s.hidden.equals(false))).get())
+        ..sort((a, b) => compareNames(a.name, b.name));
 
   /// Tipologie da offrire per una tessera nuova: quelle del catalogo
   /// attuale non ritirate, in ordine alfabetico.
-  Future<List<CardType>> activeCardTypes() =>
-      (select(cardTypes)
-            ..where(
+  Future<List<CardType>> activeCardTypes() async =>
+      (await (select(cardTypes)..where(
               (t) =>
                   t.retired.equals(false) &
                   t.id.isIn(catalogTypes().map((c) => c.id.value)),
-            )
-            ..orderBy([(t) => OrderingTerm.asc(t.name)]))
-          .get();
+            ))
+            .get())
+        ..sort((a, b) => compareNames(a.name, b.name));
 
   // ---- Sezioni -------------------------------------------------------
 
@@ -479,8 +477,8 @@ class AppDatabase extends _$AppDatabase {
   /// Tessere non nel cestino di una sezione, in ordine alfabetico.
   Stream<List<Card>> watchCards(String sectionId) {
     return (select(cards)
-          ..where((c) => c.sectionId.equals(sectionId) & c.deletedAt.isNull())
-          ..orderBy([(c) => OrderingTerm.asc(c.name)]))
-        .watch();
+          ..where((c) => c.sectionId.equals(sectionId) & c.deletedAt.isNull()))
+        .watch()
+        .map((list) => list..sort((a, b) => compareNames(a.name, b.name)));
   }
 }

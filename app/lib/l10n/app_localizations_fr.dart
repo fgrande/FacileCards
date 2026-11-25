@@ -193,9 +193,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get requestMissingCard => 'Demander une carte manquante';
 
   @override
-  String get missingCardSubject => 'Carte manquante dans FacileCards';
-
-  @override
   String get privacyPolicy => 'Politique de confidentialité';
 
   @override
@@ -1457,4 +1454,94 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get cfInvalidTyped =>
       'Code fiscal non valide : vérifiez qu\'il est bien saisi (16 caractères, le dernier est une lettre de contrôle).';
+
+  @override
+  String get requestTitle => 'Demander une carte';
+
+  @override
+  String get requestIntro =>
+      'Dites-nous quelle carte manque : nous l\'ajouterons à la liste des magasins.';
+
+  @override
+  String get requestShopName => 'Nom du magasin';
+
+  @override
+  String get requestCodeHeader => 'Code de la carte (facultatif)';
+
+  @override
+  String get requestCodeExplain =>
+      'Si vous le lisez, la demande contient le format du code : la carte sera ajoutée plus vite.';
+
+  @override
+  String requestFormatRead(String label, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count caractères',
+      one: '1 caractère',
+    );
+    return 'Format : $label · $_temp0';
+  }
+
+  @override
+  String get requestCodeStays => 'Le code reste sur le téléphone.';
+
+  @override
+  String get requestPhotoHint =>
+      'Dans l\'e-mail, vous pouvez joindre une photo du logo de la carte, pour les couleurs. Sans le code.';
+
+  @override
+  String get requestMailHint =>
+      'Votre appli de messagerie s\'ouvre : vérifiez le message et envoyez-le vous-même.';
+
+  @override
+  String get requestWriteMail => 'Écrire l\'e-mail';
+
+  @override
+  String get requestNoMailApp =>
+      'Aucune appli de messagerie trouvée sur le téléphone.';
+
+  @override
+  String requestMailSubject(String shop) {
+    return 'Carte manquante : $shop';
+  }
+
+  @override
+  String requestMailBody(
+    String shop,
+    String format,
+    String language,
+    String version,
+  ) {
+    return 'Magasin : $shop\nFormat du code : $format\nLangue : $language · Version : $version\n\nSi possible, joignez une photo du logo de la carte (sans le code).';
+  }
+
+  @override
+  String requestFormatValue(String label, String id, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count caractères',
+      one: '1 caractère',
+    );
+    return '$label ($id), $_temp0';
+  }
+
+  @override
+  String get requestFormatNotRead => 'non lu';
+
+  @override
+  String notFoundQuery(String query) {
+    return 'Vous ne trouvez pas « $query » ?';
+  }
+
+  @override
+  String get notFoundAsk => 'Demandez à l\'ajouter';
+
+  @override
+  String get notFoundShop => 'Vous ne trouvez pas votre magasin ?';
+
+  @override
+  String get requestCodeNotSent =>
+      'Le code n\'est jamais envoyé : seulement le format.';
 }

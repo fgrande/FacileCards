@@ -9,6 +9,7 @@ import '../system_settings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'about_screen.dart';
+import 'card_request_screen.dart';
 import 'language_picker.dart';
 import 'pay_app_screen.dart';
 
@@ -325,13 +326,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TileGroup(
             indent: 16,
             children: [
-              if (contactEmail != null)
-                _row(
-                  title: context.t.requestMissingCard,
-                  onTap: () => _open(
-                    'mailto:$contactEmail?subject=${Uri.encodeComponent(context.t.missingCardSubject)}',
-                  ),
+              _row(
+                title: context.t.requestMissingCard,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const CardRequestScreen()),
                 ),
+              ),
               _row(
                 title: context.t.manageAdConsent,
                 onTap: () async {

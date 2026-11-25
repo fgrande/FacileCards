@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../ads.dart';
 import '../data/catalog.dart';
 import '../data/database.dart' as db;
+import '../data/sort_key.dart';
 import '../expiry.dart';
 import '../format_utils.dart';
 import '../l10n/l10n.dart';
@@ -119,7 +120,7 @@ class _CardListScreenState extends State<CardListScreen> {
   }
 
   int _compare(db.Card a, db.Card b) {
-    int byName() => a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    int byName() => compareNames(a.name, b.name);
     if (_sort == _SortMode.name) return byName();
     final la = a.lastUsedAt, lb = b.lastUsedAt;
     if (la == null && lb == null) return byName();
@@ -276,9 +277,7 @@ class _CardListScreenState extends State<CardListScreen> {
           final sa = _sections[a], sb = _sections[b];
           if (sa?.isDefault == true) return -1;
           if (sb?.isDefault == true) return 1;
-          return (sa?.name ?? '').toLowerCase().compareTo(
-            (sb?.name ?? '').toLowerCase(),
-          );
+          return compareNames(sa?.name ?? '', sb?.name ?? '');
         });
       for (final id in ids) {
         final inSection = cards.where((c) => c.sectionId == id).toList();

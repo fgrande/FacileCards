@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844" font-family="Roboto, Inter, 'Helvetica Neue', Arial, sans-serif"><defs><clipPath id="s"><rect width="390" height="844" rx="38"/></clipPath></defs><g clip-path="url(#s)">
+<rect x="0" y="0" width="390" height="844" fill="#0F131A"/>
+<text x="24" y="31" font-size="15" font-weight="600" fill="#E8ECF3">9:41</text>
+<g fill="#E8ECF3"><rect x="318" y="20" width="3" height="5" rx="1"/><rect x="323" y="17" width="3" height="8" rx="1"/><rect x="328" y="14" width="3" height="11" rx="1"/><rect x="342" y="15" width="22" height="11" rx="3" fill="none" stroke="#E8ECF3" stroke-width="1.4"/><rect x="344" y="17" width="15" height="7" rx="1.5"/></g>
+<path d="M30 60 L21 68 L30 76 M21 68 H38" fill="none" stroke="#E8ECF3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="54" y="74" font-size="20" font-weight="600" fill="#E8ECF3">Richiedi una tessera</text>
+<text x="16" y="112" font-size="14" fill="#9AA5B8">Dicci quale tessera manca: la aggiungiamo</text>
+<text x="16" y="131" font-size="14" fill="#9AA5B8">all'elenco dei negozi.</text>
+<rect x="16" y="150" width="358" height="54" rx="12" fill="#1A2029" stroke="#323A48"/>
+<text x="30" y="170" font-size="11.5" font-weight="500" fill="#9AA5B8">Nome del negozio</text>
+<text x="30" y="192" font-size="16" fill="#E8ECF3">Esselunga</text>
+<text x="16" y="240" font-size="12" font-weight="700" fill="#9AA5B8">CODICE DELLA TESSERA (FACOLTATIVO)</text>
+<text x="16" y="264" font-size="13.5" fill="#9AA5B8">Se lo leggi, nella richiesta mettiamo il formato del</text>
+<text x="16" y="283" font-size="13.5" fill="#9AA5B8">codice: così la tessera si aggiunge più in fretta.</text>
+<rect x="16" y="296" width="358" height="42" rx="12" fill="#3D1A1D"/>
+<rect x="30" y="314" width="12" height="10" rx="2" fill="none" stroke="#E5534B" stroke-width="1.8"/>
+<path d="M32.5 314 V310.5 a3.5 3.5 0 0 1 7 0 V314" fill="none" stroke="#E5534B" stroke-width="1.8"/>
+<text x="52" y="322" font-size="13.5" font-weight="600" fill="#E5534B">Il codice non viene mai inviato: solo il formato.</text>
+<rect x="16" y="348" width="173" height="50" rx="25" fill="#4C87F2"/>
+<text x="102.5" y="378" font-size="14.5" font-weight="600" fill="#FFFFFF" text-anchor="middle">Scansiona</text>
+<rect x="201" y="348" width="173" height="50" rx="25" fill="#1A2029" stroke="#323A48"/>
+<text x="287.5" y="378" font-size="14.5" font-weight="600" fill="#4C87F2" text-anchor="middle">Da galleria</text>
+<rect x="16" y="414" width="358" height="68" rx="16" fill="#1B2B4B"/>
+<circle cx="42" cy="448" r="11" fill="#4C87F2"/>
+<path d="M36.5 448 L40.5 452 L47.5 444" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="64" y="442" font-size="15" font-weight="600" fill="#CFE0FF">Formato: EAN-13 · 13 caratteri</text>
+<text x="64" y="462" font-size="12.5" fill="#CFE0FF" opacity="0.8">Il codice resta sul telefono.</text>
+<text x="16" y="520" font-size="13.5" fill="#9AA5B8">Nella mail puoi allegare una foto del logo della</text>
+<text x="16" y="539" font-size="13.5" fill="#9AA5B8">tessera, per i colori. Senza il codice.</text>
+<text x="195" y="742" font-size="12.5" fill="#9AA5B8" text-anchor="middle">Si apre la tua app di posta: controlla il messaggio e invialo tu.</text>
+<rect x="16" y="758" width="358" height="54" rx="27" fill="#4C87F2"/>
+<text x="195" y="790.5" font-size="15.5" font-weight="600" fill="#FFFFFF" text-anchor="middle">Scrivi l'email</text>
+<rect x="128" y="828" width="134" height="5" rx="2.5" fill="#E8ECF3" opacity="0.55"/>
+</g><rect x=".5" y=".5" width="389" height="843" rx="38" fill="none" stroke="#3A4352"/></svg>

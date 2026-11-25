@@ -124,7 +124,6 @@
   "restorePurchase": "Ripristina acquisto",
   "settingsOther": "Altro",
   "requestMissingCard": "Richiedi una tessera mancante",
-  "missingCardSubject": "Tessera mancante in FacileCards",
   "privacyPolicy": "Informativa sulla privacy",
   "aboutApp": "Informazioni su FacileCards",
   "noAppToOpen": "Non c'è un'app per aprire {url}",
@@ -1024,5 +1023,77 @@
   },
   "cfInvalid": "Codice fiscale non valido",
   "cfInvalidDetail": "Il codice letto non torna con il carattere di controllo: inquadra meglio e riprova.",
-  "cfInvalidTyped": "Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l'ultimo è una lettera di controllo)."
+  "cfInvalidTyped": "Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l'ultimo è una lettera di controllo).",
+  "requestTitle": "Richiedi una tessera",
+  "requestIntro": "Dicci quale tessera manca: la aggiungiamo all'elenco dei negozi.",
+  "requestShopName": "Nome del negozio",
+  "requestCodeHeader": "Codice della tessera (facoltativo)",
+  "requestCodeExplain": "Se lo leggi, nella richiesta mettiamo il formato del codice: così la tessera si aggiunge più in fretta.",
+  "requestFormatRead": "Formato: {label} · {count, plural, =1{1 carattere} other{{count} caratteri}}",
+  "@requestFormatRead": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestCodeStays": "Il codice resta sul telefono.",
+  "requestPhotoHint": "Nella mail puoi allegare una foto del logo della tessera, per i colori. Senza il codice.",
+  "requestMailHint": "Si apre la tua app di posta: controlla il messaggio e invialo tu.",
+  "requestWriteMail": "Scrivi l'email",
+  "requestNoMailApp": "Nessuna app di posta trovata sul telefono.",
+  "requestMailSubject": "Tessera mancante: {shop}",
+  "@requestMailSubject": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      }
+    }
+  },
+  "requestMailBody": "Negozio: {shop}\nFormato del codice: {format}\nLingua: {language} · Versione: {version}\n\nSe puoi, allega una foto del logo della tessera (senza il codice).",
+  "@requestMailBody": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      },
+      "format": {
+        "type": "String"
+      },
+      "language": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "requestFormatValue": "{label} ({id}), {count, plural, =1{1 carattere} other{{count} caratteri}}",
+  "@requestFormatValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "id": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestFormatNotRead": "non letto",
+  "notFoundQuery": "Non trovi «{query}»?",
+  "@notFoundQuery": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "notFoundAsk": "Chiedi di aggiungerlo",
+  "notFoundShop": "Non trovi il tuo negozio?",
+  "requestCodeNotSent": "Il codice non viene mai inviato: solo il formato."
 }

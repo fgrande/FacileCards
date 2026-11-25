@@ -73,6 +73,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 45 | [Elenco, versione Pro](videate/45-elenco-pro.svg) | Senza banner; il pulsante "+" scende | 106 |
 | 46 | [App per pagare](videate/46-app-per-pagare.svg) | Scelta dell'app da aprire dalla tessera: "Nessuna" e le app per pagare trovate sul telefono (elenco nostro e app che pagano con NFC), con le icone vere; "Manca la tua app? Chiedi di aggiungerla" | 36, 118 |
 | 47 | [Scelta della lingua](videate/47-scelta-lingua.svg) | Finestra aperta dalla configurazione iniziale (1) e dalle Impostazioni (14): bandiera, nome della lingua nella lingua stessa, spunta su quella attuale; la lingua scelta si mostra con la sua bandiera anche nel campo e nella riga. Per l'inglese la bandiera del Regno Unito | 35 |
+| 48 | [Richiesta di una tessera](videate/48-richiesta-tessera.svg) | Aperta dalle Impostazioni (14, "Richiedi una tessera mancante") e da Nuova tessera (7), dove il collegamento sta sempre in fondo ai negozi ("Non trovi il tuo negozio? Chiedi di aggiungerlo"; dopo una ricerca "Non trovi «…»?", col nome cercato già scritto). Nome del negozio; lettura facoltativa del codice con "Scansiona" (senza "Inserisci a mano") o "Da galleria", che mostra solo formato e numero di caratteri; "Scrivi l'email" apre l'app di posta con l'email già compilata | 36, 120 |
 
 ## Tema scuro
 

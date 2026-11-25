@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../data/database.dart' as db;
+import '../data/sort_key.dart';
 import '../l10n/l10n.dart';
 import '../theme.dart';
 import '../ui.dart';
@@ -33,7 +34,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
     final sections = await d.visibleSections();
     sections.sort((a, b) {
       if (a.isDefault != b.isDefault) return a.isDefault ? -1 : 1;
-      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      return compareNames(a.name, b.name);
     });
     final counts = await d.sectionCounts();
     if (!mounted) return;

@@ -11,7 +11,7 @@ Nella scheda non si citano catene di negozi (i marchi restano fuori dai testi e 
 | Nome dell'app | FacileCards |
 | Categoria | Shopping |
 | Tag | Tessere fedeltà, Shopping, Portafoglio |
-| Email di contatto | quella dell'informativa (oggi l'indirizzo personale di Fabio; da cambiare con quello sul dominio quando ci sarà) |
+| Email di contatto | `tessere@facilecards.eu` (la stessa dell'informativa) |
 | Sito web | https://facilecards.eu |
 | Norme sulla privacy | https://facilecards.eu/privacy/ |
 | Icona | `icon-512.png` (512×512, quadrata: gli angoli li arrotonda Google) |

@@ -122,25 +122,23 @@ class _PayAppScreenState extends State<PayAppScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // La richiesta via mail compare quando c'è l'indirizzo
-                // (decisione 36).
-                if (contactEmail != null)
-                  InkWell(
-                    onTap: () => openUrl(
-                      'mailto:$contactEmail?subject=${Uri.encodeComponent(context.t.payAppMissingSubject)}',
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Text(
-                        context.t.payAppMissing,
-                        style: TextStyle(
-                          color: c.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                // Richiesta via mail (decisione 36).
+                InkWell(
+                  onTap: () => openUrl(
+                    'mailto:$contactEmail?subject=${Uri.encodeComponent(context.t.payAppMissingSubject)}',
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Text(
+                      context.t.payAppMissing,
+                      style: TextStyle(
+                        color: c.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
+                ),
                 Text(
                   context.t.payAppsExplain,
                   style: TextStyle(color: c.muted, fontSize: 13),

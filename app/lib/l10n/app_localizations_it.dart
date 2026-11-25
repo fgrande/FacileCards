@@ -192,9 +192,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get requestMissingCard => 'Richiedi una tessera mancante';
 
   @override
-  String get missingCardSubject => 'Tessera mancante in FacileCards';
-
-  @override
   String get privacyPolicy => 'Informativa sulla privacy';
 
   @override
@@ -1445,4 +1442,93 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get cfInvalidTyped =>
       'Codice fiscale non valido: controlla di averlo scritto giusto (16 caratteri, l\'ultimo è una lettera di controllo).';
+
+  @override
+  String get requestTitle => 'Richiedi una tessera';
+
+  @override
+  String get requestIntro =>
+      'Dicci quale tessera manca: la aggiungiamo all\'elenco dei negozi.';
+
+  @override
+  String get requestShopName => 'Nome del negozio';
+
+  @override
+  String get requestCodeHeader => 'Codice della tessera (facoltativo)';
+
+  @override
+  String get requestCodeExplain =>
+      'Se lo leggi, nella richiesta mettiamo il formato del codice: così la tessera si aggiunge più in fretta.';
+
+  @override
+  String requestFormatRead(String label, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count caratteri',
+      one: '1 carattere',
+    );
+    return 'Formato: $label · $_temp0';
+  }
+
+  @override
+  String get requestCodeStays => 'Il codice resta sul telefono.';
+
+  @override
+  String get requestPhotoHint =>
+      'Nella mail puoi allegare una foto del logo della tessera, per i colori. Senza il codice.';
+
+  @override
+  String get requestMailHint =>
+      'Si apre la tua app di posta: controlla il messaggio e invialo tu.';
+
+  @override
+  String get requestWriteMail => 'Scrivi l\'email';
+
+  @override
+  String get requestNoMailApp => 'Nessuna app di posta trovata sul telefono.';
+
+  @override
+  String requestMailSubject(String shop) {
+    return 'Tessera mancante: $shop';
+  }
+
+  @override
+  String requestMailBody(
+    String shop,
+    String format,
+    String language,
+    String version,
+  ) {
+    return 'Negozio: $shop\nFormato del codice: $format\nLingua: $language · Versione: $version\n\nSe puoi, allega una foto del logo della tessera (senza il codice).';
+  }
+
+  @override
+  String requestFormatValue(String label, String id, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count caratteri',
+      one: '1 carattere',
+    );
+    return '$label ($id), $_temp0';
+  }
+
+  @override
+  String get requestFormatNotRead => 'non letto';
+
+  @override
+  String notFoundQuery(String query) {
+    return 'Non trovi «$query»?';
+  }
+
+  @override
+  String get notFoundAsk => 'Chiedi di aggiungerlo';
+
+  @override
+  String get notFoundShop => 'Non trovi il tuo negozio?';
+
+  @override
+  String get requestCodeNotSent =>
+      'Il codice non viene mai inviato: solo il formato.';
 }

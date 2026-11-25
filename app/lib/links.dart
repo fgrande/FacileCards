@@ -19,6 +19,6 @@ String get privacyUrl => _page('privacy/');
 const storeUrl =
     'https://play.google.com/store/apps/details?id=eu.facilecards.app';
 
-/// Indirizzo per chiedere una tessera mancante (decisione 36). Ancora da
-/// creare sul dominio: finché è null la voce non compare nelle impostazioni.
-const String? contactEmail = null;
+/// Indirizzo per chiedere una tessera o un'app per pagare mancante
+/// (decisione 36), con l'inoltro della posta di Porkbun.
+const contactEmail = 'tessere@facilecards.eu';
