@@ -309,3 +309,5 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-26: decisione 124: annunci anche in Dati (riquadro medio), Sezioni e Informazioni (banner), ognuno con un blocco AdMob suo, per compensare i ricavi della versione Pro tolta.
 - 2026-11-26: "Offrimi un caffè" (Buy Me a Coffee) solo sul sito per ora; nell'app si valuta dopo l'accesso alla produzione, per non rischiare la revisione di Google Play sui pagamenti esterni.
 - 2026-11-26: versione 1.0.0+10 per il test chiuso: annunci anche in Dati, Sezioni e Informazioni.
+- 2026-11-26: 1.0.0+10 caricata da Fabio nel test chiuso, con la scheda dello store aggiornata (gratuita, senza limite).
+- 2026-11-26: app per pagare verificate sul telefono di Fabio (Satispay, Google Wallet, Samsung Wallet, PayPal, Intesa Sanpaolo, Klarna via NFC); telefono di Fabio come dispositivo di prova in AdMob.
