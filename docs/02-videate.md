@@ -36,8 +36,8 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 9 | [Condividi: avviso](videate/09-condividi-avviso.svg) | Primo passaggio della doppia conferma: cosa comporta la condivisione | 68 |
 | 10 | [Condividi: conferma](videate/10-condividi-conferma.svg) | Secondo passaggio: casella "Ho capito", messaggio che accompagna il file, password facoltativa | 64, 68, 103 |
 | 11 | [Importa sezione](videate/11-importa-sezione.svg) | Anteprima del file, tre destinazioni (se già ricevuta, proposta "Sostituisci"), esito sul limite di 50 | 16, 17, 18, 79, 80, 113 |
-| 12 | [Sezioni](videate/12-sezioni.svg) | Sezioni con condivisione e menu; nuova sezione | 104, 114 |
-| 12b | [Dati](videate/12b-dati.svg) | Esporta tutto, Importa da file, promemoria "Ultima copia", cestino | 19, 26, 114 |
+| 12 | [Sezioni](videate/12-sezioni.svg) | Sezioni con condivisione e menu; nuova sezione; banner in basso | 104, 114, 124 |
+| 12b | [Dati](videate/12b-dati.svg) | Esporta tutto, Importa da file, promemoria "Ultima copia", cestino; riquadro medio (300×250) in basso | 19, 26, 114, 124 |
 | 13 | [Cestino: recupero](videate/13-cestino-recupero.svg) | Scelta della sezione di destinazione, sezione eliminata che viene ricreata, esito sul limite (**il riquadro sul limite è superato dalla decisione 123**) | 20, 27, 28 |
 | 14 | [Impostazioni](videate/14-impostazioni.svg) | Valori della configurazione iniziale (anche l'app per pagare, anche nella 42), tema (come il telefono / chiaro / scuro), versione, richiesta di una tessera mancante, consenso annunci, informativa. **Con la decisione 123** il riquadro della versione mostra solo il numero di tessere, senza Pro né "Ripristina acquisto" | 36, 65, 74, 118 |
 | 15 | [Limite raggiunto](videate/15-limite-versione-pro.svg) | Proposta della versione Pro a 2 €. **Superata dalla decisione 123** (niente limite né Pro) | 13, 14, 98 |
@@ -46,7 +46,7 @@ Le tessere sono rappresentate da un riquadro colorato con le iniziali (decisione
 | 18 | [Elimina: conferma](videate/18-elimina-conferma.svg) | Scelta tra cestino ed eliminazione definitiva, raggiungibile sia dallo scorrimento sia dal cestino nella barra della tessera | 20, 75 |
 | 19 | [Aggiungi alla schermata Home](videate/19-scorciatoia-aggiungi.svg) | Riquadro di conferma aperto dal collegamento sotto i pulsanti della tessera. **Superata dalla decisione 122**: la conferma è la finestra di Android (diversa a seconda del telefono), senza riquadro nostro; poi il messaggio "Icona aggiunta alla schermata Home" | 89, 90, 122 |
 | 20 | [Scorciatoia: tessera nel cestino](videate/20-scorciatoia-tessera-eliminata.svg) | Toccando una scorciatoia la cui tessera è eliminata: ripristino o eliminazione della scorciatoia | 90 |
-| 21 | [Informazioni](videate/21-informazioni.svg) | Versione, sviluppatore, avvertenza sui marchi, informativa e sito | 99 |
+| 21 | [Informazioni](videate/21-informazioni.svg) | Versione, sviluppatore, avvertenza sui marchi, informativa e sito; banner in basso | 99, 124 |
 | 22 | [Scansione](videate/22-scansione.svg) | Fotocamera a tutto schermo con cornice, torcia, inserimento a mano; si ferma da sola alla lettura | 71, 82, 100, 110 |
 | 23 | [Scansione: formato errato](videate/23-scansione-formato-errato.svg) | Codice letto in un formato diverso da quello della tipologia: la cornice diventa ambra e compare il messaggio | 82 |
 | 24 | [Fotocamera non consentita](videate/24-fotocamera-negata.svg) | Se il permesso è negato: apri impostazioni, inserisci a mano, leggi da galleria | 100 |

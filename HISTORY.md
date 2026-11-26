@@ -306,3 +306,5 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-25: decisione 123: niente versione Pro e niente limite di 50 tessere. Da privato gestire profilo pagamenti, dati pubblici da venditore e tasse sulle vendite era troppo complesso (Fabio); l'app resta gratuita con annunci.
 - 2026-11-25: versione 1.0.0+8 per il test chiuso: tolte versione Pro e limite, effetto del tocco visibile nei riquadri bianchi.
 - 2026-11-26: 1.0.0+9 al posto della +8 (codice di versione 8 già usato su Google Play), stesso codice.
+- 2026-11-26: decisione 124: annunci anche in Dati (riquadro medio), Sezioni e Informazioni (banner), ognuno con un blocco AdMob suo, per compensare i ricavi della versione Pro tolta.
+- 2026-11-26: "Offrimi un caffè" (Buy Me a Coffee) solo sul sito per ora; nell'app si valuta dopo l'accesso alla produzione, per non rischiare la revisione di Google Play sui pagamenti esterni.

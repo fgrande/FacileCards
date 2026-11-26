@@ -1,6 +1,7 @@
-// Annunci AdMob (decisioni 13, 95, 105; analisi 8). Solo banner adattivi,
-// al piede dell'elenco e della scheda della tessera, in uno spazio già
-// riservato: il contenuto non si sposta quando l'annuncio arriva.
+// Annunci AdMob (decisioni 13, 95, 105, 124; analisi 8). Banner adattivi al
+// piede dell'elenco, della scheda della tessera, delle Sezioni e delle
+// Informazioni; un riquadro medio (300×250) al piede di "Dati". Sempre in uno
+// spazio già riservato: il contenuto non si sposta quando l'annuncio arriva.
 //
 // Niente di tutto questo rallenta la tessera: il consenso si aggiorna e gli
 // annunci si avviano dopo la prima schermata, e senza rete l'app funziona
@@ -17,10 +18,20 @@ import 'theme.dart';
 abstract final class AdUnits {
   static const _testBanner = 'ca-app-pub-3940256099942544/9214589741';
 
+  /// Prova per i banner a misura fissa, come il riquadro medio.
+  static const _testFixedBanner = 'ca-app-pub-3940256099942544/6300978111';
+
   static String get list =>
       kReleaseMode ? 'ca-app-pub-4977111287348568/7537368684' : _testBanner;
   static String get card =>
       kReleaseMode ? 'ca-app-pub-4977111287348568/3598123679' : _testBanner;
+  static String get data => kReleaseMode
+      ? 'ca-app-pub-4977111287348568/8738906732'
+      : _testFixedBanner;
+  static String get sections =>
+      kReleaseMode ? 'ca-app-pub-4977111287348568/3991857417' : _testBanner;
+  static String get about =>
+      kReleaseMode ? 'ca-app-pub-4977111287348568/9162412714' : _testBanner;
 }
 
 /// Solo per gli screenshot dello store (`--dart-define=SCREENSHOTS=true`):
@@ -32,6 +43,10 @@ const adStripHeight = 74.0;
 
 /// Altezza massima del banner dentro lo spazio riservato.
 const _maxBannerHeight = 60;
+
+/// Spazio riservato al riquadro medio (300×250) della pagina "Dati", con un
+/// margine sopra e sotto.
+const adMediumHeight = 274.0;
 
 class Ads {
   Ads._();
@@ -95,9 +110,12 @@ class Ads {
 /// Spazio del banner al piede della schermata (decisione 13). Riservato
 /// anche prima che l'annuncio arrivi; se non arriva resta vuoto.
 class AdStrip extends StatefulWidget {
-  const AdStrip({super.key, required this.unitId});
+  const AdStrip({super.key, required this.unitId, this.medium = false});
 
   final String unitId;
+
+  /// Riquadro medio 300×250 invece del banner adattivo.
+  final bool medium;
 
   @override
   State<AdStrip> createState() => _AdStripState();
@@ -128,7 +146,9 @@ class _AdStripState extends State<AdStrip> {
     }
     _loading = true;
     final width = MediaQuery.sizeOf(context).width.truncate();
-    final size = AdSize.getInlineAdaptiveBannerAdSize(width, _maxBannerHeight);
+    final size = widget.medium
+        ? AdSize.mediumRectangle
+        : AdSize.getInlineAdaptiveBannerAdSize(width, _maxBannerHeight);
     final ad = BannerAd(
       adUnitId: widget.unitId,
       size: size,
@@ -160,7 +180,7 @@ class _AdStripState extends State<AdStrip> {
     final c = AppColors.of(context);
     final ad = _ad;
     return Container(
-      height: adStripHeight,
+      height: widget.medium ? adMediumHeight : adStripHeight,
       decoration: BoxDecoration(
         color: c.surface,
         border: Border(top: BorderSide(color: c.border)),
@@ -169,7 +189,9 @@ class _AdStripState extends State<AdStrip> {
       child: _loaded && ad != null
           ? SizedBox(
               width: ad.size.width.toDouble(),
-              height: _maxBannerHeight.toDouble(),
+              height: widget.medium
+                  ? ad.size.height.toDouble()
+                  : _maxBannerHeight.toDouble(),
               child: AdWidget(ad: ad),
             )
           : null,
@@ -180,9 +202,12 @@ class _AdStripState extends State<AdStrip> {
 /// Lo spazio del banner in fondo alla schermata, con il margine di sistema;
 /// sparisce solo nella modalità screenshot.
 class AdFooter extends StatelessWidget {
-  const AdFooter({super.key, required this.unitId});
+  const AdFooter({super.key, required this.unitId, this.medium = false});
 
   final String unitId;
+
+  /// Riquadro medio 300×250 (pagina "Dati").
+  final bool medium;
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<bool>(
@@ -190,7 +215,10 @@ class AdFooter extends StatelessWidget {
     builder: (context, on, _) => on
         ? ColoredBox(
             color: AppColors.of(context).surface,
-            child: SafeArea(top: false, child: AdStrip(unitId: unitId)),
+            child: SafeArea(
+              top: false,
+              child: AdStrip(unitId: unitId, medium: medium),
+            ),
           )
         : const SizedBox.shrink(),
   );

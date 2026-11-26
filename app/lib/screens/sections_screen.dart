@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../ads.dart';
 import '../data/database.dart' as db;
 import '../data/sort_key.dart';
 import '../l10n/l10n.dart';
@@ -136,6 +137,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: AdFooter(unitId: AdUnits.sections),
       body: ListView(
         padding: const EdgeInsets.only(top: 4, bottom: 24),
         children: [

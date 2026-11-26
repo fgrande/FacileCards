@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../ads.dart';
 import '../backup_size.dart';
 import '../data/database.dart' as db;
 import '../l10n/l10n.dart';
@@ -55,6 +56,7 @@ class _DataScreenState extends State<DataScreen> {
     const padding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
     return Scaffold(
       appBar: AppBar(title: Text(context.t.dataTitle)),
+      bottomNavigationBar: AdFooter(unitId: AdUnits.data, medium: true),
       body: ListView(
         padding: const EdgeInsets.only(top: 4, bottom: 24),
         children: [

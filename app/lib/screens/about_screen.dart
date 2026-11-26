@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../ads.dart';
 import '../l10n/l10n.dart';
 import '../links.dart';
 import '../system_settings.dart';
@@ -13,8 +14,8 @@ class AboutScreen extends StatelessWidget {
 
   Future<void> _open(BuildContext context, String url) async {
     if (!await openUrl(url) && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.t.noAppToOpen(url))));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(context.t.noAppToOpen(url))));
     }
   }
 
@@ -23,16 +24,22 @@ class AboutScreen extends StatelessWidget {
     final c = AppColors.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(context.t.aboutTitle)),
+      bottomNavigationBar: AdFooter(unitId: AdUnits.about),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           const SizedBox(height: 48),
           const Center(child: AppMark(height: 80)),
           const SizedBox(height: 16),
-          Text('FacileCards',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: c.text, fontSize: 24, fontWeight: FontWeight.w500)),
+          Text(
+            'FacileCards',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: c.text,
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 4),
           FutureBuilder<String>(
             future: appVersion(),
@@ -43,9 +50,11 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text(context.t.developedBy('Fabio Grande'),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: c.text, fontSize: 15)),
+          Text(
+            context.t.developedBy('Fabio Grande'),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: c.text, fontSize: 15),
+          ),
           const SizedBox(height: 28),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
