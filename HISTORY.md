@@ -308,3 +308,4 @@ Cronologia di ciò che è stato deciso e fatto, in ordine. Serve per ricordare *
 - 2026-11-26: 1.0.0+9 al posto della +8 (codice di versione 8 già usato su Google Play), stesso codice.
 - 2026-11-26: decisione 124: annunci anche in Dati (riquadro medio), Sezioni e Informazioni (banner), ognuno con un blocco AdMob suo, per compensare i ricavi della versione Pro tolta.
 - 2026-11-26: "Offrimi un caffè" (Buy Me a Coffee) solo sul sito per ora; nell'app si valuta dopo l'accesso alla produzione, per non rischiare la revisione di Google Play sui pagamenti esterni.
+- 2026-11-26: versione 1.0.0+10 per il test chiuso: annunci anche in Dati, Sezioni e Informazioni.
